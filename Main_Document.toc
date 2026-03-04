@@ -1,0 +1,32 @@
+\babel@toc {english}{}\relax 
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Motivation}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Objectives}{2}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Outline}{3}{section.1.3}%
+\contentsline {chapter}{\numberline {2}State-of-the-Art}{4}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Solar Panels}{4}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Maximum Power Point Tracker (MPPT)}{6}{section.2.2}%
+\contentsline {section}{\numberline {2.3}MPPT Algorithms}{7}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Constant Voltage (CV)}{7}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Perturb and Observe (P\&O)}{8}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Incremental Conductance (IncCond)}{9}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.4}Look Up Table (LUT)}{10}{subsection.2.3.4}%
+\contentsline {section}{\numberline {2.4}Types of DC-DC Converters}{11}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Non-isolated versus isolated DC-DC converters}{11}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Non-isolated DC-DC converters}{12}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}Comparison between Non-isolated DC-DC converters}{14}{subsection.2.4.3}%
+\contentsline {section}{\numberline {2.5}Battery charging techniques}{15}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Processing unit}{16}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Commercial Options}{17}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Specialized ICs}{17}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.2}Commercial MPPT chargers}{18}{subsection.2.7.2}%
+\contentsline {chapter}{\numberline {3}Proposed Solution}{20}{chapter.3}%
+\contentsline {section}{\numberline {3.1}System architecture}{20}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Requirements summary}{21}{subsection.3.1.1}%
+\contentsline {section}{\numberline {3.2}Methodology}{22}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Simulations and Design}{22}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Experimental results and validation}{23}{subsection.3.2.2}%
+\contentsline {chapter}{\numberline {4}Preliminary Work}{24}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Simulations}{24}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Hardware tests}{26}{section.4.2}%
+\contentsline {chapter}{\numberline {5}Planning and Scheduling}{27}{chapter.5}%
