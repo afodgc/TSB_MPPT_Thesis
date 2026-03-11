@@ -12,47 +12,48 @@ Database file #1: Bibliography/Bibliography.bib
 -- http://www.michaelshell.org/tex/ieeetran/bibtex/
 -- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
 Warning--empty booktitle in FPGA_Implementation_MPPT
+Warning--empty booktitle in inproceedings
 
 Done.
-You've used 32 entries,
+You've used 34 entries,
             4087 wiz_defined-function locations,
-            1027 strings with 15726 characters,
-and the built_in function-call counts, 24858 in all, are:
-= -- 2014
-> -- 499
-< -- 222
-+ -- 293
-- -- 75
-* -- 1153
-:= -- 3682
-add.period$ -- 64
-call.type$ -- 32
-change.case$ -- 37
-chr.to.int$ -- 528
-cite$ -- 33
-duplicate$ -- 1751
-empty$ -- 2066
-format.name$ -- 98
-if$ -- 5892
+            1038 strings with 16068 characters,
+and the built_in function-call counts, 26007 in all, are:
+= -- 2099
+> -- 528
+< -- 227
++ -- 307
+- -- 81
+* -- 1207
+:= -- 3860
+add.period$ -- 68
+call.type$ -- 34
+change.case$ -- 39
+chr.to.int$ -- 537
+cite$ -- 36
+duplicate$ -- 1845
+empty$ -- 2174
+format.name$ -- 106
+if$ -- 6160
 int.to.chr$ -- 0
-int.to.str$ -- 32
-missing$ -- 294
-newline$ -- 131
-num.names$ -- 32
-pop$ -- 686
+int.to.str$ -- 34
+missing$ -- 312
+newline$ -- 137
+num.names$ -- 34
+pop$ -- 735
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 2
-skip$ -- 1969
+skip$ -- 2056
 stack$ -- 0
-substring$ -- 1269
-swap$ -- 1436
-text.length$ -- 46
+substring$ -- 1292
+swap$ -- 1500
+text.length$ -- 48
 text.prefix$ -- 0
 top$ -- 5
-type$ -- 32
-warning$ -- 1
-while$ -- 105
-width$ -- 34
-write$ -- 344
-(There was 1 warning)
+type$ -- 34
+warning$ -- 2
+while$ -- 110
+width$ -- 36
+write$ -- 361
+(There were 2 warnings)

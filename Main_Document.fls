@@ -613,42 +613,19 @@ INPUT ./Images/Solucional Proposal/System architecture.drawio.pdf
 INPUT ./Images/Solucional Proposal/System architecture.drawio.pdf
 INPUT ./Images/Solucional Proposal/System architecture.drawio.pdf
 INPUT ./Images/Solucional Proposal/System architecture.drawio.pdf
-INPUT ./Chapters/Preliminary Work/main.tex
-INPUT ./Chapters/Preliminary Work/main.tex
-INPUT Chapters/Preliminary Work/main.tex
-INPUT ./Images/Preliminary Work/simulink_model.png
-INPUT ./Images/Preliminary Work/simulink_model.png
-INPUT ./Images/Preliminary Work/simulink_model.png
-INPUT ./Images/Preliminary Work/simulink_model.png
-INPUT ./Images/Preliminary Work/simulink_model.png
-INPUT ./Images/Preliminary Work/Sim_Power_m.png
-INPUT ./Images/Preliminary Work/Sim_Power_m.png
-INPUT ./Images/Preliminary Work/Sim_Power_m.png
-INPUT ./Images/Preliminary Work/Sim_Power_m.png
-INPUT ./Images/Preliminary Work/Sim_Power_m.png
-INPUT ./Images/Preliminary Work/Sim_Voltage_m.png
-INPUT ./Images/Preliminary Work/Sim_Voltage_m.png
-INPUT ./Images/Preliminary Work/Sim_Voltage_m.png
-INPUT ./Images/Preliminary Work/Sim_Voltage_m.png
-INPUT ./Images/Preliminary Work/Sim_Voltage_m.png
-INPUT ./Images/Preliminary Work/Sim_Current_m.png
-INPUT ./Images/Preliminary Work/Sim_Current_m.png
-INPUT ./Images/Preliminary Work/Sim_Current_m.png
-INPUT ./Images/Preliminary Work/Sim_Current_m.png
-INPUT ./Images/Preliminary Work/Sim_Current_m.png
-INPUT ./Images/Preliminary Work/STM32F103C8T6_Blue_Pill-1.jpg
-INPUT ./Images/Preliminary Work/STM32F103C8T6_Blue_Pill-1.jpg
-INPUT ./Images/Preliminary Work/STM32F103C8T6_Blue_Pill-1.jpg
-INPUT ./Images/Preliminary Work/STM32F103C8T6_Blue_Pill-1.jpg
-INPUT ./Images/Preliminary Work/STM32F103C8T6_Blue_Pill-1.jpg
-INPUT ./Chapters/Planning and scheduling/main.tex
-INPUT ./Chapters/Planning and scheduling/main.tex
-INPUT Chapters/Planning and scheduling/main.tex
-INPUT ./Images/Planning/Gantt.pdf
-INPUT ./Images/Planning/Gantt.pdf
-INPUT ./Images/Planning/Gantt.pdf
-INPUT ./Images/Planning/Gantt.pdf
-INPUT ./Images/Planning/Gantt.pdf
+INPUT ./Chapters/Implementation/Implementation.tex
+INPUT ./Chapters/Implementation/Implementation.tex
+INPUT Chapters/Implementation/Implementation.tex
+INPUT ./Images/Implementation/Boost.png
+INPUT ./Images/Implementation/Boost.png
+INPUT ./Images/Implementation/Boost.png
+INPUT ./Images/Implementation/Boost.png
+INPUT ./Images/Implementation/Boost.png
+INPUT ./Images/Implementation/Conventional-synchronous-boost-converter.png
+INPUT ./Images/Implementation/Conventional-synchronous-boost-converter.png
+INPUT ./Images/Implementation/Conventional-synchronous-boost-converter.png
+INPUT ./Images/Implementation/Conventional-synchronous-boost-converter.png
+INPUT ./Images/Implementation/Conventional-synchronous-boost-converter.png
 INPUT ./Main_Document.bbl
 INPUT ./Main_Document.bbl
 INPUT Main_Document.bbl
@@ -660,6 +637,7 @@ OUTPUT Main_Document.loc
 INPUT Main_Document.aux
 INPUT ./Main_Document.out
 INPUT ./Main_Document.out
+INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb
