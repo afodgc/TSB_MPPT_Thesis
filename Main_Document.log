@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.26)  11 MAR 2026 12:27
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.26)  12 MAR 2026 16:46
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1081,13 +1081,13 @@ Package hyperref Info: Link coloring OFF on input line 45.
 \c@Changes@commentCountCC=\count401
 
 TextBlockOrigin set to -18pt x -2pt
-<./Images/IST_A_RGB_POS.png, id=155, 509.905pt x 198.7425pt>
+<./Images/IST_A_RGB_POS.png, id=167, 509.905pt x 198.7425pt>
 File: ./Images/IST_A_RGB_POS.png Graphic file (type png)
 <use ./Images/IST_A_RGB_POS.png>
 Package pdftex.def Info: ./Images/IST_A_RGB_POS.png  used on input line 75.
 (pdftex.def)             Requested size: 142.26378pt x 55.4504pt.
 TextBlockOrigin set to -18pt x -2pt
-<./Images/SR03_Monaco.jpg, id=157, 407.121pt x 134.904pt>
+<./Images/SR03_Monaco.jpg, id=169, 407.121pt x 134.904pt>
 File: ./Images/SR03_Monaco.jpg Graphic file (type jpg)
 <use ./Images/SR03_Monaco.jpg>
 Package pdftex.def Info: ./Images/SR03_Monaco.jpg  used on input line 75.
@@ -1117,29 +1117,29 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 LaTeX Font Info:    Trying to load font information for U+msb on input line 3.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-))
+) [2
+
+
+])
 \tf@toc=\write5
 \openout5 = `Main_Document.toc'.
 
- [2
+ [3] (./Acronyms/Acronyms.tex
+
+LaTeX Warning: Hyper reference `acro:dc' on page iv undefined on input line 17.
 
 
-] (./Acronyms/Acronyms.tex
-
-LaTeX Warning: Hyper reference `acro:dc' on page iii undefined on input line 16.
+LaTeX Warning: Hyper reference `acro:dc' on page iv undefined on input line 17.
 
 
-LaTeX Warning: Hyper reference `acro:dc' on page iii undefined on input line 16.
+LaTeX Warning: Hyper reference `acro:gui' on page iv undefined on input line 19.
 
 
-LaTeX Warning: Hyper reference `acro:gui' on page iii undefined on input line 18.
+LaTeX Warning: Hyper reference `acro:gui' on page iv undefined on input line 19.
 
+) [4
 
-LaTeX Warning: Hyper reference `acro:gui' on page iii undefined on input line 18.
-
-) [3
-
-] [4
+] [5] [6
 
 ] (./Chapters/Introduction/main.tex
 Chapter 1.
@@ -1179,7 +1179,7 @@ Package acronym Info: Label `acro:tsb' overridden on input line 15.
 
 
 pdfTeX warning: pdflatex (file ./Images/Background/solar_cell.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<Images/Background/solar_cell.pdf, id=392, 1001.66924pt x 406.00784pt>
+<Images/Background/solar_cell.pdf, id=419, 1001.66924pt x 406.00784pt>
 File: Images/Background/solar_cell.pdf Graphic file (type pdf)
 <use Images/Background/solar_cell.pdf>
 Package pdftex.def Info: Images/Background/solar_cell.pdf  used on input line 21.
@@ -1193,7 +1193,7 @@ Package acronym Info: Label `acro:mpp' overridden on input line 30.
 ]
 
 pdfTeX warning: pdflatex (file ./Images/Background/i-v,p-v.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<Images/Background/i-v,p-v.pdf, id=408, 636.03123pt x 443.8964pt>
+<Images/Background/i-v,p-v.pdf, id=436, 636.03123pt x 443.8964pt>
 File: Images/Background/i-v,p-v.pdf Graphic file (type pdf)
 <use Images/Background/i-v,p-v.pdf>
 Package pdftex.def Info: Images/Background/i-v,p-v.pdf  used on input line 34.
@@ -1201,7 +1201,7 @@ Package pdftex.def Info: Images/Background/i-v,p-v.pdf  used on input line 34.
 
 
 pdfTeX warning: pdflatex (file ./Images/Background/irradiance_i-v.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<Images/Background/irradiance_i-v.pdf, id=414, 545.68565pt x 371.62036pt>
+<Images/Background/irradiance_i-v.pdf, id=442, 545.68565pt x 371.62036pt>
 File: Images/Background/irradiance_i-v.pdf Graphic file (type pdf)
 <use Images/Background/irradiance_i-v.pdf>
 Package pdftex.def Info: Images/Background/irradiance_i-v.pdf  used on input line 50.
@@ -1209,7 +1209,7 @@ Package pdftex.def Info: Images/Background/irradiance_i-v.pdf  used on input lin
 
 
 pdfTeX warning: pdflatex (file ./Images/Background/temperature_i-v.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<Images/Background/temperature_i-v.pdf, id=415, 620.97394pt x 457.75015pt>
+<Images/Background/temperature_i-v.pdf, id=443, 620.97394pt x 457.75015pt>
 File: Images/Background/temperature_i-v.pdf Graphic file (type pdf)
 <use Images/Background/temperature_i-v.pdf>
 Package pdftex.def Info: Images/Background/temperature_i-v.pdf  used on input line 58.
@@ -1222,7 +1222,7 @@ Package acronym Info: Label `acro:mppt' overridden on input line 71.
 
 
 pdfTeX warning: pdflatex (file ./Images/Background/Block diagram.drawio.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<Images/Background/Block diagram.drawio.pdf, id=447, 341.35529pt x 121.4136pt>
+<Images/Background/Block diagram.drawio.pdf, id=475, 341.35529pt x 121.4136pt>
 File: Images/Background/Block diagram.drawio.pdf Graphic file (type pdf)
 <use Images/Background/Block diagram.drawio.pdf>
 Package pdftex.def Info: Images/Background/Block diagram.drawio.pdf  used on input line 77.
@@ -1239,7 +1239,7 @@ although it is yet undefined on input line 103.
  [7 <./Images/Background/Block diagram.drawio.pdf>]
 
 pdfTeX warning: pdflatex (file ./Images/Background/PeO.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<Images/Background/PeO.pdf, id=511, 702.88696pt x 443.8964pt>
+<Images/Background/PeO.pdf, id=538, 702.88696pt x 443.8964pt>
 File: Images/Background/PeO.pdf Graphic file (type pdf)
 <use Images/Background/PeO.pdf>
 Package pdftex.def Info: Images/Background/PeO.pdf  used on input line 118.
@@ -1247,7 +1247,7 @@ Package pdftex.def Info: Images/Background/PeO.pdf  used on input line 118.
 
 
 pdfTeX warning: pdflatex (file ./Images/Background/fast_change.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<Images/Background/fast_change.pdf, id=514, 681.20396pt x 446.90866pt>
+<Images/Background/fast_change.pdf, id=541, 681.20396pt x 446.90866pt>
 File: Images/Background/fast_change.pdf Graphic file (type pdf)
 <use Images/Background/fast_change.pdf>
 Package pdftex.def Info: Images/Background/fast_change.pdf  used on input line 125.
@@ -1258,7 +1258,7 @@ although it is yet undefined on input line 137.
  [9]
 
 pdfTeX warning: pdflatex (file ./Images/Background/IncCond_flow.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<Images/Background/IncCond_flow.pdf, id=572, 322.83409pt x 359.57436pt>
+<Images/Background/IncCond_flow.pdf, id=599, 322.83409pt x 359.57436pt>
 File: Images/Background/IncCond_flow.pdf Graphic file (type pdf)
 <use Images/Background/IncCond_flow.pdf>
 Package pdftex.def Info: Images/Background/IncCond_flow.pdf  used on input line 175.
@@ -1266,7 +1266,7 @@ Package pdftex.def Info: Images/Background/IncCond_flow.pdf  used on input line 
 
 
 pdfTeX warning: pdflatex (file ./Images/Background/InCond_graph.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<Images/Background/InCond_graph.pdf, id=577, 500.62032pt x 394.47375pt>
+<Images/Background/InCond_graph.pdf, id=604, 500.62032pt x 394.47375pt>
 File: Images/Background/InCond_graph.pdf Graphic file (type pdf)
 <use Images/Background/InCond_graph.pdf>
 Package pdftex.def Info: Images/Background/InCond_graph.pdf  used on input line 182.
@@ -1284,7 +1284,7 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 [10 <./Images/Background/IncCond_flow.pdf> <./Images/Background/InCond_graph.pdf>] [11] [12]
 
 pdfTeX warning: pdflatex (file ./Images/Background/DC-DC_classic_topologys.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<Images/Background/DC-DC_classic_topologys.pdf, id=660, 1234.46191pt x 176.13603pt>
+<Images/Background/DC-DC_classic_topologys.pdf, id=688, 1234.46191pt x 176.13603pt>
 File: Images/Background/DC-DC_classic_topologys.pdf Graphic file (type pdf)
 <use Images/Background/DC-DC_classic_topologys.pdf>
 Package pdftex.def Info: Images/Background/DC-DC_classic_topologys.pdf  used on input line 280.
@@ -1292,7 +1292,7 @@ Package pdftex.def Info: Images/Background/DC-DC_classic_topologys.pdf  used on 
 
 
 pdfTeX warning: pdflatex (file ./Images/Background/DC-DC_buck_bost.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<Images/Background/DC-DC_buck_bost.pdf, id=669, 1260.04749pt x 186.67442pt>
+<Images/Background/DC-DC_buck_bost.pdf, id=697, 1260.04749pt x 186.67442pt>
 File: Images/Background/DC-DC_buck_bost.pdf Graphic file (type pdf)
 <use Images/Background/DC-DC_buck_bost.pdf>
 Package pdftex.def Info: Images/Background/DC-DC_buck_bost.pdf  used on input line 295.
@@ -1308,7 +1308,7 @@ although it is yet undefined on input line 391.
 
 
 pdfTeX warning: pdflatex (file ./Images/Background/CC-CV graph.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<Images/Background/CC-CV graph.pdf, id=713, 845.1575pt x 597.23125pt>
+<Images/Background/CC-CV graph.pdf, id=740, 845.1575pt x 597.23125pt>
 File: Images/Background/CC-CV graph.pdf Graphic file (type pdf)
 <use Images/Background/CC-CV graph.pdf>
 Package pdftex.def Info: Images/Background/CC-CV graph.pdf  used on input line 396.
@@ -1339,7 +1339,7 @@ although it is yet undefined on input line 7.
 
 
 pdfTeX warning: pdflatex (file ./Images/Solucional Proposal/System architecture.drawio.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<Images/Solucional Proposal/System architecture.drawio.pdf, id=825, 419.64778pt x 135.6267pt>
+<Images/Solucional Proposal/System architecture.drawio.pdf, id=852, 419.64778pt x 135.6267pt>
 File: Images/Solucional Proposal/System architecture.drawio.pdf Graphic file (type pdf)
 <use Images/Solucional Proposal/System architecture.drawio.pdf>
 Package pdftex.def Info: Images/Solucional Proposal/System architecture.drawio.pdf  used on input line 11.
@@ -1353,36 +1353,35 @@ Package acronym Info: Label `acro:stc' newly defined as it shall be overridden
 although it is yet undefined on input line 70.
 ) (./Chapters/Implementation/Implementation.tex [23]
 Chapter 4.
-<Images/Implementation/Boost.png, id=913, 469.755pt x 70.01157pt>
+<Images/Implementation/Boost.png, id=941, 469.755pt x 70.01157pt>
 File: Images/Implementation/Boost.png Graphic file (type png)
 <use Images/Implementation/Boost.png>
 Package pdftex.def Info: Images/Implementation/Boost.png  used on input line 13.
 (pdftex.def)             Requested size: 409.71689pt x 61.06339pt.
 [24
 
- <./Images/Implementation/Boost.png>]
-<Images/Implementation/Conventional-synchronous-boost-converter.png, id=930, 137.7948pt x 69.861pt>
+ <./Images/Implementation/Boost.png>] [25] [26]
+Package acronym Info: Label `acro:ccm' newly defined as it shall be overridden
+although it is yet undefined on input line 152.
+ [27]
+<Images/Implementation/Conventional-synchronous-boost-converter.png, id=993, 137.7948pt x 69.861pt>
 File: Images/Implementation/Conventional-synchronous-boost-converter.png Graphic file (type png)
 <use Images/Implementation/Conventional-synchronous-boost-converter.png>
-Package pdftex.def Info: Images/Implementation/Conventional-synchronous-boost-converter.png  used on input line 71.
+Package pdftex.def Info: Images/Implementation/Conventional-synchronous-boost-converter.png  used on input line 196.
 (pdftex.def)             Requested size: 227.62204pt x 115.41275pt.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-) (./Main_Document.bbl [25] [26 <./Images/Implementation/Conventional-synchronous-boost-converter.png>]
+) (./Main_Document.bbl [28 <./Images/Implementation/Conventional-synchronous-boost-converter.png>]
 LaTeX Font Info:    Font shape `OT1/phv/m/it' in size <10> not available
 (Font)              Font shape `OT1/phv/m/sl' tried instead on input line 29.
- [27
+ [29
 
-] [28] [29])
+] [30] [31])
 \Changes@OutFile=\write6
 \openout6 = `Main_Document.soc'.
 
 \tf@loc=\write7
 \openout7 = `Main_Document.loc'.
 
- [30] (./Main_Document.aux
+ [32] (./Main_Document.aux
 Package cleveref Info: loaded `english' language definitions on input line 10.
 )
  ***********
@@ -1397,21 +1396,21 @@ LaTeX Warning: There were undefined references.
 LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `Main_Document.out' has not changed.
-(rerunfilecheck)             Checksum: A7FF25D85E35ABF7CE2621BA778118E4;6524.
+(rerunfilecheck)             Checksum: 91E26559AA7EAF78C2A36B04EE630C3A;7090.
  ) 
 Here is how much of TeX's memory you used:
- 35243 strings out of 474222
- 654670 string characters out of 5748733
+ 35292 strings out of 474222
+ 655414 string characters out of 5748733
  1975975 words of memory out of 5000000
- 56627 multiletter control sequences out of 15000+600000
+ 56653 multiletter control sequences out of 15000+600000
  599086 words of font info for 107 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 90i,17n,134p,982b,728s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,17n,134p,982b,1030s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvbo8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvro8a.pfb>
-Output written on Main_Document.pdf (36 pages, 1389172 bytes).
+Output written on Main_Document.pdf (40 pages, 1402804 bytes).
 PDF statistics:
- 1085 PDF objects out of 1200 (max. 8388607)
- 949 compressed objects within 10 object streams
- 187 named destinations out of 1000 (max. 500000)
- 394 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1149 PDF objects out of 1200 (max. 8388607)
+ 1008 compressed objects within 11 object streams
+ 210 named destinations out of 1000 (max. 500000)
+ 418 words of extra memory for PDF output out of 10000 (max. 10000000)
 
