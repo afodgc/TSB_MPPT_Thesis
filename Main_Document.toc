@@ -29,7 +29,7 @@
 \contentsline {chapter}{\numberline {4}Implementation}{24}{chapter.4}%
 \contentsline {section}{\numberline {4.1}DC-DC converter}{24}{section.4.1}%
 \contentsline {subsection}{\numberline {4.1.1}Operation principles}{24}{subsection.4.1.1}%
-\contentsline {subsection}{\numberline {4.1.2}Dimensioning}{25}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.2}Dimensioning}{26}{subsection.4.1.2}%
 \contentsline {subsubsection}{\numberline {4.1.2.A}Inductor}{26}{subsubsection.4.1.2.1}%
-\contentsline {subsubsection}{\numberline {4.1.2.B}Capacitor}{27}{subsubsection.4.1.2.2}%
-\contentsline {subsubsection}{\numberline {4.1.2.C}Transistor and gate driver}{28}{subsubsection.4.1.2.3}%
+\contentsline {subsubsection}{\numberline {4.1.2.B}Capacitor}{28}{subsubsection.4.1.2.2}%
+\contentsline {subsubsection}{\numberline {4.1.2.C}Transistor and gate driver}{29}{subsubsection.4.1.2.3}%

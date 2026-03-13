@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex Main_Document"] 1773333915.55981 "Main_Document.aux" "Main_Document.bbl" "Main_Document" 1773337737.1369 0
+["bibtex Main_Document"] 1773414585.44698 "Main_Document.aux" "Main_Document.bbl" "Main_Document" 1773419199.32347 0
   "./Bibliography/Bibliography.bib" 1773223909.30248 19891 f67867e78cd1703cc1b62cdd38002379 ""
   "/usr/share/texlive/texmf-dist/bibtex/bst/ieeetran/IEEEtran.bst" 1440712899 57748 7c8250ecf02814ce6ddc0cdbb63df1dd ""
-  "Main_Document.aux" 1773337736.72539 33405 f0e12de46ce478a81c61edd44f4c03b0 "pdflatex"
+  "Main_Document.aux" 1773419198.86585 33957 b792b05987104d6c79b4f8c658ff10b2 "pdflatex"
   (generated)
   "Main_Document.bbl"
   "Main_Document.blg"
   (rewritten before read)
-["pdflatex"] 1773337734.37242 "/root/Thesis-Fast-response-MPPT-charger-for-the-T-cnico-Solar-Boat/Main_Document.tex" "Main_Document.pdf" "Main_Document" 1773337737.1371 0
+["pdflatex"] 1773419197.80405 "/root/Thesis-Fast-response-MPPT-charger-for-the-T-cnico-Solar-Boat/Main_Document.tex" "Main_Document.pdf" "Main_Document" 1773419199.32386 0
   "/etc/texmf/web2c/texmf.cnf" 1772110324.62027 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/root/Thesis-Fast-response-MPPT-charger-for-the-T-cnico-Solar-Boat/Main_Document.tex" 1773048516.21214 8776 308fdf96b0ed2a75d16b89738152049f ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
@@ -268,10 +268,10 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1772110349.27614 5472669 54eaf61a88b6b7896ebd0dac973cb29c ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1772110385 8213265 a441a8dff37a6e2bf751b16c9f53dba1 ""
-  "Acronyms/Acronyms.tex" 1773243171.66198 2297 66ce8ddc0afe0a104d1d8267b2477f28 ""
+  "Acronyms/Acronyms.tex" 1773399550.30758 2398 5d0abbfb756d727e1b84ff315c4fa2a2 ""
   "Chapters/Abstract/EN-Abstract.tex" 1772638474.76573 1684 7c2af0bc58eaa9c16d610655cff62ee6 ""
   "Chapters/Abstract/EN-KeyWords.tex" 1772638474.76573 359 83238adb7fb920fc74d401bb71c113b7 ""
-  "Chapters/Implementation/Implementation.tex" 1773337733.81461 10675 310081630746633261940c1cc7195d03 ""
+  "Chapters/Implementation/Implementation.tex" 1773419197.41177 15446 c79e8546a0e27ef48f428ce0b1dbeedd ""
   "Chapters/Introduction/main.tex" 1772638474.76573 6770 3c99203e7a64455cca498fc36cd05c01 ""
   "Chapters/SoA/SoA.tex" 1772638474.76573 58876 722e781f0f48b7428708c4ec18dc34ee ""
   "Chapters/Solucion Proposal/Solucion Proposal.tex" 1772638474.76573 10068 75faab5dec9dd63b3c6e592e69721908 ""
@@ -293,11 +293,11 @@
   "Images/Implementation/Conventional-synchronous-boost-converter.png" 1773223777.51048 33469 5f76d6d3e3b0a87b5f24672f40c9fe4e ""
   "Images/SR03_Monaco.jpg" 1772638474.7854 246415 f622f995ce26ae4abd016af7caa8a889 ""
   "Images/Solucional Proposal/System architecture.drawio.pdf" 1772638474.7854 226043 39c7289ea1581d401ab119563328c06c ""
-  "Main_Document.aux" 1773337736.72539 33405 f0e12de46ce478a81c61edd44f4c03b0 "pdflatex"
-  "Main_Document.bbl" 1773333915.68246 10257 9ae1695d4ff009a2b697a7cace4c8330 "bibtex Main_Document"
-  "Main_Document.out" 1773337736.73392 7090 91e26559aa7eaf78c2a36b04ee630c3a "pdflatex"
+  "Main_Document.aux" 1773419198.86585 33957 b792b05987104d6c79b4f8c658ff10b2 "pdflatex"
+  "Main_Document.bbl" 1773414585.56238 10257 9ae1695d4ff009a2b697a7cace4c8330 "bibtex Main_Document"
+  "Main_Document.out" 1773419198.87835 7090 91e26559aa7eaf78c2a36b04ee630c3a "pdflatex"
   "Main_Document.tex" 1773048516.21214 8776 308fdf96b0ed2a75d16b89738152049f ""
-  "Main_Document.toc" 1773337736.73392 2966 f763c904a9f98d72a47add4b82c3d20b "pdflatex"
+  "Main_Document.toc" 1773419198.88252 2966 e75290834235b7d924c74c3ab1855843 "pdflatex"
   "Preamble_commands.tex" 1772638474.79326 24547 297d357a18dd8eb630b4deaa27cb59fa ""
   "Tools/mcode.sty" 1772638474.79719 11599 3dcf14784ba37ad4aa9810db1e91d75e ""
   "istulthesis.cls" 1772638474.79719 17147 afd1b7c17ed0647017d50523d545c352 ""
