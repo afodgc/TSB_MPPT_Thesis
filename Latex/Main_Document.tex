@@ -1,0 +1,229 @@
+% #############################################################################
+% This is the MAIN DOCUMENT of the Thesis MSc TEMPLATE.
+% The content for the Thesis MSc is to be written in separate documents
+% located in the folder ./Chapters
+%         Aknowledgments.tex
+%         Abstract.tex
+%         KeyWords.tex
+%         Resumo.tex
+%         PalavrasChave.tex
+%         Acronyms.tex
+%         Front_Cover.tex
+%         Chapter_1.tex ....Chapter_2 .....
+%         ApendixA.tex ... ApendixB.tex...
+% -----------------------------------------------------------------------------
+% The class "istulthesis" is based on the standard LaTeX 'report' class.
+% It can be used for Instituto Superior Tecnico thesis, as it follows the
+% https://www.overleaf.com/6139349192mwrcjcczyjfw
+% regulations published by the Scientific Council of IST.
+% The class defines the document style.
+% IST requires the thesis to be written in Arial or similar.
+% Two arguments in '\documentclass' allow you to define the thesis font:
+% 'Helvetica' and 'AvantGarde', which transforms
+% the default LaTeX font into Helvetica or AvantGarde, respectively.
+% #############################################################################
+% The document is automatically set for english or portuguese by just selecting
+% the MAIN LANGUAGE in file 'Thesis-MSc-Preamble_commands.tex'
+% #############################################################################
+% Thesis-MSc
+% Version 2.0, August 2018
+% BY: Rui Santos Cruz, rui.s.cruz@tecnico.ulisboa.pt
+% #############################################################################
+% !TEX root = ./main.tex
+% -----------------------------------------------------------------------------
+
+\documentclass[defaultstyle,10pt,Helvetica]{istulthesis}
+
+% -----------------------------------------------------------------------------
+% The Preamble document contains all the necessary Packages for typesetting
+% Modify it to suit your needs
+% -----------------------------------------------------------------------------
+\input{Preamble_commands.tex}
+
+% #############################################################################
+% #############################################################################
+\begin{document}
+
+% Add PDF bookmark
+\pdfbookmark[0]{Titlepage}{Title}
+\input{Front_Cover.tex}
+\cleardoublepage
+
+% -----------------------------------------------------------------------------
+% PAGE NUMBERING FOR INDEXING MATTER in ROMAN
+\setcounter{page}{1} \pagenumbering{roman}
+\baselineskip 18pt % line spacing: -12pt for single spacing
+%               -18pt for 1 1/2 spacing
+%               -24pt for double spacing
+% -----------------------------------------------------------------------------
+% -----------------------------------------------------------------------------
+% THE ABSTRACT
+\pdfbookmark[-1]{Abstract}{Abstract}
+\begin{abstract}
+	\input{./Chapters/Abstract/EN-Abstract}
+	\input{./Chapters/Abstract/EN-KeyWords.tex}
+\end{abstract}
+\clearpage
+
+% -----------------------------------------------------------------------------
+% This is required for the Fancy Chapters with minitoc
+% \dominitoc
+%\dominilof
+%\dominilot
+
+% -----------------------------------------------------------------------------
+%                                   Lists of Contents
+\renewcommand{\baselinestretch}{0.8}
+\pdfbookmark[0]{Contents}{toc}
+\tableofcontents
+%\contentsline{chapter}{References}{\pageref{bib}}
+% If Printing on DOUBLE SIDED pages, the second page should be white.
+% Otherwise, comment the following command:
+%\cleardoublepage
+% reposition baseline
+\renewcommand{\baselinestretch}{1.5}
+% -----------------------------------------------------------------------------
+%                                List of Figures
+%\pdfbookmark[1]{List of Figures}{lof}
+%\listoffigures
+%\cleardoublepage
+
+% -----------------------------------------------------------------------------
+%\begingroup
+%    \let\clearpage\relax
+%    \let\cleardoublepage\relax
+%    \let\cleardoublepage\relax
+%
+%                               List of Tables
+%\pdfbookmark[1]{List of Tables}{lot}
+%\listoftables
+% If Printing on DOUBLE SIDED pages, the second page should be white.
+% Otherwise, comment the following command:
+%\let\cleardoublepage\relax
+%\cleardoublepage
+%\clearpage
+% -----------------------------------------------------------------------------
+%                             List of Algorithms
+% If not used, comments the lines!
+% Requires packages algorithmic, algorithm
+%\pdfbookmark[1]{List of Algorithms}{loa}
+%\listofalgorithms
+% If Printing on DOUBLE SIDED pages, the second page should be white.
+%\endgroup
+% Otherwise, comment the following command:
+%\cleardoublepage
+% -----------------------------------------------------------------------------
+%                                Listings
+% If not used, comments the lines!
+% Requires packages listings
+%\pdfbookmark[1]{Listings}{lol}
+%\lstlistoflistings
+%\cleardoublepage
+% -----------------------------------------------------------------------------
+%                             List of acronyms
+\pdfbookmark[1]{Acronyms}{loac}
+\chapter*{\tlangAcronyms}
+\input{Acronyms/Acronyms.tex}
+\cleardoublepage
+% -----------------------------------------------------------------------------
+% PAGE NUMBERING FOR DOCUMENT MATTER in ARABIC
+% Pages number is starting with arabic style. Until here were on roman mode
+\setcounter{page}{1} \pagenumbering{arabic}
+\baselineskip 18pt
+
+
+
+
+% #############################################################################
+% #############################################################################
+%                                   CHAPTERS
+
+% Chapter 1 [5/6 pages]
+\acresetall
+\input{Chapters/Introduction/main.tex}
+% \cleardoublepage
+% -----------------------------------------------------------------------------
+
+% Chapter 2 [?? pages]
+\acresetall
+\input{Chapters/SoA/SoA.tex}
+% \cleardoublepage
+% -----------------------------------------------------------------------------
+
+% Chapter 3 [13/15 pages]
+\acresetall
+\input{Chapters/Solucion Proposal/Solucion Proposal.tex}
+% \cleardoublepage
+% -----------------------------------------------------------------------------
+
+% Chapter 4 [? pages]
+\acresetall
+\input{Chapters/Implementation/Implementation.tex}
+% \cleardoublepage
+% -----------------------------------------------------------------------------
+
+% Chapter 5 [4/5 pages]
+\acresetall
+%\input{Chapters/Preliminary Work/main.tex}
+% \cleardoublepage
+% -----------------------------------------------------------------------------
+
+% Chapter 6 [1 pages]
+\acresetall
+%\input{Chapters/Planning and scheduling/main.tex}
+% \cleardoublepage
+% -----------------------------------------------------------------------------
+
+
+
+
+% #############################################################################
+% #############################################################################
+%                          BIBLIOGRAPHY
+
+% Add the Bibliography to the PDF table of contents (not the document table of contents)
+\pdfbookmark[0]{Bibliography}{bib}
+% The bibliography style sheet
+% Chose your preferences on the format of the entries and the Labels:
+% IEEEtran: Used in general (recommended for IST Thesis)
+%           Entries are labelled and sorted by appearance in the document
+%           Labels are Numeric inside square brackets
+\bibliographystyle{IEEEtran}
+%
+% Apalike:  Entries formatted alphabetically, last name first, with identation
+%           Labels with Autor's Name and Year inside square brackets
+%\bibliographystyle{apalike}
+%
+% Alpha:    Entries formatted with Autor's Name and Year, hanging identation
+%           Labels with Autor's abbr. Names and Year inside square brackets
+%\bibliographystyle{alpha}
+%
+% Acm:     Entries formatted with Autor's Name (small Caps), hanging identation
+%          Labels are Numeric inside square brackets
+%\bibliographystyle{acm}
+% The following command resets the 'emphasis' style for bibliography entries
+\normalem
+% Name of your BiBTeX file
+\bibliography{Bibliography/Bibliography} % Put here your own filename
+%
+% The following command modifies the 'emphasis' style for bibliography entries
+\ULforem
+% If Printing on DOUBLE SIDED pages, the second page should be white.
+% Otherwise, comment the following command:
+%\cleardoublepage
+
+
+% -----------------------------------------------------------------------------
+%                          APPENDIXES
+% HERE GO THE APPENDIXES IF REQUIRED
+% If not required just comment the blocks
+% \appendix
+% %% First Appendix
+
+% \pdfbookmark[1]{Appendix A}{appendix}
+% \input{./Appendix/Thesis-MSc-AppendixA}
+
+
+% -----------------------------------------------------------------------------
+% And this is THE END of the IST Thesis Document
+\end{document}

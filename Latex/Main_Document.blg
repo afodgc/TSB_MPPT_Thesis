@@ -1,0 +1,58 @@
+This is BibTeX, Version 0.99d (TeX Live 2023/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: Main_Document.aux
+The style file: IEEEtran.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: Bibliography/Bibliography.bib
+-- IEEEtran.bst version 1.14 (2015/08/26) by Michael Shell.
+-- http://www.michaelshell.org/tex/ieeetran/bibtex/
+-- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
+Warning--empty booktitle in FPGA_Implementation_MPPT
+
+Done.
+You've used 33 entries,
+            4087 wiz_defined-function locations,
+            1033 strings with 15908 characters,
+and the built_in function-call counts, 25303 in all, are:
+= -- 2052
+> -- 508
+< -- 223
++ -- 297
+- -- 77
+* -- 1174
+:= -- 3763
+add.period$ -- 66
+call.type$ -- 33
+change.case$ -- 38
+chr.to.int$ -- 528
+cite$ -- 34
+duplicate$ -- 1791
+empty$ -- 2105
+format.name$ -- 101
+if$ -- 5991
+int.to.chr$ -- 0
+int.to.str$ -- 33
+missing$ -- 301
+newline$ -- 134
+num.names$ -- 33
+pop$ -- 701
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 2
+skip$ -- 2004
+stack$ -- 0
+substring$ -- 1270
+swap$ -- 1463
+text.length$ -- 47
+text.prefix$ -- 0
+top$ -- 5
+type$ -- 33
+warning$ -- 1
+while$ -- 106
+width$ -- 35
+write$ -- 353
+(There was 1 warning)

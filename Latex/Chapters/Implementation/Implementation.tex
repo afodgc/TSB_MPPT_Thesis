@@ -1,0 +1,271 @@
+\fancychapter{Implementation}
+\label{chap:imp}
+\textcolor{red}{introdução do capítulo}
+
+\section{DC-DC converter}
+\textcolor{red}{introdução do capítulo}
+
+\subsection{Operation principles}
+The DC-DC converter chosen for this project was a boost converter. This topology uses one switching device, one inductor, one output capacitor and a diode, Figure \ref{fig:boost}. The switching device is used to control the output voltage by switching on and off at a specified frequency (fsw) and duty cycle (D). The inductor is used to store energy when the switch is on (stage 1) and release it when the switch is off (stage 2), while the output capacitor is used to smooth the output voltage, Figure~\ref{fig:boost}.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Images/Implementation/Boost.png}
+    \caption{Classic Boost converter topology and stages \cite{Comparison_PV_Converter_Technologies_1989}.}
+    \label{fig:boost}
+\end{figure}
+
+Analyzing the boost converter separately on his two stages, it is possible to define the drop  voltage across the inductor (VL), as a function of the input voltage (Vin) and output voltage (Vout) as follows:
+
+\begin{equation}
+    V_L = \begin{cases}
+    V_{in} & \text{if } t \in [0, D \cdot T] \\
+    V_{in} - V_{out} & \text{if } t \in [D \cdot T, T]
+  \end{cases}
+  \label{eq:vl}
+\end{equation}
+
+With equation \ref{eq:vl} and the fact that at stationary state the average voltage across the inductor is zero, it is possible to define the output voltage in function of the input voltage and duty cycle as follows:
+
+\begin{equation}
+    V_{Lavg} = \frac{1}{T} (\int_{0}^{DT} V_{in} dt + \int_{DT}^{T} (V_{in} - V_{out}) dt) = 0 \Rightarrow V_{out} = \frac{V_{in}}{1-D}
+    \label{eq:duty}
+\end{equation}
+
+Equation \ref{eq:duty} is one of the most important equations in boost converter design, as it defines the relationship between the input voltage, output voltage and duty cycle. As the duty cycle increases, the output voltage also increases, which is the main principle behind boost converters. For our use case, it is import to analyze the relation betwen the input and output current as well. Using the power balance equation, it is possible to define the input current as follows:
+\begin{equation}
+    P_{in} = P_{out} \Leftrightarrow V_{in} \cdot I_{in} = V_{out} \cdot I_{out} \Leftrightarrow I_{in} = \frac{V_{out}}{V_{in}} \cdot I_{out} = \frac{I_{out}}{1-D}
+\end{equation}
+
+However, these equations are only valid for ideal components since it does not take into account the parasitic elements of the components, such as the resistance of the inductor, the drain source resistance of the transistor, and the voltage drop across the diode (there are more parasitic components that affect the performance). In a real boost converter, these parasitic elements will cause a voltage drop and therefore reduce the output voltage. 
+
+Let's quickly analyze the influence of the inductor resistance ($R_L$) and the voltage drop across the diode ($V_d$) by changing the equation \ref{eq:vl} to:
+
+\begin{equation}
+    V_L = \begin{cases}
+    V_{in} - R_{DS_{(on)}} \cdot I_{DS} & \text{if } t \in [0, D \cdot T] \\
+    V_{in} - V_{out} - V_d & \text{if } t \in [D \cdot T, T]
+  \end{cases}
+  \label{eq:vl2}
+\end{equation}
+
+In this case the at stationary state the average voltage across the inductor is $R_L \cdot I_L$ and therefore the output voltage can be defined as:
+
+\begin{equation}
+    V_{Lavg} = \frac{1}{T} (\int_{0}^{DT} (V_{in} - R_{DS_{(on)}} \cdot I_{DS}) dt + \int_{DT}^{T} (V_{in} - V_{out} - V_d) dt) \Leftrightarrow 
+\end{equation}
+
+\begin{equation}
+    \Leftrightarrow R_L \cdot I_L = \frac{1}{T} [T \cdot D \cdot  (V_{in} - R_{DS_{(on)}} \cdot I_{DS}) + T \cdot (1-D)\cdot(V_{in} - V_{out} -V_d)] \Leftrightarrow  V_{out} = \frac{V_{in} - R_{DS_{(on)}} \cdot I_{DS} - R_L \cdot I_L}{1-D}-V_d
+    \label{eq:vout2}
+\end{equation}
+
+Equation \ref{eq:vout2} shows the 3 mains causes of losses in a boost converter. The main cause is the voltage drop across the diode, which causes a significant reduction in the output voltage (usually 0.3~V to 0.7~V). This will be solved by using a synchronous boost converter (Figure~\ref{fig:sync_boost}), which replaces the diode with a transistor. In synchronous boost converters the voltage drop across the transistor is much smaller due to the low $R_{DS,on}$, usually lower than 0.1~V.
+
+As for the inductor internal resistance, it is not possible to remove it entirely, so it must be taken into account when designing the boost converter. The same is true for the drain source resistance of the transistor, which is also not possible to remove entirely. Therefore, it is important to select components with low internal resistance to minimize the losses and increase the efficiency of the converter.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Images/Implementation/Conventional-synchronous-boost-converter.png}
+    \caption{Synchronous boost converter topology \cite{lee_high-efficiency_2019}.}
+    \label{fig:sync_boost}
+\end{figure}
+
+\subsection{Dimensioning}
+Let us first define the design goals of the synchronous boost converter. The converter must be able to step up the voltage from the solar panels, which may consist of a maximum of 40 cells (Maxeon Gen 3 from SunPower) connected in series, a minimum of 20 cells in series, and is optimized for 35 cells (Figure~\ref{tab:pv_conditions}). 
+The converter must charge a lithium-ion battery with a nominal voltage of 43.2~V. 
+The switching frequency was defined as 100~kHz. This relatively high frequency allows the use of smaller inductors and capacitors, while still avoiding excessive switching losses.
+
+Table~\ref{tab:converter_constraints} summarizes the system requirements.
+
+
+
+\begin{table}[!h]
+\centering
+\caption{Solar panel operating conditions}
+\label{tab:pv_conditions}
+\begin{tabular}{lccc}
+\hline
+Configuration & $V_{pv}$ (V) & $I_{pv}$ (A) & $P_{pv}$ (W) \\
+\hline
+40 cells & 24.68 & 6.05 & 139.6 \\
+35 cells & 21.875 & 6.05 & 122.15 \\
+20 cells & 12.34 & 6.05 & 69.8 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[!h]
+\centering
+\caption{Converter design constraints}
+\label{tab:converter_constraints}
+\begin{tabular}{lc}
+\hline
+Parameter & Value \\
+\hline
+Battery voltage (nominal) & 43.2 V \\
+Battery voltage (max) & 50.4 V \\
+Battery voltage (min) & 30 V \\
+$\Delta V_o$ & 0.1 V \\
+$\Delta V_i$ & 0.5 V \\
+$\Delta I_o$ & 0.6 A \\
+\hline
+\end{tabular}
+\end{table}
+
+Since the load is
+ a battery, the output ripple voltage and current must be limited to avoid aging and heating. The industry standard is to limit the output voltage ripple to 0.5\% of the nominal voltage. As for the current ripple, it is typical limited to 10\%. Therefore, the values presented in Table~\ref{tab:converter_constraints} were selected.
+
+\subsubsection{Inductor}
+The inductor is one of the most important components in the boost converter since it is responsible for storing energy and releasing it to the load. 
+
+The choice of an inductor will highly influence the performance of the converter. A big inductor will generate low current ripple, however it generates losses due to its internal resistance. On the other hand a smaller inductor will generate high current ripples, high stress in components and high magnetic interference.
+
+On the other hand, a smaller inductor will generate high current ripples that can cause the system to operate in \ac{dcm}. In \ac{dcm} the inductor current reaches zero during the switching period, which means that the energy stored in the inductor is not enough to supply the load during the off time. This can cause high current and voltage ripples, which can damage the components and reduce the efficiency of the converter. Therefore, it is important to ensure that the inductor is big enough to operate in \ac{ccm}.
+
+
+The equation that describes the inductor is defined as:
+\begin{equation}
+    V_L = L \cdot \frac{dI_L}{dt} = L \cdot \frac{\Delta i_l}{\Delta t} \Leftrightarrow L = \frac{V_L \Delta t}{\Delta i_L}
+    \label{eq:inductor1}
+\end{equation}
+
+In the first stage (transistor in conduction mode), the voltage in the inductor is equal to the input voltage and it occurs for $D \cdot T$ seconds. Therefore, the ripple current in the inductor can be defined as follows:
+
+\begin{equation}
+    \Delta I_L = \frac{V_{in} \cdot D \cdot T}{L}
+\end{equation}
+
+As for the current ripple, it can be described using the riple factor and the average current in the inductor as follows.
+\begin{equation}
+    r = \frac{\Delta I_L}{I_{L,avg}}
+    \label{eq:riple factor}
+\end{equation}
+
+\begin{equation}
+    I_{L,avg} = \frac{I_o}{1-D}
+    \label{eq:ilavg}
+\end{equation}
+
+Using Equation~\ref{eq:ilavg}, \ref{eq:riple factor}, \ref{eq:inductor1} and \ref{eq:duty}, the following equation is achieved:
+
+\begin{equation}
+    L = \frac{V_{in} (1-D)DT}{I_o \cdot r} = \frac{V_{out}(1-D)^2DT}{I_o \cdot r}
+    \label{eq:L}
+\end{equation}
+
+The value of D that maximizes Equation~\ref{eq:L} is 1/3, which results in the critical inductance formula:
+
+\begin{equation}
+    MAX[(1-D)^2\cdot D]= (1-1/3)^2 \cdot 1/3= \frac{4}{27}
+\end{equation}
+\begin{equation}
+    L_{critical} = \frac{4}{27} \cdot \frac{V_o}{I_o \cdot r \cdot f}
+\end{equation}
+
+Using the maximum battery voltage (50.4~V) and the maximum current ($I_{pv}+Margin=10~A$), and a ripple factor of 2 which is equivalent  to the \ac{ccm} limit we achieve the following result:
+
+\begin{equation}
+    L_{critical} = \frac{4}{27} \cdot \frac{50.4}{10 \cdot 2 \cdot 100000} = 3.73 \mu H
+\end{equation}
+
+This is a reference value, if it were used it would highly stress the components, generating heat, magnetic interference and high current ripples. Therefore, the calculation was repeated aiming the output current ripple of 0.6~A, which is the value defined in Table~\ref{tab:converter_constraints}. Solving equation~\ref{eq:riple factor} in terms of the output current ripple, the following equation is achieved:
+\begin{equation}
+    r = \frac{\Delta I_L}{I_{L,avg}} = \frac{\Delta I_{out} \cdot (1-D)}{\frac{I_{out}}{(1-D)}} = \frac{\Delta I_{out} \cdot (1-D)^2}{I_{out}}
+\end{equation}
+
+
+\begin{equation}
+    L_{critical} = \frac{4}{27} \cdot \frac{50.4}{10 \cdot 0.4 \cdot 100000} = 18.66 \mu H
+\end{equation}
+
+The final value of the inductor was defines as 100~$\mu H$, which results in a maximum inductor ripple current of 1.26~A and an output current ripple of 0.53~A.
+
+To select the apropriate inductor, the rated current and the saturation current must be taken into account. The rated current is the maximum current that the inductor can handle without overheating. In this case the rated current must be higher that the maximum short circuit current of the biggest solar panel configuration (40 cells in series), which is 6.56~A. Some margin must be added to this value, so the rated current must be higher than 10~A.
+
+The saturation current is the maximum current that the inductor can handle without saturating. When the inductor saturates, the inductance drops significantly, which can cause high current ripples and damage the components. Therefore, the saturation current must be:
+
+\begin{equation}
+    I_{sat} > I_{in} + \frac{\Delta I_L}{2} = 6.56 + \frac{1.26}{2} = 7.19~A
+\end{equation}
+
+\subsubsection{Capacitor}
+    The output capacitor is responsible for smoothing the output voltage and reducing the voltage ripple. The capacitor electric caracteristic can be described by the following equation:
+    \begin{equation}
+        i_c = C \frac{dv_o}{d_t}
+    \end{equation}
+
+    Based on this equation, the capacitor value can be calculated based on the desired voltage ripple and the load current as follows:
+    \begin{equation}
+        i_c = C_o \cdot \frac{\Delta V_o}{\Delta t} = C_o \frac{\Delta V_o}{D \cdot T } \Leftrightarrow C_o = \frac{I_o D}{\Delta V_o \cdot f} = \frac{I_{in} (1-D)D}{\Delta V_o \cdot f}
+    \end{equation}
+
+    Using the maximum input current of 10~A, a duty cycle of 0.5 (value that maximizes the formula), a voltage ripple of 0.1~V and a switching frequency of 100~kHz, the following value is achieved:
+    \begin{equation}
+        C_o = \frac{10 \cdot (1-0.5) \cdot 0.5}{0.1 \cdot 100000} = 250 \mu F
+    \end{equation}
+
+    The same can be done for the input capacitor, but in this case the voltage ripple is not as critical as in the output capacitor, since the input voltage is not directly connected to the load. Therefore, a voltage ripple of 0.5~V was used:
+    \begin{equation}
+        C_{in} = i_{in} \cdot \frac{\Delta t}{\Delta V_i} = \frac{i_{in} \cdot D}{\Delta V_{in} \cdot f}  =  \frac{10 \cdot 0.5}{0.5 \cdot 100000} = 100 \mu F
+    \end{equation}
+
+    Some margin was added to the calculated values, resulting in an input capacitor of 200~$\mu F$ and an output capacitor of 500~$\mu F$.
+
+    To choose the appropriate capacitors, the voltage rating, current ripple and \ac{esr} must be taken into account. The voltage rating must be higher than:
+    \begin{equation}
+        V_{rating} > MAX(V_{in}) + \Delta V_{in} = 28.5 + 0.5 = 29~V
+    \end{equation}
+
+    The current ripple must higher than the RMS input current, which can be calculated based on the RMS formula for triangle wave as follows:
+    \begin{equation}
+        I_{ripple} > \frac{\Delta I / 2}{\sqrt{3}} = \frac{1.26 / 2}{\sqrt{3}} = 0.36~A
+    \end{equation}
+
+    As for the \ac{esr} the value must be as low as possible to reduce the power losses.
+
+    The same process was repeated for the output capacitor, but in this case the voltage rating must be higher than the maximum battery voltage, which is 50.4~V. The current ripple must be higher than the RMS output current, which can be calculated as follows:
+    \begin{equation}
+        V_{rating} > MAX(V_{out}) + \Delta V_{out} = 50.4 + 0.1 = 50.5~V
+    \end{equation}
+    \begin{equation}
+        I_{ripple} > \sqrt{\frac{I_{in}^2}{4} + \frac{\Delta I ^2}{12} \cdot (1-D)^2} = \sqrt{\frac{6.56^2}{4} + \frac{1.28 ^2}{12} \cdot (1-0.27)^2} = 3.29~A
+    \end{equation}
+
+    The ripple current in the output capacitor is much higher than in the input capacitor, and it is not a common value for electrolytic capacitor, therefore instead of using a single capacitor, multiple capacitors in parallel will be used to achieve the desired current ripple rating.
+
+    Additionally, the output and input needs to filtered to reduce the high frequency noise generated by the switching. This is achieved by adding a small capacitor in parallel with the main capacitors. The values use are 1~$\mu F$ and 0.1~$\mu F$. \textcolor{red}{Supostamente os condesadores ceramicos são melhores para isto devio a um ESR baixo. Terei de pesquisar sobre o assunto.}
+
+\subsubsection{Transistor and gate driver}
+    The transistor is the switching device on a synchronous boost converter. The choice of the transistor will highly influence the behavior and performance of the converter.
+
+    When selecting a transistor for a switching converter, not only the maximum rating mater but the switching speed and internal resistance are also quite important. 
+    
+    There are many types of transistors, however, at this frequency (100~kHz) and power level the choice is between MOSFETs and GaN transistors. The advantage of GaN transistors is their low internal resistance and very fast switching speed, which can significantly reduce the switching losses and therefore increasing the efficiency of the converter. Additionally, they have a high energy density and lower Vgs(on). However, they are more expensive and require a precise gate driver to operate correctly because there max(Vgs) is usually low. Finally, they do not have a body diode, which can be used as a safety feature in case of overvoltage.
+
+    \textcolor{red}{Não estou totalmente decidido mas vou analisar melhor a opção da tecnologia GaN.}
+
+    \textcolor{red}{O DFN package é bom para dissipação de calor.}
+
+    \textcolor{red}{Por escrever: os parametros importantes são tensão e corrente maxima, Rds(on), trise, tfall e Vgs(on). }
+
+    \textcolor{red}{Escrever sobre o dead time necessario para evitar o shoot through. Tendo isso em conta ver quais as hipoteses de gate drivers.}
+
+    \begin{figure}[!h]
+        \centering
+        \begin{minipage}[b]{0.49\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Images/Implementation/1707057125_Figure2.jpg}
+            \caption{}
+            \label{}
+        \end{minipage}
+        \hfill
+        \begin{minipage}[b]{0.49\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Images/Implementation/gan-revolution-fig-1.jpg}
+            \caption{}
+            \label{}
+        \end{minipage}
+    \end{figure}
+
+    \section{MCU}
