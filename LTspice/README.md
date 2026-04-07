@@ -19,24 +19,16 @@ Before these simulations, some simulations were done in Matlab however Matlab is
 
 
 <div align="center">
-  <img src="./img/V3.png" alt="V3.png" width="600" />
-</div>
-<div align="center">
-  <img src="./img/V3.1.png" alt="V3.1.png" width="600" />
+  <img src="./img/v3 sim.png" alt="V3 sim.png" width="600" />
 </div>
 
-<div align="center">
-  <img src="./img/v3 sim.png" alt="V3.png" width="600" />
-</div>
-<div align="center">
-  <img src="./img/V3 sim2.png" alt="V3 sim2.png" width="600" />
-</div>
+
 
 
 Right now the curves are similar, however i added two capacitors in the input to filter the high frequency spikes generated in the simulation with non ideal components.
 
 **What is next:**
-- Simulate the circuit for different points of the i-V curve
+- Simulate the circuit for different points of the i-V curve (already done it but i did not analyze it)
 - Calculate the power losses
 - Extract the data to a .txt file for future analysis with Matlab
 
