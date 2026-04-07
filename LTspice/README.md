@@ -1,12 +1,60 @@
 # LTspice simulations
 
-## Solar panel model
+## Simulations evolution 
+
+Before these simulations, some simulations were done in Matlab however Matlab is not so relaible for electronics simulations. Additionally LTspice let us simulate with the components models provided by the manufacture which increases even more the reliability of the simulation. The only problem, is that LTspice is old, and it was not made for microcontrollers, so we can not test the MPPT algorithm. For an initial stage this is not a problem, however for that type of simulations the best choice is even Matlab simulink or Qspice.
+
+**V1**: The first simulations were done with a basic boost converter. The some generic components were chosen and constant load were used. The load is equivalent to the impedance of the battery which is calculated with ohms law.
+<div align="center">
+  <img src="./img/v1.png" alt="v1.png" width="600" />
+</div>
+
+**V2**: In this version i tried to make synchronous boost converter. The gate driver was ok but it generates a lot of oscilations.
+
+<div align="center">
+  <img src="./img/V2.png" alt="V2.png" width="600" />
+</div>
+
+**V3**: In this version I staled in the EPC23102 (transistor+gate driver). Two versions of these simulations were made, one with ideal components and another with the components models of Wurth Elektonik. In these simulations the model of a solar panel was implemented for the first time giving a set further to the real system and making easier to describe the load. Now the load is described as a voltage source with a series resistance (equivalent to the internal resistance of the batteries).
+
+
+<div align="center">
+  <img src="./img/V3.png" alt="V3.png" width="600" />
+</div>
+<div align="center">
+  <img src="./img/V3.1.png" alt="V3.1.png" width="600" />
+</div>
+
+<div align="center">
+  <img src="./img/v3 sim.png" alt="V3.png" width="600" />
+</div>
+<div align="center">
+  <img src="./img/V3 sim2.png" alt="V3 sim2.png" width="600" />
+</div>
+
+
+Right now the curves are similar, however i added two capacitors in the input to filter the high frequency spikes generated in the simulation with non ideal components.
+
+**What is next:**
+- Simulate the circuit for different points of the i-V curve
+- Calculate the power losses
+- Extract the data to a .txt file for future analysis with Matlab
+
+
+## Spice Models
+
+### Solar panel model
 
 Explanation: https://www.youtube.com/watch?v=uV_z1ptufa4
 
 How to do it on LTspice: https://www.youtube.com/watch?v=ox0UtYe4owI
 
-## Inductor and capacitor model
+<div align="center">
+  <img src="./img/PV model.png" alt="PV model.png" width="600" />
+</div>
+
+
+### Inductor and capacitor model
 Wurth libs: https://github.com/WurthElektronik/LTspice-Library/tree/master
 
 Capacitor: https://www.we-online.com/en/components/products/WCAP-ATUL?sq=860040881014#860040881014
@@ -15,9 +63,9 @@ Capacitor: https://www.we-online.com/en/components/products/WCAP-ATUL?sq=8600408
 
 Inductor: https://www.we-online.com/en/components/products/WE-HCF?sq=74437529203680#74437529203680
 
-68uH, 16A -> 74437529203680
+68uH, 16A -> 74437529203680 -> 2920_74437529203680_68u (model name)
 
-47uH, 17.5A -> 74437529203470
+47uH, 17.5A -> 74437529203470 -> 2920_74437529203470_47u (model name)
 
 ## How to add components
 
