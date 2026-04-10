@@ -53,12 +53,23 @@ Capacitor: https://www.we-online.com/en/components/products/WCAP-ATUL?sq=8600408
 
 100uF, 100V -> 860040875005
 
+220uF, 100V -> 860040878017
+
+Capacitor (input): https://www.we-online.com/en/components/products/WCAP-HTG5?sq=870575875006#870575875006
+
+56uF, 100V -> 870575875006
+
 Inductor: https://www.we-online.com/en/components/products/WE-HCF?sq=74437529203680#74437529203680
+
+100uH, 8.2A -> 74437429203101 -> 2920_74437429203101_100u  (model name)
 
 68uH, 16A -> 74437529203680 -> 2920_74437529203680_68u (model name)
 
 47uH, 17.5A -> 74437529203470 -> 2920_74437529203470_47u (model name)
 
+33uH, 34.95A -> 7443643300 -> 2818_7443643300_33u (model name)
+
+22uH, 44A -> 74436412200 -> 2815_74436412200_22u
 ## How to add components
 
 ### .lib (Wurth Elektronik)

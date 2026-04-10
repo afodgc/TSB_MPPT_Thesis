@@ -9,3 +9,5 @@ Modelo: Sunpower Maxeo Gen 3 [(Datasheet)](SP_Gen3_Solar_Cell_ds_en_a4_166_51945
 ![alt text](md_img/35cells.png)
 
 ![alt text](md_img/40cells.png)
+
+![alt text](image.png)
