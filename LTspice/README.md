@@ -17,6 +17,9 @@ Before these simulations, some simulations were done in Matlab however Matlab is
 
 **V3**: In this version I staled in the EPC23102 (transistor+gate driver). Two versions of these simulations were made, one with ideal components and another with the components models of Wurth Elektonik. In these simulations the model of a solar panel was implemented for the first time giving a set further to the real system and making easier to describe the load. Now the load is described as a voltage source with a series resistance (equivalent to the internal resistance of the batteries).
 
+<div align="center">
+  <img src="./img/V3.2.png" alt="V3.2.png" width="600" />
+</div>
 
 <div align="center">
   <img src="./img/v3 sim.png" alt="V3 sim.png" width="600" />

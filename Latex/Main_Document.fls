@@ -636,6 +636,41 @@ INPUT ./Images/Implementation/gan-revolution-fig-1.jpg
 INPUT ./Images/Implementation/gan-revolution-fig-1.jpg
 INPUT ./Images/Implementation/gan-revolution-fig-1.jpg
 INPUT ./Images/Implementation/gan-revolution-fig-1.jpg
+INPUT ./Images/Implementation/I-V_P-V.png
+INPUT ./Images/Implementation/I-V_P-V.png
+INPUT ./Images/Implementation/I-V_P-V.png
+INPUT ./Images/Implementation/I-V_P-V.png
+INPUT ./Images/Implementation/I-V_P-V.png
+INPUT ./Images/Implementation/PV model.png
+INPUT ./Images/Implementation/PV model.png
+INPUT ./Images/Implementation/PV model.png
+INPUT ./Images/Implementation/PV model.png
+INPUT ./Images/Implementation/PV model.png
+INPUT ./Images/Implementation/Sim_circuit.png
+INPUT ./Images/Implementation/Sim_circuit.png
+INPUT ./Images/Implementation/Sim_circuit.png
+INPUT ./Images/Implementation/Sim_circuit.png
+INPUT ./Images/Implementation/Sim_circuit.png
+INPUT ./Images/Implementation/vbat__sweep_sim_res.pdf
+INPUT ./Images/Implementation/vbat__sweep_sim_res.pdf
+INPUT ./Images/Implementation/vbat__sweep_sim_res.pdf
+INPUT ./Images/Implementation/vbat__sweep_sim_res.pdf
+INPUT ./Images/Implementation/vbat__sweep_sim_res.pdf
+INPUT ./Images/Implementation/3_stages_wave_results.png
+INPUT ./Images/Implementation/3_stages_wave_results.png
+INPUT ./Images/Implementation/3_stages_wave_results.png
+INPUT ./Images/Implementation/3_stages_wave_results.png
+INPUT ./Images/Implementation/3_stages_wave_results.png
+INPUT ./Images/Implementation/3_stages_wave_results_zoomed.png
+INPUT ./Images/Implementation/3_stages_wave_results_zoomed.png
+INPUT ./Images/Implementation/3_stages_wave_results_zoomed.png
+INPUT ./Images/Implementation/3_stages_wave_results_zoomed.png
+INPUT ./Images/Implementation/3_stages_wave_results_zoomed.png
+INPUT ./Images/Implementation/3_stages_wave_results_zoomed+.png
+INPUT ./Images/Implementation/3_stages_wave_results_zoomed+.png
+INPUT ./Images/Implementation/3_stages_wave_results_zoomed+.png
+INPUT ./Images/Implementation/3_stages_wave_results_zoomed+.png
+INPUT ./Images/Implementation/3_stages_wave_results_zoomed+.png
 INPUT ./Main_Document.bbl
 INPUT ./Main_Document.bbl
 INPUT Main_Document.bbl
@@ -650,6 +685,7 @@ INPUT ./Main_Document.out
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb
+INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb
@@ -658,6 +694,7 @@ INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb
+INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb

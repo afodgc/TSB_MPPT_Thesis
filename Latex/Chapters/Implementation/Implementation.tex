@@ -275,35 +275,104 @@ The saturation current is the maximum current that the inductor can handle witho
     \section{MCU}
 
 
-    \section{Optimization}
+    \section{Simulations}
+        \subsection{Solar model}
+
+        \begin{figure}[!h]
+            \centering
+            \includegraphics[width=0.9\textwidth]{Images/Implementation/I-V_P-V.png}
+            \caption{I-V and P-V characteristics of a solar panel model with 35 cells in series.}
+            \label{}
+        \end{figure}
+
+        \begin{figure}[!h]
+            \centering
+            \includegraphics[width=0.9\textwidth]{Images/Implementation/PV model.png}
+            \caption{Solar panel model diagram (1M5P configuration).}
+            \label{}
+        \end{figure}
+
+        \subsection{Boost}
         Fiz umas  simulações com 4 configuraçoes diferentes de condesadores e cheguei á conclusão que:....
 
         \begin{table}[h!]
             \centering
             \begin{tabular}{|c|cccc|}
             \hline
-            \textbf{Case} & \textbf{100 $\mu$F, 5x100 $\mu$F} & \textbf{100 $\mu$F, 3x220 $\mu$F} & \textbf{2x56 $\mu$F, 3x220 $\mu$F} & \textbf{2x56 $\mu$F, 5x100 $\mu$F} \\
+            \textbf{Case \#} & \textbf{2x56 $\mu$F, 3x220 $\mu$F} & \textbf{100 $\mu$F, 3x220 $\mu$F} & \textbf{100 $\mu$F, 5x100 $\mu$F} & \textbf{2x56 $\mu$F, 5x100 $\mu$F} \\
             \hline
-            1 & 0.8769 & 0.8738 & 0.8295 & 0.8380 \\
-            2 & 0.9670 & 0.9612 & 0.8846 & 0.8916 \\
-            3 & 1.0138 & 1.0121 & 0.9274 & 0.9429 \\
+            1 & 0.5530 & 0.5606 & 0.5666 & 0.5589 \\
+            2 & 0.6410 & 0.6645 & 0.6738 & 0.6486 \\
+            3 & 0.6940 & 0.7245 & 0.7335 & 0.7029 \\
             \hline
             \end{tabular}
             \caption{Loss (\%) for different capacitor configurations}
-            \label{tab:loss2_capacitors}
+            \label{tab:loss_capacitors_2}
         \end{table}
 
         \begin{table}[h!]
             \centering
             \begin{tabular}{|c|ccccc|}
             \hline
-            \textbf{Case} & \textbf{22 $\mu$H} & \textbf{33 $\mu$H} & \textbf{47 $\mu$H} & \textbf{68 $\mu$H} & \textbf{100 $\mu$H} \\
+            \textbf{Case \#} & \textbf{22 $\mu$H} & \textbf{33 $\mu$H} & \textbf{47 $\mu$H} & \textbf{68 $\mu$H} & \textbf{100 $\mu$H} \\
             \hline
-            1 & 1.0064 & 1.0074 & 0.8377 & 0.8295 & 0.8814 \\
-            2 & 1.2343 & 1.2099 & 0.9105 & 0.8846 & 0.9529 \\
-            3 & 1.3407 & 1.3178 & 0.9663 & 0.9274 & 0.9960 \\
+            1 & 0.3955 & 0.4189 & 0.5193 & 0.5530 & 1.2406 \\
+            2 & 0.6240 & 0.6362 & 0.6191 & 0.6410 & 1.3230 \\
+            3 & 0.7448 & 0.7587 & 0.6770 & 0.6940 & 1.3708 \\
             \hline
             \end{tabular}
             \caption{Loss (\%) for different inductance values}
-            \label{tab:loss_inductance}
+            \label{tab:loss_inductance_2}
         \end{table}
+
+        \begin{table}[h!]
+            \centering
+            \begin{tabular}{|c|ccccc|}
+            \hline
+            \textbf{Case \#} & \textbf{22 $\mu$H} & \textbf{33 $\mu$H} & \textbf{47 $\mu$H} & \textbf{68 $\mu$H} & \textbf{100 $\mu$H} \\
+            \hline
+            1 & 2.7104 & 1.8907 & 1.3315 & 0.9936 & 0.6382 \\
+            2 & 4.8956 & 3.3868 & 2.3671 & 1.7671 & 1.1391 \\
+            3 & 5.5385 & 3.9316 & 2.7262 & 2.0276 & 1.2898 \\
+            \hline
+            \end{tabular}
+            \caption{$\Delta i_{in}$ ($I_{in,\max} - I_{in,\min}$) for different inductance values}
+            \label{tab:delta_iin_inductance}
+        \end{table}
+
+        \begin{figure}[!h]
+            \centering
+            \includegraphics[width=0.9\textwidth]{Images/Implementation/Sim_circuit.png}
+            \caption{Simulation circuit diagram.}
+            \label{}
+        \end{figure}
+
+        \begin{figure}[!h]
+            \centering
+            \includegraphics[width=0.9\textwidth]{Images/Implementation/vbat__sweep_sim_res.pdf}
+            \caption{Battery voltage sweep simulation results.}
+            \label{}
+        \end{figure}
+
+        \begin{figure}[!h]
+            \centering
+            \includegraphics[width=0.7\textwidth]{Images/Implementation/3_stages_wave_results.png}
+            \caption{3 stages of charge waveforms.}
+            \label{}
+        \end{figure}
+
+        \begin{figure}[!h]
+            \centering
+            \includegraphics[width=0.7\textwidth]{Images/Implementation/3_stages_wave_results_zoomed.png}
+            \caption{3 stages of charge waveforms in zoomed view.}
+            \label{}
+        \end{figure}
+
+        \begin{figure}[!h]
+            \centering
+            \includegraphics[width=0.7\textwidth]{Images/Implementation/3_stages_wave_results_zoomed+.png}
+            \caption{3 stages of charge waveforms in enhanced zoomed view.}
+            \label{}
+        \end{figure}
+
+        
