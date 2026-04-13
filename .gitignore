@@ -1,0 +1,95 @@
+# =========================
+# LaTeX build artifacts
+# =========================
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+*.run.xml
+*.bcf
+*-blx.aux
+
+# Index / glossary / nomenclature
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.glsdefs
+*.ist
+*.ind
+*.idx
+*.nlo
+*.nls
+*.soc
+*.loc
+*.loe
+*.lol
+
+# Minipage TOC & multicol
+*.maf
+*.mtc
+*.mtc[0-9]
+*.mtc[0-9][0-9]
+
+# Beamer / presentations
+*.nav
+*.snm
+*.vrb
+
+# DVI / PS / intermediate
+*.dvi
+*.ps
+*.xdv
+
+# TikZ / externalization
+*-tikzDictionary
+*.gaux
+*.glog
+*.gtex
+*.gnuplot
+*.table
+*-gnuplottex-*
+
+# SVG / PythonTeX / minted
+_minted*
+pythontex-files-*/
+svg-inkscape/
+sympy-plots-for-*.tex/
+
+# =========================
+# Editor / OS junk
+# =========================
+*~
+.*.swp
+*.lyx~
+.texpadtmp
+TSWLatexianTemp*
+__pycache__/
+*.pyc
+node_modules/
+
+# =========================
+# Data / tool artifacts
+# =========================
+*.json
+*.el
+*.lpz
+*.newpax
+*.upa
+*.upb
+*.md5
+
+# =========================
+# PDFs
+# =========================
+# (PDFs are already allowed globally via !*.pdf above)
+!Main_Document.pdf
