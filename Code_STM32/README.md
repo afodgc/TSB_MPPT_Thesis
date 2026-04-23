@@ -1,7 +1,4 @@
-# ADS1015 Test repo
 
-## ADS1015
-The ADS1015 is an 12-bit ADC with i2c comunication. The lib use is from this link: [Link](https://www.micropeta.com/video124)
 
 ## How to run and debug STM32 devices in VScode
 
@@ -110,10 +107,10 @@ void example(void);
 #include "example.h"
 ```
 ### 2 Professional way
-I am not sure but i think you need to add an extra folder with his own Inc and Src. The objective is to separete the files.
+Add a folder called lib. For libs like can lib which are used in many projects, use git submodules to clone an updated version of that lib every time you clone it. Se [Gitcommands.md](https://gitlab.rnl.tecnico.ulisboa.pt/tecnicosb/se/tutorials/-/blob/master/Gitcommands.md?ref_type=heads).
 
-Aditionaly if you use the same lib in a variaty of projects you should use --recurse-submodules tool of git.
+I did not try this with STM32 framework but I will. It should not be hard to set up.
 
 ## STM32 tutorials
-Best tuturials that i have ever found. Deepblue mbedded: [Link](https://deepbluembedded.com/stm32-arm-programming-tutorials/)
+Best tutorials that I have ever found. Deepblue mbedded: [Link](https://deepbluembedded.com/stm32-arm-programming-tutorials/)
 
