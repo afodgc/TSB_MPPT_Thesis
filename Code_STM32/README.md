@@ -8,12 +8,12 @@
 <div align="center">
   <img src="README_img/extension.png" alt="extension.png" width="400" />
 </div>
-3. Intall STM32CubeMX (and STM32CubeMX2 for certain partnumbers);
+3. Install STM32CubeMX (and STM32CubeMX2 for certain part numbers);
 
 ### Config
 1. Launch STM32CubeMX;
 2. Config the MCU as you want;
-3. Than go to "Project Manager" tab, insertt the name of the project and location, and finaly select CMake on the "Toolchain/IDE" option;
+3. Than go to "Project Manager" tab, insert the name of the project and location, and finally select CMake on the "Toolchain/IDE" option;
 <div align="center">
   <img src="README_img/CubeMX.png" alt="CubeMX.png" width="600" />
 </div>
@@ -37,7 +37,7 @@ int main(void){
 }
 
 ```
-2. On the down left coner, select build. If the code does not have errors, you should see the folowing message:
+2. On the down left corner, select build. If the code does not have errors, you should see the following message:
 <div align="center">
   <img src="README_img/build.png" alt="build.png" width="400" />
 </div>
@@ -51,7 +51,7 @@ int main(void){
 </div>
 4. Click on the arrow to Upgrade the ST-Link firmware (you do not need to do this step every time);
 5. Click Run and Debug;
-6. If everything runs correctly, the DEEBUG CONSOLE should open automaticaly and the Debug bar should apear too;
+6. If everything runs correctly, the DEEBUG CONSOLE should open automatically and the Debug bar should appear too;
 
 <div align="center">
   <img src="README_img/debug.png" alt="debug.png" width="400" />
@@ -62,7 +62,7 @@ int main(void){
 
 ### Serial prints
 1. Conect a UART to serial convert to your device;
-2. Than "Ctrl + shift + P", "Open serial", "COMx", "115200" (adjust the COM port and bound rate to your aplication);
+2. Than "Ctrl + shift + P", "Open serial", "COMx", "115200" (adjust the COM port and bound rate to your application);
 
 ## Create a library
 ### 1 Easy way
@@ -72,7 +72,7 @@ int main(void){
 ```c
 #include "example.h"
 ```
-3. On h file you need to place all includes, defines, macros, structs, etc. that you neeed and the defenition of the functions described in cpp file;
+3. On h file you need to place all includes, defines, macros, structs, etc. that you needed and the definition of the functions described in cpp file;
 ```c
 #ifndef __EXAMPLE_H
 #define __EXAMPLE_H
