@@ -1,0 +1,153 @@
+\fancychapter{System}
+\label{chap:System}
+
+\section{Overview}
+
+\ac{sg01} is the most recent vessel built by \acs{tsb}, which was designed to compete in Sea Lab category of Monaco energy boat challenge. To compete in this category a vessel with 8 x 2.5~m was designed creating new challenges for the team. This vessel was designed to use boat hydrogen and solar energy, using hydro foils to hydroplane which highly increases efficiency. Additionally, it will use actuators and sensors to drive autonomously to compete in AI class of Monaco Energy Boat Challenge.
+
+Since it is a larger and heavier boat than the previous ones built by \acs{tsb} it needs more power than the others. So a motor with 130~KW peak power was chosen. This much power is only possible to provide with high voltages, so for the first time in \acs{tsb} history this vessel have a High Voltage system (300-600~V) and a Low Voltage system (30-50~V). 
+
+The High Voltage system is responsible for the drive train, powering a motor. Since the energy consumed by this motor is much larger than solar panels can ever achieve, the boat is designed to be powered by hydrogen (not installed yet).
+
+As for the low voltage system, it is designed to power all auxiliary system (dashboard, telemetry, flight control, electrical string, throttle, etc.). Some of this auxiliary systems are critical for the normal use of the vessel, for example if the dashboard turns of, the pilot will not know the state of the high voltage system (temperature, voltage, state of charge, etc.). Or even more critical, if the throttle does not work, the boat can not electrically move.
+
+The auxiliary systems are always changing and growing, so it is difficult to estimate the power consumption of this system. For this work it is considered 1000~W of continuous consumption. It is not a perfect estimation because the power consumption will depend on the driving mode (autonomous driving, hydroplaning or normal drive) which can create different power profiles due to the actuators. Additionally, the cooling system (which is planed to be moved to the High Voltage system) have high power consumption too. 
+
+To help to maintain the low voltage system always live, we use solar panels which are connected to several \acp{mppt}.
+
+For better understanding of the system architecture see Figure~\ref{fig:SG01_sch} which represent highly simplified diagram of the overall system.
+
+\begin{figure} [!ht]
+    \centering
+    \includegraphics[width=0.90 \textwidth]{Images/System/Sys_diagram.pdf}
+    \qquad
+    \caption{Simplified electrical schematic of SG01.}
+    \label{fig:SG01_sch}
+\end{figure}
+
+
+
+
+\section{PV system}
+
+The photovoltaic system of \ac{sg01} was designed to maximize the energy harvested from the available deck area while maintaining reliable operation under the varying environmental conditions encountered in marine applications.
+
+The current installation consists of 140 Maxeon Gen 3 (Me3) photovoltaic cells distributed among ten custom-manufactured solar panels. These panels are connected to four independent \acp{mppt}, as illustrated in Figure~\ref{fig:PV_SG01}. The distribution of panels among the \acp{mppt} was carefully selected to reduce the effects of partial shading, temperature gradients, and non-uniform solar irradiance across the vessel surface. By electrically separating regions with different operating conditions, each \ac{mppt} can independently track the optimal operating point of its associated panels, increasing the overall energy yield.
+
+Each photovoltaic cell has an active area of approximately $155.06~\mathrm{cm^2}$, resulting in a total photovoltaic area of $2.171~\mathrm{m^2}$.
+
+Assuming \ac{stc} with an irradiance of $1000~\mathrm{W/m^2}$, the photovoltaic array is capable of delivering approximately $526.4~\mathrm{W}$ of peak power (theoretical value). 
+
+The photovoltaic energy is processed by four commercial Genasun \acp{mppt}, which are grouped in a dedicated \ac{mppt} box. The \acp{mppt} convert the variable voltage produced by the solar panels into a stable charging voltage suitable for the low-voltage battery system. This architecture allows each photovoltaic group to operate close to its maximum power point independently, improving energy extraction under non-uniform illumination conditions that are common in maritime environments.
+
+To ensure long-term reliability, the photovoltaic modules were manufactured in house using materials selected specifically for marine operation. 
+
+Prior to installation, all panels underwent electroluminescence testing to detect manufacturing defects such as microcracks, broken cells, or interconnection failures, Figure~\ref{fig:ilu_test}. These tests were performed before integration into the vessel to ensure that only panels with acceptable electrical and structural integrity were installed. This quality-control procedure reduces the likelihood of premature degradation and enables comparison before and after competitions.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}{0.50\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Images/System/DSC_3873.pdf}
+        \caption{Worst results.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.40\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Images/System/DSC_3887.pdf}
+        \caption{Best results.}
+    \end{subfigure}
+    \caption{Electroluminescence test results.}
+    \label{fig:ilu_test}
+\end{figure}
+
+Although the current photovoltaic installation already provides a significant contribution to the low-voltage energy budget, additional usable deck area remains available. Figure~\ref{fig:renderSG01} presents a conceptual rendering with supplementary solar panels. Preliminary estimates indicate that the total photovoltaic power could be increased to approximately $977~\mathrm{W}$, almost doubling the currently installed capacity. Such an upgrade would substantially reduce battery charging times and significantly increase the operational autonomy of the vessel.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=0.99 \textwidth]{Images/System/solar panels.pdf}
+        \qquad
+        \caption{Distribution of Solar Panels and \ac{mppt} on SG01.}
+        \label{fig:PV_SG01}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.49\textwidth}
+         \centering
+        \includegraphics[width=0.99 \textwidth]{Images/System/boat_render.jpeg}
+        \qquad
+        \caption{Render of São Gabriel 01 with additional solar panels.}
+        \label{fig:renderSG01}
+    \end{subfigure}
+    \caption{Solar panels installation on \ac{sg01}.}
+    % \label{fig:}
+\end{figure}
+
+
+
+\section{Battery}
+The current low voltage battery uses Samsung INR21700-50G cells in a 12s28p configuration. This configuration results in the specifications written in Table~\ref{tab:battery_comparison}.
+
+
+\begin{table}[htbp]
+    \centering
+    \caption{\ac{sg01} and \ac{sr03} battery specs.}
+    \label{tab:battery_comparison}
+    \begin{tabular}{|l|c|c|c|}
+        \hline
+        \textbf{Parameter} & \textbf{Unit} & \textbf{SG01 Battery} & \textbf{SR03 Battery} \\ \hline
+        Max Voltage & V & 50.4 & 50.4 \\ \hline
+        Nominal Voltage & V & 43.2 & 43.2 \\ \hline
+        Min Voltage & V & 30 & 30 \\ \hline
+        Configuration & -- & 12s28p & 12s7p \\ \hline
+        Number of cells & -- & 336 & 84 \\ \hline
+        Energy Capacity & Wh & 5855.56 & 1512 \\ \hline
+        Capacity & Ah & 140 & 35 \\ \hline
+        Max charge current & A & 135.8 & 42 \\ \hline
+        Cutoff charge current & A & 3.395 & 1.75 \\ \hline
+        Max discharge current & A & 271.6 & 175 \\ \hline
+        Weight & kg & 25.2 & ? \\ \hline
+        Internal resistance & m$\Omega$ & 6 & 24 \\ \hline
+    \end{tabular}
+\end{table}
+
+
+\ac{sg01} battery was designed for a different vessel which needed a substantial high capacity. The battery is too heavy, and overall overdimensioned. 
+
+For lab tests and for a more realistic impact analysis, \ac{sr03} battery will be used. This is a much smaller battery 
+with a reasonable capacity for this vessel. It uses Samsung INR21700-50s cells in a 12s7p configuration. This configuration results in the specifications also written in Table~\ref{tab:battery_comparison}.
+
+\section{PV System Impact on Autonomy}
+
+With \ac{sg01} battery (5844.56~Wh) and the maximum power that the solar panels can currently provide (526.4~W), the minimum time to fully charge the battery is 11h and 7min (5844.56~Wh / 526.4~W). This is a large time to charge a battery. There are two solutions to this problem: increase the power provided by the solar panels or decrease the battery capacity.
+
+Let's consider the case where we reduced the battery capacity of 1512~Wh which is the capacity of our solar boat (\acs{sr03}) battery. With this change alone the battery is fully charged in 2h and 53min, which is a much more reasonable time. Additionally, if we increase the power provided by the solar panels to 977 W, the battery will be fully charged in 1h and 33min, which is an excellent time to charge a battery.
+
+
+The charging times are a good to evaluate the \ac{pv} system, but the main goal is to maximize the time on water before full battery discharge. For that lets consider 1000~W of consumption. Considering the original battery it takes 5~h 51~min to fully discharge without solar panels and 12~h 21min with solar panels and approximately 10 days with the additional solar panels. As previously said, this battery is overdimensioned and will be changed in the future.
+
+To get a better idea of the impact of the \ac{pv} system lets consider the battery of \acs{sr03}. This battery takes 1.51~h to fully discharge without solar panels and 3~h 12~min with solar panels and approximately 2 days 18~h with the additional solar panels. 
+
+By reducing the battery capacity and increase the solar panel area, the battery would never need external charging. In another point of view, the low voltage system can drain more power from the battery.
+
+
+
+\section{Environmental changes}
+
+In engineer, the word "fast", used in the title of this thesis, needs to be associated with a unit. It is only classified as fast compared to a slower unit. In this section, a brief study was made about waves frequency, boat oscillations and the effect on \ac{mppt} algorithm speed.
+
+Tests in Cascais at the marina: I collected 3 datasets—1 while moored at the marina, 2 while underway, and 3 while unmoored at the marina.
+
+I think the wave frequency wasn’t the dominant factor because the amplitude is very low, so the boat was oscillating at its natural frequency. I need to calculate the natural frequency to confirm this
+
+It’s not the only visible frequency. The rest of the spectrum could be due to: tiny wavelets and wake reflections, mooring line forces, wind gusts, and water motion reflected from seawalls and neighboring boats.
+
+If I’m wrong, the data might be correct and simply show a frequency of 0.5 Hz (higher than the expected 0.05 to 0.3) because we’re very close to the coast
+
+Translated with DeepL.com (free version)
+
+\textcolor{red}{rewrite when new results are available}
+% https://geo.libretexts.org/Bookshelves/Oceanography/Introduction_to_Physical_Oceanography_(Stewart)/16%3A_Ocean_Waves/16.4%3A_Ocean-Wave_Spectra
+
+% See Swell Period and hight here https://bigsalty.com/en/weather/forecast/8350/

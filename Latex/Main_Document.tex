@@ -47,7 +47,19 @@
 % Add PDF bookmark
 \pdfbookmark[0]{Titlepage}{Title}
 \input{Front_Cover.tex}
-\cleardoublepage
+% \cleardoublepage
+
+% -----------------------------------------------------------------------------
+
+I declare that this document is an original work of my own authorship and that it fulfils all the requirements of the Code of Conduct and Good Practices of the Universidade de Lisboa.
+
+\clearpage
+
+% -----------------------------------------------------------------------------
+\pdfbookmark[-2]{Acknowledgments}{Acknowledgments}
+\begin{acknowledgments}
+	\textcolor{red}{Agradecimentos... por escrever}
+\end{acknowledgments}
 
 % -----------------------------------------------------------------------------
 % PAGE NUMBERING FOR INDEXING MATTER in ROMAN
@@ -84,9 +96,9 @@
 \renewcommand{\baselinestretch}{1.5}
 % -----------------------------------------------------------------------------
 %                                List of Figures
-%\pdfbookmark[1]{List of Figures}{lof}
-%\listoffigures
-%\cleardoublepage
+\pdfbookmark[1]{List of Figures}{lof}
+\listoffigures
+\cleardoublepage
 
 % -----------------------------------------------------------------------------
 %\begingroup
@@ -95,8 +107,8 @@
 %    \let\cleardoublepage\relax
 %
 %                               List of Tables
-%\pdfbookmark[1]{List of Tables}{lot}
-%\listoftables
+\pdfbookmark[1]{List of Tables}{lot}
+\listoftables
 % If Printing on DOUBLE SIDED pages, the second page should be white.
 % Otherwise, comment the following command:
 %\let\cleardoublepage\relax
@@ -138,21 +150,27 @@
 % #############################################################################
 %                                   CHAPTERS
 
-% Chapter 1 [5/6 pages]
+% Chapter 1 [4 pages]
 \acresetall
 \input{Chapters/Introduction/main.tex}
 % \cleardoublepage
 % -----------------------------------------------------------------------------
 
-% Chapter 2 [?? pages]
+% Chapter 2 [? pages]
 \acresetall
-\input{Chapters/SoA/SoA.tex}
+\input{Chapters/System/System.tex}
 % \cleardoublepage
 % -----------------------------------------------------------------------------
 
-% Chapter 3 [13/15 pages]
+% % Chapter 3 [ pages]
 \acresetall
-\input{Chapters/Solucion Proposal/Solucion Proposal.tex}
+\input{Chapters/SoA/SoA.tex}
+% % \cleardoublepage
+% -----------------------------------------------------------------------------
+
+% Chapter 3 [ pages]
+% \acresetall
+% \input{Chapters/Solucion Proposal/Solucion Proposal.tex}
 % \cleardoublepage
 % -----------------------------------------------------------------------------
 
@@ -164,15 +182,23 @@
 
 % Chapter 5 [4/5 pages]
 \acresetall
-%\input{Chapters/Preliminary Work/main.tex}
-% \cleardoublepage
+\input{Chapters/Simulations/Simulations.tex}
+\cleardoublepage
 % -----------------------------------------------------------------------------
 
 % Chapter 6 [1 pages]
 \acresetall
-%\input{Chapters/Planning and scheduling/main.tex}
-% \cleardoublepage
+\input{Chapters/Lab_results/Lab_results.tex}
+\cleardoublepage
 % -----------------------------------------------------------------------------
+
+% Chapter 7 [1 pages]
+\acresetall
+\input{Chapters/Conclusions/Conclusion.tex}
+\cleardoublepage
+% -----------------------------------------------------------------------------
+
+
 
 
 

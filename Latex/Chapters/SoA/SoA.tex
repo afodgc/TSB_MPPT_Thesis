@@ -16,7 +16,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
 
     Each cell is made of semiconductor materials, usually silicon. This semiconductor is doped with phosphorus, a group V element, to create a negative type layer. On the other side, a layer is doped with boron, a group III element, to create a positive type layer. This creates a p-n junction, which is essential for the photovoltaic effect~\cite{photovoltaics_System_Design}.
 
-    \begin{figure} [!h]
+    \begin{figure} [!ht]
         \centering
         \includegraphics[width=0.60 \textwidth]{Images/Background/solar_cell.pdf}
         \qquad
@@ -29,7 +29,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
     The energy generated results in voltage and current outputs that are not constant. Voltage and current are interdependent, therefore, a variation in one parameter leads to a corresponding variation in the other. This relationship is nonlinear and can be characterized by a current-voltage (I-V) curve. Furthermore, the power output also varies with operating conditions and can be represented by a power-voltage (P-V) curve. Both curves are represented in Figure~\ref{fig:i-v,p-v}.
     In both curves, there is a specific point where the power output is maximized, known as the \ac{mpp}. This point corresponds to a unique combination of voltage and current, denoted as $V_{mpp}$ and $I_{mpp}$, respectively. Operating the solar panel at this point ensures optimal energy extraction under a given condition.
 
-    \begin{figure} [!h]
+    \begin{figure} [!ht]
         \centering
         \includegraphics[width=0.50 \textwidth]{Images/Background/i-v,p-v.pdf}
         \qquad
@@ -43,7 +43,7 @@ shading conditions, it is possible to have multiple local maxima, but overall, t
 
     As seen in Figure~\ref{fig:irradiance_i-v}, the variation of the solar irradiance changes the I-V and P-V curves of the solar panel. The increase in irradiance produces more power by mainly increasing the current output of the panel. On the other hand, the temperature has an opposite effect (Figure~\ref{fig:temperature_i-v}). The increase in temperature produces a decrease in power output, mainly by decreasing the voltage output of the panel. 
 
-    \begin{figure}[!h]
+    \begin{figure}[!ht]
         \centering
         \begin{subfigure}[b]{0.48\textwidth}
             \centering
@@ -72,7 +72,7 @@ shading conditions, it is possible to have multiple local maxima, but overall, t
 
     To achieve its goal, an \ac{mppt} charger is usually composed of a \acs{dc}-\acs{dc} converter, a microcontroller, and some sensors (Figure~\ref{fig:block diagram mppt}). The sensors are used to measure the input/output variables of the control system (typically voltage and current). The information acquired by these sensors is processed by the microcontroller, which runs an algorithm to determine if the \ac{mpp} was reached or how to act on the system towards the \ac{mpp}. In the second case, the microcontroller generates a signal to control the \acs{dc}-\acs{dc} converter that will adjust its operation accordingly.
  
-    \begin{figure} [!h]
+    \begin{figure} [!ht]
         \centering
         \includegraphics[width=0.65 \textwidth]{Images/Background/Block diagram.drawio.pdf}
         \qquad
@@ -111,7 +111,7 @@ shading conditions, it is possible to have multiple local maxima, but overall, t
 
         Another weal-know issue of \ac{peo} is that it can get confused in rapidly changing environmental conditions, like fast irradiance changes caused by clouds. In this case, the algorithm can misinterpret the power change caused by the environmental variation as a result of its own perturbation, leading it to move away from the \ac{mpp} instead of towards it~\cite{Comparison_PV_Array_MPPT_Techniques_2007}. For example, if the perturbation was in the wrong direction, but the irradiance increased, the power output would increase, and the algorithm would continue perturbing in the wrong direction (Figure~\ref{fig:PeO_Divergence}).
 
-        \begin{figure}[!h]
+        \begin{figure}[!ht]
             \centering
             \begin{minipage}[b]{0.49\textwidth}
                 \centering
@@ -168,7 +168,7 @@ shading conditions, it is possible to have multiple local maxima, but overall, t
 
         Comparative analysis demonstrates that the \ac{incond} algorithm exhibits superior performance relative to the \acs{peo} method. This outcome is expected, as the Incremental Conductance technique was developed specifically to address the limitations inherent in the \acs{peo} approach~\cite{Intelligent_PV_Module_2006}. For example, the \ac{incond} method eliminates the oscillation problem around the MPP that is characteristic of the \acs{peo} method. Additionally, \ac{incond} demonstrates superior performance under rapidly changing environmental conditions, such as sudden irradiance variations, since it uses derivative-based information that is less sensitive to transient disturbances~\cite{bendib_survey_mppt_methods}. 
 
-        \begin{figure}[!h]
+        \begin{figure}[!ht]
             \centering
             \begin{minipage}[b]{0.41\textwidth}
                 \centering
@@ -195,7 +195,7 @@ shading conditions, it is possible to have multiple local maxima, but overall, t
 
             The main advantage of this method is its speed since it can reach the \ac{mpp} in one clock cycle. This makes it suitable for applications where fast tracking is required, like in this project. However, it is not very accurate~\cite{Look-Up-Table_VS_PeO}.
 
-            \begin{table}[h]
+            \begin{table}[ht]
                 \centering
                 \caption{\acs{lut} matrix representation with $m \times n$ elements.}
                 \label{tab:LUT_matrix}
@@ -221,8 +221,8 @@ shading conditions, it is possible to have multiple local maxima, but overall, t
 
 
     \subsection{Non-isolated versus isolated DC-DC converters}
-        This galvanic isolation is usually achieved by using a transformer, which provides electrical separation between the input and output sides of the converter. This isolation is important in applications where safety is a concern, such as in medical devices or industrial equipment, as it helps to prevent electrical shock and damage to sensitive components. In the context of solar energy systems and E-mobility, isolated converters are often used when the solar panel is connected to the grid~\cite{Review_Isolated_Non_isolated_DC_DC_Converters_MVDC_2021}, as they help to protect against voltage spikes and other electrical disturbances. Also, this converter can provide very higher/lower gain, which is useful for applications where 
-        solar panels \ac{mpp} voltage is very different from the battery or load voltage (typically medium/high voltages). 
+        This galvanic isolation is usually achieved by using a transformer, which provides electrical separation between the input and output sides of the converter. This isolation is important in applications where safety is a concern, such as in medical devices or industrial equipment, as it helps to prevent electrical shock and damage to sensitive components. In the context of solar energy systems and E-mobility, isolated converters are often used when the solar panel is connected to the grid~\cite{Review_Isolated_Non_isolated_DC_DC_Converters_MVDC_2021}, as they help to protect against voltage spikes and other electrical disturbances. Also, non-isolated converter can provide very higher/lower gain, which is useful for applications where 
+        solar panels \ac{mpp} voltage is very different from the battery or load voltage (typically medium/high voltages which is not the case). 
 
         In contrast, non-isolated converters do not provide galvanic isolation between the input and output circuits. However, they generally offer higher efficiency, lower cost, reduced size, and lower circuit complexity (Table~\ref{tab:switching-vs-isolated-converters}). Additionally, they present fewer challenges in thermal management and are simpler to design. These advantages, together with the fact that galvanic isolation is not a requirement for this application, led to the exclusion of isolated \acs{dc}-\acs{dc} converters from this project.
 
@@ -253,8 +253,9 @@ shading conditions, it is possible to have multiple local maxima, but overall, t
                 \bottomrule
                 \end{tabularx}
             \end{adjustbox}
-            \end{table}
+        \end{table}
 
+        
             
 
 
@@ -275,7 +276,7 @@ shading conditions, it is possible to have multiple local maxima, but overall, t
 
             \textbf{Buck-Boost converters} are step-up and step-down \acs{dc}-\acs{dc} converters that can operate in both modes. This makes them more versatile than the previous two topologies, but also more complex and less efficient~\cite{Review_Isolated_Non_isolated_DC_DC_Converter_PV_Application_2018}. This converter uses an inductor to store energy when the transistor is in the ON state and the diode is reverse-biased. When the transistor is in the OFF state, the inductor releases the stored energy to the output through the diode, increasing or decreasing the output voltage (Figure~\ref{fig:DC-DC_classic_topologys}c)~\cite{Comparison_PV_Converter_Technologies_1989}.
 
-            \begin{figure} [!h]
+            \begin{figure} [!ht]
                 \centering
                 \includegraphics[width= \textwidth]{Images/Background/DC-DC_classic_topologys.pdf}
                 \qquad
@@ -290,7 +291,7 @@ shading conditions, it is possible to have multiple local maxima, but overall, t
 
             The issue of output voltage polarity inversion can be addressed by using a single-ended primary inductor converter (SEPIC), as shown in Figure~\ref{fig:DC-DC_buck_bost}b. This makes the SEPIC converter suitable for battery charging applications. Nevertheless, its main drawbacks are the high output current and voltage ripple which increases losses and electromagnetic interference (EMI)~\cite{Comparative_Analysis_Non_Isolated_DC_DC_Converters_Solar_PV_2021}. These limitations are mitigated by the ZETA converter, shown in Figure~\ref{fig:DC-DC_buck_bost}c, which provides improved output current characteristics while maintaining the same output voltage polarity as the SEPIC converter~\cite{PeO_and_Newton_Raphson_Comparison}\cite{Non_Isolated_DC_DC_Converters_MPPT_Controller_2021}.
 
-            \begin{figure} [!h]
+            \begin{figure} [!ht]
                 \centering
                 \includegraphics[width= \textwidth]{Images/Background/DC-DC_buck_bost.pdf}
                 \qquad
@@ -303,7 +304,7 @@ shading conditions, it is possible to have multiple local maxima, but overall, t
 
 
     \subsection{Comparison between Non-isolated DC-DC converters}
-        All the non-isolated \acs{dc}-\acs{dc} topologies explained before have their own advantages and disadvantages. The choice of the topology will depend on the specific application, the desired performance, and the available resources. To help with this choice, Table~\ref{tab:dc-dc-comparison} shows a comparison between the most relevant characteristics of each topology~\cite{Comparative_Analysis_Non_Isolated_DC_DC_Converters_Solar_PV_2021}. The most significant advantages of each topology are highlighted.
+        All the non-isolated \acs{dc}-\acs{dc} topologies explained before have their own advantages and disadvantages. The choice of the topology will depend on the specific application, the desired performance, and the available resources. To help with this choice, Table~\ref{tab:dc-dc-comparison} shows a comparison between the most relevant characteristics of each topology~\cite{Comparative_Analysis_Non_Isolated_DC_DC_Converters_Solar_PV_2021}. The most significant advantages of each topology are highlighted accordingly with the aim of the project.
 
         \begin{table}[htbp]
         \centering
@@ -337,7 +338,7 @@ shading conditions, it is possible to have multiple local maxima, but overall, t
             Switch stress & \G No & Yes & \G No & Yes & Yes & Yes \\
             \midrule
             \multicolumn{7}{l}{\textit{\textbf{Functional aspects}}} \\
-            Type & Step-Up & Step-Down & \DG Step-Down/Up & \DG Step-Down/Up & \DG Step-Down/Up & \DG Step-Down/Up \\
+            Type & \G Step-Up & Step-Down & \DG Step-Down/Up & \DG Step-Down/Up & \DG Step-Down/Up & \DG Step-Down/Up \\
             Versatility & Low & Low & Medium & \G High & Medium & \G High \\
             Inverted output & \G No & \G No & Yes & \G No & Yes & \G No \\
             Reliability & \G High & \G High & \G High & Medium & Medium & Medium \\
@@ -349,16 +350,17 @@ shading conditions, it is possible to have multiple local maxima, but overall, t
         \end{adjustbox}
         \end{table}
 
-        For \acs{mppt} controllers, the choice is mainly governed by the possibility of operating at the \ac{mpp} which is connected with the converter type, efficiency, cost (related to the number of storage elements), output voltage ripple.
+        For \acs{mppt} controllers, the choice is mainly governed by the possibility of operating at the \ac{mpp} which is connected with the converter type (Step Up, Down or Down/Up). Also, efficiency, cost (related to the number of storage elements), output voltage ripple are relevant in this choice.
 
         The buck converter can be excluded from this comparison since in this project the solar panel voltage is lower than the battery voltage, therefore, a step-down converter is not suitable.
         However, when choosing between the boost and the step-up/down converters, there is a trade-off. 
         The boost converter is simpler, cheaper and more efficient. On the other hand the step-down/up converters are more versatile since they can operate in a wide range of input voltages, which is interesting since the size of the solar panels and battery voltage can change.
 
-        % \textcolor{red}{Option1:} Considering that in this project the solar panel voltage is always lower than the battery voltage, the boost converter is the most suitable topology due to its simplicity, cost-effectiveness, and high efficiency. However, if versatility were to become a priority, the ZETA converter would be the preferred choice among the step-up/down topologies, owing to its non-inverted output voltage and low output current ripple, which are advantageous for battery charging applications.
+        % \textcolor{red}{Option1:} 
+        Considering that in this project the solar panel voltage is always lower than the battery voltage, the boost converter is the most suitable topology due to its simplicity, cost-effectiveness, and high efficiency. However, if versatility were to become a priority, the ZETA converter would be the preferred choice among the step-up/down topologies, owing to its non-inverted output voltage and low output current ripple, which are advantageous for battery charging applications.
 
         % \textcolor{red}{Option2:}
-        Considering versatility as a key requirement, the Zeta converter emerges as the most efficient, non-inverted output option. Additionally, its low output voltage ripple makes it particularly well-suited for battery charging applications. Therefore, if versatility is prioritized, the ZETA converter would be the preferred choice among the step-up/down topologies. Also, the buck-boost converter is another alternative that provides versatility, but it has an inverted output voltage that will be a challenge for the sensors and driving circuits. On the other hand, if efficiency were prioritized, the boost converter would be the most suitable topology.
+        %Considering versatility as a key requirement, the Zeta converter emerges as the most efficient, non-inverted output option. Additionally, its low output voltage ripple makes it particularly well-suited for battery charging applications. Therefore, if versatility is prioritized, the ZETA converter would be the preferred choice among the step-up/down topologies. Also, the buck-boost converter is another alternative that provides versatility, but it has an inverted output voltage that will be a challenge for the sensors and driving circuits. On the other hand, if efficiency were prioritized, the boost converter would be the most suitable topology.
 
 
 
@@ -391,7 +393,7 @@ shading conditions, it is possible to have multiple local maxima, but overall, t
      When employing the \acs{cc}-\acs{cv} charging technique with a \ac{mppt} controller, the initial \ac{cc} phase is regulated by the \ac{mppt} algorithm, which extracts the maximum available power from the solar panel limited by the maximum charging current. Once the \ac{cv} phase is reached, the \ac{mppt} function is disabled, and the power converter increases the solar panel voltage to progressively reduce the charging current while keeping the output voltage constant.
 
 
-    \begin{figure} [!h]
+    \begin{figure} [!ht]
         \centering
         \includegraphics[width=0.45 \textwidth]{Images/Background/CC-CV graph.pdf}
         \qquad

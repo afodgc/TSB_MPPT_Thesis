@@ -2,13 +2,9 @@
 \label{chap:imp}
 \textcolor{red}{introdução do capítulo}
 
-\section{Battery}
 
-With the current battery (5844.56 Wh) and the maximum power that the solar panels can currently provide (420.5 W), the minimum time to fully charge the battery is 13h and 54min (5844.56 Wh / 420.5 W). This is a large time to charge a battery. There are two solutions to this problem: increase the power provided by the solar panels or decrease the battery capacity. Both solution can be implemented in this vessel. The battery capacity is over dimensioned since it was designed for another vessel and reutilized in this project. As for the solar panels, there is more usable area in the vessel to install more solar panels, which can increase the power provided by the solar panels to approximately 900 W.
 
-\textcolor{red}{Add render with all solar panels installed.}
 
-Let's consider the case where we reduced the battery capacity to 1512 Wh which was the capacity of our solar boat (\acs{SR03}) battery and will be the battery used for laboratory tests. With this change alone the battery is fully charged in 3h and 35min, which is a much more reasonable time. Additionally, if we increase the power provided by the solar panels to 900 W, the battery will be fully charged in 1h and 41min, which is an excellent time to charge a battery.
 
 \section{DC-DC converter}
 \textcolor{red}{introdução do capítulo}
@@ -16,7 +12,7 @@ Let's consider the case where we reduced the battery capacity to 1512 Wh which w
 \subsection{Operation principles}
 The DC-DC converter chosen for this project was a boost converter. This topology uses one switching device, one inductor, one output capacitor and a diode, Figure \ref{fig:boost}. The switching device is used to control the output voltage by switching on and off at a specified frequency (fsw) and duty cycle (D). The inductor is used to store energy when the switch is on (stage 1) and release it when the switch is off (stage 2), while the output capacitor is used to smooth the output voltage, Figure~\ref{fig:boost}.
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.9\textwidth]{Images/Implementation/Boost.png}
     \caption{Classic Boost converter topology and stages \cite{Comparison_PV_Converter_Technologies_1989}.}
@@ -72,7 +68,7 @@ Equation \ref{eq:vout2} shows the 3 mains causes of losses in a boost converter.
 
 As for the inductor internal resistance, it is not possible to remove it entirely, so it must be taken into account when designing the boost converter. The same is true for the drain source resistance of the transistor, which is also not possible to remove entirely. Therefore, it is important to select components with low internal resistance to minimize the losses and increase the efficiency of the converter.
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.5\textwidth]{Images/Implementation/Conventional-synchronous-boost-converter.png}
     \caption{Synchronous boost converter topology \cite{lee_high-efficiency_2019}.}
@@ -88,7 +84,7 @@ Table~\ref{tab:converter_constraints} summarizes the system requirements.
 
 
 
-\begin{table}[!h]
+\begin{table}[!ht]
 \centering
 \caption{Solar panel operating conditions}
 \label{tab:pv_conditions}
@@ -103,7 +99,7 @@ Configuration & $V_{pv}$ (V) & $I_{pv}$ (A) & $P_{pv}$ (W) \\
 \end{tabular}
 \end{table}
 
-\begin{table}[!h]
+\begin{table}[!ht]
 \centering
 \caption{Converter design constraints}
 \label{tab:converter_constraints}
@@ -263,7 +259,7 @@ The saturation current is the maximum current that the inductor can handle witho
 
     \textcolor{red}{Escrever sobre o dead time necessario para evitar o shoot through. Tendo isso em conta ver quais as hipoteses de gate drivers.}
 
-    \begin{figure}[!h]
+    \begin{figure}[!th]
         \centering
         \begin{minipage}[b]{0.49\textwidth}
             \centering
@@ -286,14 +282,14 @@ The saturation current is the maximum current that the inductor can handle witho
     \section{Simulations}
         \subsection{Solar model}
 
-        \begin{figure}[!h]
+        \begin{figure}[!ht]
             \centering
             \includegraphics[width=0.9\textwidth]{Images/Implementation/I-V_P-V.png}
             \caption{I-V and P-V characteristics of a solar panel model with 35 cells in series.}
             \label{}
         \end{figure}
 
-        \begin{figure}[!h]
+        \begin{figure}[!ht]
             \centering
             \includegraphics[width=0.9\textwidth]{Images/Implementation/PV model.png}
             \caption{Solar panel model diagram (1M5P configuration).}
@@ -303,7 +299,7 @@ The saturation current is the maximum current that the inductor can handle witho
         \subsection{Boost}
         Fiz umas  simulações com 4 configuraçoes diferentes de condesadores e cheguei á conclusão que:....
         
-        \begin{figure}[!h]
+        \begin{figure}[!ht]
             \centering
             \includegraphics[width=0.9\textwidth]{Images/Implementation/CC-CV.pdf}
             \caption{CC-CV charge characteristics and case selection.}
@@ -355,35 +351,35 @@ The saturation current is the maximum current that the inductor can handle witho
             \label{tab:delta_iin_inductance}
         \end{table}
 
-        \begin{figure}[!h]
+        \begin{figure}[!ht]
             \centering
             \includegraphics[width=0.9\textwidth]{Images/Implementation/Sim_circuit.png}
             \caption{Simulation circuit diagram.}
             \label{}
         \end{figure}
 
-        \begin{figure}[!h]
+        \begin{figure}[!ht]
             \centering
             \includegraphics[width=0.9\textwidth]{Images/Implementation/vbat__sweep_sim_res.pdf}
             \caption{Battery voltage sweep simulation results.}
             \label{}
         \end{figure}
 
-        \begin{figure}[!h]
+        \begin{figure}[!ht]
             \centering
             \includegraphics[width=0.7\textwidth]{Images/Implementation/3_stages_wave_results.png}
             \caption{3 stages of charge waveforms.}
             \label{}
         \end{figure}
 
-        \begin{figure}[!h]
+        \begin{figure}[!ht]
             \centering
             \includegraphics[width=0.7\textwidth]{Images/Implementation/3_stages_wave_results_zoomed.png}
             \caption{3 stages of charge waveforms in zoomed view.}
             \label{}
         \end{figure}
 
-        \begin{figure}[!h]
+        \begin{figure}[!ht]
             \centering
             \includegraphics[width=0.7\textwidth]{Images/Implementation/3_stages_wave_results_zoomed+.png}
             \caption{3 stages of charge waveforms in enhanced zoomed view.}
