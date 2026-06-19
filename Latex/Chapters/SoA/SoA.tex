@@ -408,25 +408,7 @@ Therefore, the \acs{cc}-\acs{cv} charging method is considered the most suitable
 Other charging techniques fall outside the scope of this work, however, some methods are briefly discussed in the references provided~\cite{Charging_Algorithms_Nickel_Lithium_Battery_2011}\cite{Charging_Algorithms_Lithium_Ion_Batteries_Overview_2012}\cite{Review_Different_Charging_Techniques_Lithium_Polymer_Battery_2015}.
 
     
-\section{Processing unit}
-    Several types of processing units can be considered for this project, including \acp{mcu}, \acp{fpga}, and \acp{asic}.  
 
-    \acp{asic} are custom-designed integrated circuits optimized for specific applications, offering high efficiency and performance. However, they are typically expensive and time-consuming to design and manufacture. Although commercially available \acp{asic}, commonly referred to as \acp{ic}, mitigate these drawbacks, they are usually made for a specific application and therefore not suitable for the high performance and flexibility required in this project, as discussed in Section~\ref{sec:ICs}.  
-
-        \acp{fpga} are reconfigurable devices capable of implementing custom digital circuits through programmable logic blocks based on look-up tables (LUTs) and interconnections~\cite{231340}. Their main advantage lies in their inherent parallel processing capability, which enables high-performance operation. Nevertheless, \acp{fpga} generally present high costs, high design complexity, and volatile configuration memory, requiring reprogramming after power loss~\cite{ampheo_fpga_vs_microcontroller_2025,FPGA_Implementation_MPPT}.  
-
-        In contrast, \acp{mcu} are widely adopted in embedded systems due to their low cost, ease of use, and versatility. They integrate processing, memory, and peripherals in a single non-volatile device, simplifying hardware design and development. Although their sequential execution limits parallel processing performance compared to \acp{fpga}, modern \acp{mcu} provide sufficient computational capability for many control and signal-processing tasks~\cite{ampheo_fpga_vs_microcontroller_2025}.  
-
-        Considering the emphasis on low cost, reduced development time, and implementation simplicity, a \ac{mcu} is selected for this application. Furthermore, the performance of current \acp{mcu} is adequate to meet the requirements of the \ac{mppt} algorithm and the battery charging strategy.
-
-        A \acf{mcu} typically consists of three fundamental components: a central processing unit (CPU), memory, and peripheral modules. The CPU executes program instructions and performs arithmetic and logical operations. Memory is generally divided into non-volatile memory (Flash) for program storage and volatile memory (SRAM) for data and runtime variables. Peripheral modules provide interfaces to the external environment and may include analog-to-digital converters (ADCs), timers, pulse-width modulation (PWM) units, communication interfaces (such as UART, SPI, I²C and \acs{can}), and general-purpose input/output (GPIO) ports. The integration of these components enables standalone operation without the need for extensive external circuitry~\cite{ibm_microcontroller_2025}.
-
-         When selecting a \acs{mcu} for a specific application, the first factor to consider is to use an 8, 16, or 32 bit \acs{mcu}. For this application, a 16-bit \acs{mcu} would probably be sufficient, however to ensure future-proof and compatibility with other \ac{tsb} systems, the choice is for a 32-bit \ac{mcu}. Besides, nowadays, 32-bit \acp{mcu} are considered the industry standard since most embedded system \ac{red} effort is focused on 32-bit cores, and thus both architectures can achieve similar power consumption~\cite{embedded_upgrading_mcu_designs_2025}.
-          There are two main architectures for 32-bit \acp{mcu}: AVR and ARM. Being ARM, the most widely used architecture in the industry and the most advanced, it was chosen for this project~\cite{ampheo_fpga_vs_microcontroller_2025}. 
-
-        Other important characteristics like clock speed, PWM resolution, communication protocols, memory capacity, power consumption, and cost, are not yet well-defined. The choice of \acs{mcu} will be revisited in future stages of the project.
-
-        However, the STM32 family of \acs{mcu} was already selected as it is the standard \acs{mcu} used in \ac{tsb} project and widely used in the industry. The STM32 family offers a wide range of solutions with different characteristics, making it suitable for various applications, including this project. 
 
         % \textcolor{red}{If there is time, chose a specific STM32 and justify the choice based on some parameters.}
 
