@@ -444,6 +444,7 @@
 \let\@afterindentfalse\@afterindenttrue
 \@afterindenttrue
 %
+
 \endinput
 %%
 %% End of file `istulthesis.cls'.
