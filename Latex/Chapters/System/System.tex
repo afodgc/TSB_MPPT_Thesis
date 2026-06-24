@@ -34,35 +34,6 @@ The photovoltaic system of \ac{sg01} was designed to maximize the energy harvest
 
 The current installation consists of 140 Maxeon Gen 3 (Me3) photovoltaic cells distributed among ten custom-manufactured solar panels. These panels are connected to four independent \acp{mppt}, as illustrated in Figure~\ref{fig:PV_SG01}. The distribution of panels among the \acp{mppt} was carefully selected to reduce the effects of partial shading, temperature gradients, and non-uniform solar irradiance across the vessel surface. By electrically separating regions with different operating conditions, each \ac{mppt} can independently track the optimal operating point of its associated panels, increasing the overall energy yield.
 
-Each photovoltaic cell has an active area of approximately $155.06~\mathrm{cm^2}$, resulting in a total photovoltaic area of $2.171~\mathrm{m^2}$.
-
-Assuming \ac{stc} with an irradiance of $1000~\mathrm{W/m^2}$, the photovoltaic array is capable of delivering approximately $526.4~\mathrm{W}$ of peak power (theoretical value). 
-
-The photovoltaic energy is processed by four commercial Genasun \acp{mppt}, which are grouped in a dedicated \ac{mppt} box. The \acp{mppt} convert the variable voltage produced by the solar panels into a stable charging voltage suitable for the low-voltage battery system. This architecture allows each photovoltaic group to operate close to its maximum power point independently, improving energy extraction under non-uniform illumination conditions that are common in maritime environments.
-
-To ensure long-term reliability, the photovoltaic modules were manufactured in house using materials selected specifically for marine operation. 
-
-Prior to installation, all panels underwent electroluminescence testing to detect manufacturing defects such as microcracks, broken cells, or interconnection failures, Figure~\ref{fig:ilu_test}. These tests were performed before integration into the vessel to ensure that only panels with acceptable electrical and structural integrity were installed. This quality-control procedure reduces the likelihood of premature degradation and enables comparison before and after competitions.
-
-\begin{figure}[!ht]
-    \centering
-    \begin{subfigure}{0.50\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Images/System/DSC_3873.pdf}
-        \caption{Worst results.}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.40\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Images/System/DSC_3887.pdf}
-        \caption{Best results.}
-    \end{subfigure}
-    \caption{Electroluminescence test results.}
-    \label{fig:ilu_test}
-\end{figure}
-
-Although the current photovoltaic installation already provides a significant contribution to the low-voltage energy budget, additional usable deck area remains available. Figure~\ref{fig:renderSG01} presents a conceptual rendering with supplementary solar panels. Preliminary estimates indicate that the total photovoltaic power could be increased to approximately $977~\mathrm{W}$, almost doubling the currently installed capacity. Such an upgrade would substantially reduce battery charging times and significantly increase the operational autonomy of the vessel.
-
 \begin{figure}[!ht]
     \centering
     \begin{subfigure}{0.49\textwidth}
@@ -83,6 +54,37 @@ Although the current photovoltaic installation already provides a significant co
     \caption{Solar panels installation on \ac{sg01}.}
     % \label{fig:}
 \end{figure}
+
+Each photovoltaic cell has an active area of approximately $155.06~\mathrm{cm^2}$, resulting in a total photovoltaic area of $2.171~\mathrm{m^2}$.
+
+Assuming \ac{stc} with an irradiance of $1000~\mathrm{W/m^2}$, the photovoltaic array is capable of delivering approximately $526.4~\mathrm{W}$ of peak power (theoretical value). 
+
+The photovoltaic energy is processed by four commercial Genasun \acp{mppt}, which are grouped in a dedicated \ac{mppt} box. The \acp{mppt} convert the variable voltage produced by the solar panels into a stable charging voltage suitable for the low-voltage battery system. This architecture allows each photovoltaic group to operate close to its maximum power point independently, improving energy extraction under non-uniform illumination conditions that are common in maritime environments.
+
+To ensure long-term reliability, the photovoltaic modules were manufactured in house using materials selected specifically for marine operation. 
+
+Prior to installation, all panels underwent electroluminescence testing to detect manufacturing defects such as microcracks, broken cells, or interconnection failures, Figure~\ref{fig:ilu_test}. These tests were performed before integration into the vessel to ensure that only panels with acceptable electrical and structural integrity were installed. This quality-control procedure reduces the likelihood of premature degradation and enables comparison before and after competitions.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{Images/System/DSC_3873.pdf}
+        \caption{Worst results.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=0.65\textwidth]{Images/System/DSC_3887.pdf}
+        \caption{Best results.}
+    \end{subfigure}
+    \caption{Electroluminescence test results.}
+    \label{fig:ilu_test}
+\end{figure}
+
+Although the current photovoltaic installation already provides a significant contribution to the low-voltage energy budget, additional usable deck area remains available. Figure~\ref{fig:renderSG01} presents a conceptual rendering with supplementary solar panels. Preliminary estimates indicate that the total photovoltaic power could be increased to approximately $977~\mathrm{W}$, almost doubling the currently installed capacity. Such an upgrade would substantially reduce battery charging times and significantly increase the operational autonomy of the vessel.
+
+
 
 
 
