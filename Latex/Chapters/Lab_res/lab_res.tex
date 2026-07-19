@@ -1,12 +1,35 @@
 \fancychapter{Laboratory results}
 \label{chap:lab_res}
 
-\textcolor{red}{}
+\textcolor{red}{intro}
 
 \section{Voltage and Current sensor}
-    \textcolor{red}{Annalise resolution}
+    Both current and voltage sensors were tested in the laboratory to validate the performance and accuracy of the measurements. 
 
-    \textcolor{red}{Já fiz mas não tirei resultados :c}
+    The voltage sensor test was performed by applying a known voltage to the input and measuring the output of the voltage divider and the MCU readings. 
+
+    The test was performed for the entire range of voltages needed for this application, which is from 0~V to 51~V. The results show that the voltage sensor is accurate and has a resolution of 15.34~mV,  which is close to the theoretical value of 15.38~mV and a average error of 40~mV. However, this could be improved even further by using resistors with less tolerance and lower temperature coefficient or by increasing the ADC resolution. Another option that does not increase the cost of the system is to do a linearization of the results. In Figure~\ref{fig:voltage_sense_error} the error of the voltage readings is shown, and it can be seen that the error is linear and can be corrected by applying a linearization in the software. None of this is necessary for this application, since the resolution is already good enough for the \ac{mppt} operation.
+
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=0.6\textwidth]{Images/LAB_res/ErrorVmeas.png}
+        \caption{Voltage sensor performance.}
+        \label{fig:voltage_sense_error}
+    \end{figure}
+
+    The same test was performed for the current sensor, the measured resolution was 3.72~mA, which is close to the theoretical value of 3.66~mA. The average error was 52~mA, which is very good for this application. The error of the current sensor is shown in Figure~\ref{fig:current_sense_error}, and it can be seen that the error is linear, but it is still very small and does not affect the \ac{mppt} operation.
+
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=0.6\textwidth]{Images/LAB_res/ErrorCmeas.png}
+        \caption{Current sensor performance.}
+        \label{fig:current_sense_error}
+    \end{figure}
+
+    In both cases the linearization whould highly increase the accuracy of the measurements and it is highly recommended. However, it takes a lot of time to do the measurements and calculate the linearization for each \ac{pcb} which is not realistic for a student prototype project like \ac{tsb}. So the linearization was not implemented in this project, but it is highly recommended for future work. 
+
+    \textcolor{red}{Tenho imagens do setup, tabelas de excel com os resultados e mais graficos que posso por aqui ou em anexos}
+
 
 \section{Boost}
     \textcolor{red}{Describe the test and want i want to achieve}
