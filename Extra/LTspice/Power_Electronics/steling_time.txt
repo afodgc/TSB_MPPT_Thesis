@@ -1,0 +1,20 @@
+Measured in case:
+with 2% of tolerance
+
+Measurement: delta_iin (22uH)
+    1.1227725
+
+Measurement: delta_iin (33uH)
+    1.2038977
+
+
+Measurement: delta_iin(47uH)
+    1.2075548
+    or
+    1.0252033
+
+Measurement: delta_iin (68uH)
+    1.1855185
+
+Measurement: delta_iin (100uH)
+    917.57457

@@ -6,3 +6,6 @@ overdimesioned
 disconsider
 comun
 outpcoupler
+LTspice
+overdimensionded
+datasheets
