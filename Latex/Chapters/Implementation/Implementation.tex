@@ -735,12 +735,18 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
         
  
 \section{PCB design}
-    \subsection{MPPT}
+    \subsection{MPPT V1}
     \label{subsec:PCB_design_MPPT}
         \textcolor{red}{High level explanation of the components and interconections}
 
         \textcolor{red}{software used, falar sobre o design de 4 layers, pontos de debug, coisas adicionais não faladas anteriormente (pq de cada conector, porta fusiveis, serial to UART, LEDs de debug), posicionamento, segurança adicional de temperatura, dcdcs de power, can, I2C }
-        
+
+        \textcolor{red}{Image of V1 and V1.1.}
+    
+    \subsection{MPPT V1.1}
+        \textcolor{red}{Improvments}
+
+
         
     \subsection{Pre charge}
         The Pre charge \ac{pcb} was designed with the intention of being reusable across other \ac{pcb} systems. For this reason, particular attention was given to achieving a compact and versatile layout. The design uses a two-layer stack-up, as the circuit is relatively simple, which reduces manufacturing complexity and overall cost while still meeting the electrical requirements. The \ac{pcb} is mechanically mounted directly onto the main relay contactors, which simplifies assembly and reduces wiring complexity, Figure~\ref{fig:3D_precharge}.
@@ -752,6 +758,6 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
             \label{fig:3D_precharge}
         \end{figure}
 
-        In addition, the precharge resistor was intentionally placed outside the \ac{pcb}, mounted to a costume 3D holder. This design choice facilitates easy replacement or adjustment of the resistor value while also contributing to a more compact board footprint. The resistor is electrically connected to the \ac{pcb} by soldering wires directly to dedicated copper pads, ensuring a simple and reliable interface between the external component and the board.
+        In addition, the pre charge resistor was intentionally placed outside the \ac{pcb}, mounted to a costume 3D holder. This design choice facilitates easy replacement or adjustment of the resistor value while also contributing to a more compact board footprint. The resistor is electrically connected to the \ac{pcb} by soldering wires directly to dedicated copper pads, ensuring a simple and reliable interface between the external component and the board.
 
         
