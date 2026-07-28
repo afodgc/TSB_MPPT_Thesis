@@ -46,6 +46,73 @@
         \textcolor{red}{Foto do setup}
         
     \subsection{Results}
+        \subsubsection{Switching noise}
+
+            During the initial experimental tests, a significant amount of electrical noise was observed in all measured signals. This noise caused the measured current to exceed the configured \ac{oc} protection thresholds, resulting in repeated activation of the protection mechanism. Initially, it was assumed that the problem originated from the measurement system. Consequently, several modifications were implemented in the firmware, including reducing the measurement update frequency to minimize ADC crosstalk and increasing the ADC sampling time to improve measurement accuracy. Furthermore, the fault-handling logic was modified because, once a \ac{oc} fault occurred, the converter entered an oscillatory state in which it repeatedly enabled and disabled itself. Although these software modifications improved the stability and accuracy of the measurements, they did not eliminate the excessive noise.
+
+            During the \ac{oc} events, a large oscillation in the input current was also observed, varying approximately between 4~A and 12~A. One possible explanation considered was that the laboratory power supply was operating close to its current limit, causing it to become unstable. Replacing the power supply was therefore considered as a potential solution. However, since the observed noise was considerably higher than expected, it was believed that the root cause was located elsewhere.
+
+            A detailed analysis of the reference evaluation board revealed a significant difference in the output decoupling network. While the initial prototype employed a single 1~$\mu$F ceramic capacitor, which completely eliminated the switching noise in simulation, the reference evaluation board used ten 1~$\mu$F ceramic capacitors connected in parallel.
+
+            To evaluate the impact of the output capacitance, the converter was characterized without any changes. Figure~\ref{fig:ruido inicial} shows the initial noise.
+
+            In all oscilloscope captures, Channel~1 (yellow) corresponds to the output current ($I_{out}$), Channel~2 (blue) to the input voltage ($V_{in}$), Channel~3 (orange) to the input current ($I_{in}$), and Channel~4 (green) to the output voltage ($V_{out}$). Although the screenshots are not of optimal quality, they clearly illustrate the reduction in switching noise obtained after increasing the output decoupling capacitance.
+
+            To increase the local output decoupling, nine additional 1~$\mu$F ceramic capacitors were soldered in parallel with the existing capacitor, matching the total capacitance used in the evaluation board. After this modification, a significant reduction in the measured noise was observed, as shown in Figure~\ref{fig:ruido final}.
+
+            These results confirm that the insufficient output decoupling capacitance was one of the primary contributors to the observed electrical noise. Increasing the number of ceramic capacitors substantially improved the converter performance and reduced measurement fluctuations. 
+           
+            Although the results were already satisfactory, the reference evaluation board also includes seven additional 220~nF ceramic capacitors distributed across the output stage. Initially I also had one smaller capacitor (100~nF) and since i did not had any 220~nF with 100~V rating, i added six 100~nF capacitors. The result should be similar. These capacitors are expected to further reduce the high frequency switching noise. The results are presented in Figure~\ref{fig:ruido final 2}.
+
+            The approximate peak noise amplitudes measured for each hardware configuration are summarized in Table~\ref{tab:noise_comparison}. Adding nine 1~$\mu$F ceramic capacitors significantly reduced both the current and voltage noise. Subsequently, the six additional 100~nF ceramic capacitors further reduced the current noise, although the input and output voltage noise increased slightly, contrary to expectations.
+
+            \begin{table}[!ht]
+                \centering
+                \caption{Approximate peak noise amplitudes measured for the three hardware configurations.}
+                \label{tab:noise_comparison}
+                \begin{tabular}{lccc}
+                    \toprule
+                    Quantity &
+                    Original &
+                    +9 $\times$ 1~$\mu$F &
+                    +9 $\times$ 1~$\mu$F +6 $\times$ 100~nF \\
+                    \midrule
+                    $I_{in}$  & 1.8 A   & 640 mA & 144 mA \\
+                    $I_{out}$ & 0.8 A   & 300 mA & 190 mA \\
+                    $V_{in}$  & 2.0 V   & 350 mV & 880 mV \\
+                    $V_{out}$ & 8.0 V   & 2.3 V  & 2.4 V \\
+                    \bottomrule
+                \end{tabular}
+            \end{table}
+
+            \begin{figure}[!ht] 
+                \centering 
+                \includegraphics[width=0.6\linewidth]{Images/LAB_res/case2-1.pdf} 
+                \caption{Measured waveforms before adding the additional ceramic capacitors.} 
+                \label{fig:ruido inicial}
+            \end{figure}
+
+            \begin{figure}[!ht] 
+                \centering 
+                \begin{minipage}{0.49\textwidth}
+                    \centering 
+                    \includegraphics[width=\linewidth]{Images/LAB_res/case2-2.pdf}
+                    \caption{Measured waveforms after adding nine additional 1~$\mu$F ceramic capacitors.} 
+                    \label{fig:ruido final} 
+                \end{minipage} 
+                \hfill 
+                \begin{minipage}{0.49\textwidth} 
+                    \centering 
+                    \includegraphics[width=0.9\linewidth]{Images/LAB_res/case2-3.pdf} 
+                    \caption{Measured waveforms after adding nine additional 1~$\mu$F ceramic capacitors.} 
+                    \label{fig:ruido final 2} 
+                \end{minipage} 
+            \end{figure}
+
+
+        
+
+
         \textcolor{red}{Efficiency, voltage and current ripple}
 
         \textcolor{red}{Losses analysis}
