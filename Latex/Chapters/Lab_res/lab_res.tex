@@ -64,24 +64,24 @@
            
             Although the results were already satisfactory, the reference evaluation board also includes seven additional 220~nF ceramic capacitors distributed across the output stage. Initially I also had one smaller capacitor (100~nF) and since i did not had any 220~nF with 100~V rating, i added six 100~nF capacitors. The result should be similar. These capacitors are expected to further reduce the high frequency switching noise. The results are presented in Figure~\ref{fig:ruido final 2}.
 
-            The approximate peak noise amplitudes measured for each hardware configuration are summarized in Table~\ref{tab:noise_comparison}. Adding nine 1~$\mu$F ceramic capacitors significantly reduced both the current and voltage noise. Subsequently, the six additional 100~nF ceramic capacitors further reduced the current noise, although the input and output voltage noise increased slightly, contrary to expectations.
+            The approximate peak noise amplitudes measured for each hardware configuration are summarized in Table~\ref{tab:noise_comparison}. Adding nine 1~$\mu$F ceramic capacitors significantly reduced both the current and voltage noise. Subsequently, the six additional 100~nF ceramic capacitors further reduced the current noise, although the input voltage increased but it may be due to imprecise measurements from the oscilloscope. I tried to do the same measurements with a multimeter, however the precision was similar.
 
             \begin{table}[!ht]
                 \centering
-                \caption{Approximate peak noise amplitudes measured for the three hardware configurations.}
+                \caption{Approximate noise amplitudes measured for the three hardware configurations.}
                 \label{tab:noise_comparison}
-                \begin{tabular}{lccc}
-                    \toprule
+                \begin{tabular}{|l|ccc|}
+                    \hline
                     Quantity &
                     Original &
                     +9 $\times$ 1~$\mu$F &
                     +9 $\times$ 1~$\mu$F +6 $\times$ 100~nF \\
-                    \midrule
-                    $I_{in}$  & 1.8 A   & 640 mA & 144 mA \\
-                    $I_{out}$ & 0.8 A   & 300 mA & 190 mA \\
-                    $V_{in}$  & 2.0 V   & 350 mV & 880 mV \\
-                    $V_{out}$ & 8.0 V   & 2.3 V  & 2.4 V \\
-                    \bottomrule
+                    \hline
+                    $I_{in}$  & 1.8 A   & 640 mA & 292 mA \\
+                    $I_{out}$ & 0.8 A   & 300 mA & 220 mA \\
+                    $V_{in}$  & 2.0 V   & 350 mV & 380 mV \\
+                    $V_{out}$ & 8.0 V   & 2.3 V  & 2.2 V \\
+                    \hline 
                 \end{tabular}
             \end{table}
 
@@ -109,7 +109,38 @@
                 \end{minipage} 
             \end{figure}
 
+        \subsubsection{Temperature rise}
+            \textcolor{red}{mostra o aumento da temperatura para cada caso.}
 
+            \textcolor{red}{mostrar a foto termica, ter em conta que a imagem e o prefil de temperatura estão ligeiramente deslocados.}
+
+            \textcolor{red}{concluir que não é preciso heatsink e que os componetes que aquecem mais é a bobine. Nos outros testes medimos alguma aumento de temperatura também nos condesadores, porem a temperatura irradia e por sua vez aquece os condensadores. O que leva a algumas medições erradas. Eu tirei a temperatura mais alta dos condensadores mas era notavel a diferença entre os condesadores perto da bobine e os condesadores longe.}
+
+            \textcolor{red}{Inicialmente os condesadores aqueciam mais devido aos picos de corrente gerados pelo ruido.}
+
+            \textcolor{red}{É interesante notar tambem um aumento de temperatura em alguns traces. Nomeadamente a linha que contorna a PCB é onde está localizado o trace que aliemnta os dcdcs para 5V e 3.3V que alimenta toda a eletronica auxiliar da placa. Isto significa que deveria ser um tace mais largo.}
+
+            \textcolor{red}{O mesmo aconte na zona dos sensors de current. }
+
+            \begin{figure}[!ht] 
+                \centering 
+                \begin{minipage}{0.49\textwidth}
+                    \centering 
+                    \includegraphics[width=0.9\linewidth]{Images/LAB_res/IMG00022.png} 
+                    \caption{} 
+                    \label{fig:} 
+                \end{minipage} 
+                \hfill 
+                \begin{minipage}{0.49\textwidth} 
+                    \centering 
+                    \includegraphics[width=0.9\linewidth]{Images/LAB_res/IMG00024.png} 
+                    \caption{} 
+                    \label{fig:} 
+                \end{minipage} 
+            \end{figure}
+
+
+        \subsubsection{Efficiency and voltage and current ripples.}
         
 
 
