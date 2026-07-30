@@ -122,6 +122,8 @@
 
             \textcolor{red}{O mesmo aconte na zona dos sensors de current. }
 
+            \textcolor{red}{Já np lado de baixo da placa, apenas observamos um aumento de temperatura no transistor (a imagem está shiftada para baixo/cima), porem muito menor do que o aumento no condesador.}
+
             \begin{figure}[!ht] 
                 \centering 
                 \begin{minipage}{0.49\textwidth}
@@ -142,13 +144,18 @@
 
         \subsubsection{Efficiency and voltage and current ripples.}
         
+            Potencia perdida com o circuito desligado, + boost, e todos os casos.
+
+            cerca de 0.43w só para ter tudo ligado á volta do boost. Se ligarmos o PWM sem load esta potencia aumenta para 1.01w. O sensor de corrente não mede esta corrente e por isso mede sempre 0 A no caso de OC. (neste caso a corrente é tão baixa que praticamente não há perdas nos cabos)
+
+            Muitas perdas nos cabos. Resitencia dos cabos de entrada = 0.09 Ohm e dos cabos de saida 0.2 ohm
 
 
-        \textcolor{red}{Efficiency, voltage and current ripple}
+            \textcolor{red}{Efficiency, voltage and current ripple}
 
-        \textcolor{red}{Losses analysis}
+            \textcolor{red}{Losses analysis}
 
-        \textcolor{red}{temperature analysis}
+            \textcolor{red}{temperature analysis}
 
 \section{MPPT}
     \subsection{Setup}
