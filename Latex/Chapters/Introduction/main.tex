@@ -9,19 +9,22 @@ With environmental pollution intensifying worldwide, the transition to cleaner e
 In 1985, only 20.82\% of the energy produced in the world came from renewable energies. These numbers have been rising every year, and in 2024, have reached 31.92\%~\cite{ourworldindata_electricity_mix_2025}. In 2024, 6.9\% of the energy produced in the world comes from solar panels, and in Portugal this number rises to 14.5\%, demonstrating the importance and the impact of solar energy~\cite{ourworldindata_electricity_mix_2025}. Solar energy still plays a minuscule role, and it is listed behind the other sources of energy in terms of its contribution to meeting the world's energy demand. However, solar energy is becoming more relevant, with the cost of solar panels dropping significantly in the last decade. 
 
 In comparison to other forms of green energy, Photovoltaic energy is relevant due to its availability, simplicity, lower maintenance, environmental friendliness, reliability, and many other benefits. 
-More recently, it is becoming more relevant in the automotive industry, with solar-powered cars, boats, and robots~\cite{shahira2022_electrical_design_solar_boat}. The CO2 emissions of the automotive sector are one of the main contributors to global warming. In 2018, 29\% of total CO2 emissions in the EU came from the transport sector, with 4\% coming from the maritime sector alone~\cite{icct_transport_eu_carbon_budget}.
+More recently, it is becoming more relevant in the automotive industry, with solar powered cars, boats, and robots~\cite{shahira2022_electrical_design_solar_boat}. The CO2 emissions of the automotive sector are one of the main contributors to global warming. In 2018, 29\% of total CO2 emissions in the EU came from the transport sector, with 4\% coming from the maritime sector alone~\cite{icct_transport_eu_carbon_budget}.
 These challenges have directly motivated the development of the \ac{tsb} project.
 
-In 2015, \ac{tsb} was created with the goal of designing and building a solar-powered boat to compete in international competitions. Since then, the project has grown, and several vessels have been built. It began with the construction of the first solar prototype, São Rafael 01, which still had a lot of room for improvement and was followed by São Rafael 02 and 03. The team then decided to approach the hydrogen energy and autonomous driving, and therefore São Miguel 01 and 02 and São Pedro 01 were built. More recently, a vessel was built to combine all the technologies used before and was named \ac{sg01}.   
+In 2015, \ac{tsb} was created with the goal of designing and building solar powered boats to compete in international competitions while also contributing to the innovation in yath industry. Since then, the project has grown, and several vessels have been built. It began with the construction of the first solar prototype, São Rafael 01, which had a lot of room for improvement and was followed by São Rafael 02 and 03. The team then decided to approach the hydrogen energy and autonomous driving, and therefore São Miguel 01 and 02 and São Pedro 01 were built. More recently, a vessel was built to combine all the technologies used before and was named \ac{sg01}.   
 
-All these prototypes used solar energy to maximize their range and efficiency. In the first years the energy produced was small, and the whole system was built using commercial \ac{ots} components. In 2020, the team started to build its own solar panels for São Rafael 03. Many other systems were also designed and built in house, but there is still one system that is yet to be developed, the \ac{mppt} charger.
+All these prototypes used solar energy to maximize their range and efficiency. In the first years the energy produced was small, and the whole system was built using commercial \ac{ots} components. However since the beginning of the \ac{tsb} project, the spirit of innovation and the desired to develop all the systems in house  has been present. In previous years, the team has built its own batteries, telemetry systems, flight controllers, fuel cell controllers, etc. Some other more complex systems were design during master thesis. Until today a \ac{bms}, dual motor system, Marine Propulsion System, a \ac{mppt} and more.
+
+In 2020, the team started to build its own solar panels for São Rafael 03. To increase performance and the amount of information acquired by the solar panels' operation, in the same year, surge the first attempt to do a \ac{mppt}. This was the fist step to achieve a fully functional product. The result was a working \ac{mppt} that was never implemented on any vessel due to constantly burning components which was not reliable. Additionally, the project is outdated in terms of components and firmware, lacking configurability.
+
 
 The \ac{mppt} charger is a fundamental subsystem in photovoltaic energy systems, responsible for maximizing the power extracted from solar panels by ensuring continuous operation at the \ac{mpp}. A \ac{mppt} charger is typically a power converter that continuously monitors the voltage and current produced by the photovoltaic modules and adjusts their electrical operating point accordingly. By dynamically regulating these operating parameters, the \ac{mppt} compensates for variations in environmental conditions such as solar irradiance and temperature, which cause the \ac{mpp} to shift over time. As a result, the photovoltaic system can operate with improved efficiency and deliver maximum available power under changing conditions~\cite{Comparative_study_MPPT_algorithms_2000}.
 
-% \textcolor{red}{Added:} In the context \ac{tsb} project, a \ac{mppt} is specially important to increase the autonomy of our vessels. For example in 2023/24 season we were able to consume only 300~W with \ac{sr03} which had motor of 1.5~KW. Decreasing 80~\% of his consumption with the addition of solar panels. However, we believed that by acquiring more data about our solar panels, we would be able to make better decisions during races and improve the manufacture of our solar panels.
+In the context \ac{tsb} project, a solar system is specially important to increase the autonomy of our vessels. In 2023/24 season we were able to consumption of \ac{sr03} from 1.5~kW to 300~w by using solar energy
+Decreasing 80~\% of his consumption. With a costume made \ac{mppt}, we believe that we could reach even better performances wile also increasing the data acquired about the system performance that would serve to improve the system.
 
-% Now in 2025/26 season, the relevancy of the solar system decreased drastically with the new vessel (São Gabriel 01) since it uses a motor with 130~KW peak and around 20~KW constant power. So the main power source will be hydrogen. However, solar energy will continue to be used in this vessel to power the auxiliary systems being a relabeling green source that will keep the boat alive in all situations.
-
+Now in 2025/26 season, the relevancy of the solar system decreased with our new vessel \ac{sg01}, since it uses around 20~KW of constant power. So the main power source will be hydrogen. However, solar energy will continue to be used in this vessel to power the auxiliary systems being a reliable green source that will keep the boat powered in all situations.
 
 \section{Objectives} 
 
@@ -35,14 +38,16 @@ The main objectives of this project are:
     \item Implement a fast response and accurate control algorithm;
     \item Design and simulate the hardware and software;
     \item Implement the system in hardware and develop a \ac{pcb};
-    \item Test and validate the performance of the circuit;
+    \item Test and validate the performance of the designed circuit;
     \item Ensure the safety and reliability of the \ac{mppt} charger for its integration in the \ac{tsb} project;
-    \item Provide performance data of the solar panel and the \ac{mppt} through a \ac{can} communication interface.
+    \item Provide performance data of the solar panel and the \ac{mppt} through a \ac{can} communication interface;
+    \item Allow easily change the configuration for ease of use.
 \end{itemize}
 
 
 By achieving these objectives, the project will contribute to a more efficient solar system, maximizing the energy received from the solar panels and increasing the available data for performance tracking of the \ac{mppt} and solar panel. This data will be used to later improve the energy efficiency of the \ac{mppt} and take conclusions about the manufacture quality of the solar panels build by \ac{tsb} project. A cheap, efficient and versatile \ac{mppt} will also mean future savings to the team, since it could be used in a variety of vessels.
 
+In the context of \ac{tsb}, such complex projects with high scientific \textcolor{red}{rigor}, that involve simulations, \ac{pcb} design, laboratory tests and field tests are only possible in master thesis. So, for \ac{tsb}, the main objective is to increase the team knolage about this subject by increasing the documentation about it. Also, due to a drastic event of another team, which burn all their \acp{mppt} during competition, the security of this system is the main concern.
 
 \newpage
 

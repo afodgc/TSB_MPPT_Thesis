@@ -68,6 +68,9 @@ shading conditions, it is possible to have multiple local maxima, but overall, t
     Both environmental conditions have a meaningful impact on the \acs{mpp} of the solar panel and therefore on the power output of the system. To maximize the power extracted by the solar panels, a classic power converter, like a buck converter with fixed duty cycle, will not be efficient since neither the current nor the voltage are constant for different conditions. Instead, an \acs{mppt} charger is used, which will find the \acs{mpp} and operate the solar panel at that point while sensing the changes caused by the environment.
 
 \section{Maximum Power Point Tracker (MPPT)}
+
+    \textcolor{red}{Refer to moving MPPTs/ mecanical MPPT}
+
     A \acf{mppt} charger is a device that is used to optimize the power output from solar panels by continuously tracking and adjusting the operation point of the panels to ensure they operate at their \ac{mpp}. 
 
     To achieve its goal, an \ac{mppt} charger is usually composed of a \acs{dc}-\acs{dc} converter, a microcontroller, and some sensors (Figure~\ref{fig:block diagram mppt}). The sensors are used to measure the input/output variables of the control system (typically voltage and current). The information acquired by these sensors is processed by the microcontroller, which runs an algorithm to determine if the \ac{mpp} was reached or how to act on the system towards the \ac{mpp}. In the second case, the microcontroller generates a signal to control the \acs{dc}-\acs{dc} converter that will adjust its operation accordingly.
@@ -184,6 +187,8 @@ shading conditions, it is possible to have multiple local maxima, but overall, t
                 \label{fig:IncCond_graph}
             \end{minipage}
         \end{figure}
+
+        Note: Figure~\ref{fig:IncCond_flowchart} was made for a buck converter, so the duty cycle actions are inverted for a boost converter. For example, if the operating point is to the left of the \ac{mpp}, the duty cycle should be decreased to increase the voltage of the solar panel and move towards the \ac{mpp}.
 
     
         \subsection{Look Up Table (LUT)}

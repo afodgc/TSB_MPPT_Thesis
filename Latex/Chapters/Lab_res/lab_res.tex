@@ -28,27 +28,21 @@
 
     In both cases the linearization whould highly increase the accuracy of the measurements and it is highly recommended. However, it takes a lot of time to do the measurements and calculate the linearization for each \ac{pcb} which is not realistic for a student prototype project like \ac{tsb}. So the linearization was not implemented in this project, but it is highly recommended for future work. 
 
-    \textcolor{red}{Tenho imagens do setup, tabelas de excel com os resultados e mais graficos que posso por aqui ou em anexos}
+    \textcolor{green}{Tenho imagens do setup, tabelas de excel com os resultados e mais graficos que posso por aqui ou em anexos}
 
 
 \section{Boost}
-    \textcolor{red}{Describe the test and want i want to achieve}
+    The Boost test is essential to identifie the efficiency and electrical parameters of the board without the influence of the control system. Aditionaly, it is essential to confirm the correct dimensioning of the power converter enabling a comparison with simulations and theoretical calculations.
 
-    \subsection{Setup}
-        \textcolor{red}{Describe the setup used}
+    The test was performed using a voltage source on the input side and two power resistors on the load side. As in simulations, both duty cycle and load resistance were varied to obtain the results in all different cases represented in Figure~\ref{fig:cc-cv points}.
 
-        \textcolor{red}{Fonte com resistencia como load. O circuito consegue ligar divido ao body diode. Uso multimetros diitais para medições precisas, termoetros para medição de temperatura.}
+    All the measurements were performed with multimeters with high precision. The voltage readings were performed as close as possible to the \ac{pcb}, as for the current readings, they have to be performed in line and due to cable losses they are not as precise.
 
-        \textcolor{red}{Dizer que há voltage drop nos cabos então a medição tem de ser feita nas entradas do MPPT}
-
-        \textcolor{red}{Com app facilmente se analise os resultados}
+    It is important to note that this board uses the battery side to power itself, however in this test the battery side is not connected to a battery but since the \ac{pv} side is connected to a voltage source, this energy flows to the battery side through the boost converter diodes and therefore powering the control system.
         
-        \textcolor{red}{Foto do setup}
-        
-    \subsection{Results}
-        \subsubsection{Switching noise}
+    \subsection{Switching noise}
 
-            During the initial experimental tests, a significant amount of electrical noise was observed in all measured signals. This noise caused the measured current to exceed the configured \ac{oc} protection thresholds, resulting in repeated activation of the protection mechanism. Initially, it was assumed that the problem originated from the measurement system. Consequently, several modifications were implemented in the firmware, including reducing the measurement update frequency to minimize ADC crosstalk and increasing the ADC sampling time to improve measurement accuracy. Furthermore, the fault-handling logic was modified because, once a \ac{oc} fault occurred, the converter entered an oscillatory state in which it repeatedly enabled and disabled itself. Although these software modifications improved the stability and accuracy of the measurements, they did not eliminate the excessive noise.
+            During the initial experimental tests, a significant amount of electrical noise was observed in all measured signals. This noise caused the measured current to exceed the configured \ac{oc} protection thresholds, resulting in repeated activation of the protection mechanism. Initially, it was assumed that the problem originated from the measurement system. Consequently, several modifications were implemented in the firmware, mainly increasing the ADC sampling time to improve measurement accuracy. Furthermore, the fault-handling logic was modified because, once a \ac{oc} fault occurred, the converter entered an oscillatory state in which it repeatedly enabled and disabled itself. Now when a fault occurred, it waits 1 second and verifies if the fault was removed. Although these software modifications improved the stability and accuracy of the measurements, they did not eliminate the excessive noise.
 
             During the \ac{oc} events, a large oscillation in the input current was also observed, varying approximately between 4~A and 12~A. One possible explanation considered was that the laboratory power supply was operating close to its current limit, causing it to become unstable. Replacing the power supply was therefore considered as a potential solution. However, since the observed noise was considerably higher than expected, it was believed that the root cause was located elsewhere.
 
@@ -60,7 +54,7 @@
 
             To increase the local output decoupling, nine additional 1~$\mu$F ceramic capacitors were soldered in parallel with the existing capacitor, matching the total capacitance used in the evaluation board. After this modification, a significant reduction in the measured noise was observed, as shown in Figure~\ref{fig:ruido final}.
 
-            These results confirm that the insufficient output decoupling capacitance was one of the primary contributors to the observed electrical noise. Increasing the number of ceramic capacitors substantially improved the converter performance and reduced measurement fluctuations. 
+            These results confirm that the insufficient output decoupling capacitance was the primary contributor to the observed electrical noise. Increasing the number of ceramic capacitors substantially improved the converter performance and reduced measurement fluctuations. 
            
             Although the results were already satisfactory, the reference evaluation board also includes seven additional 220~nF ceramic capacitors distributed across the output stage. Initially I also had one smaller capacitor (100~nF) and since i did not had any 220~nF with 100~V rating, i added six 100~nF capacitors. The result should be similar. These capacitors are expected to further reduce the high frequency switching noise. The results are presented in Figure~\ref{fig:ruido final 2}.
 
@@ -109,40 +103,35 @@
                 \end{minipage} 
             \end{figure}
 
-        \subsubsection{Temperature rise}
-            \textcolor{red}{mostra o aumento da temperatura para cada caso.}
+    \subsection{Temperature rise}
+        The temperature of each element was measured before each test and after 10 min. All test show similar result, a temperature rise of approximately 10ºC, starting with in case 1 to 3. The inductor is the main heat element, reaching 42ºC, the capacitors also reach around 41ºC hover they are placed side by side with the inductor which heats the capacitors. As expected, the transistors do not overheat. The maximum temperature measured was 38.5ºC, so there is no need for cooling. 
 
-            \textcolor{red}{mostrar a foto termica, ter em conta que a imagem e o prefil de temperatura estão ligeiramente deslocados.}
+        The results are close to what was expected. In Section~\ref{subsubsec:loss_estimation}, we concluded that the component with the highest losses is the inductor, followed by the capacitors and the transistors. In this section, we observe that the temperatures of these three components follow the same order. This makes sense, since the temperature of these components is related to their losses. 
 
-            \textcolor{red}{concluir que não é preciso heatsink e que os componetes que aquecem mais é a bobine. Nos outros testes medimos alguma aumento de temperatura também nos condesadores, porem a temperatura irradia e por sua vez aquece os condensadores. O que leva a algumas medições erradas. Eu tirei a temperatura mais alta dos condensadores mas era notavel a diferença entre os condesadores perto da bobine e os condesadores longe.}
+        We were also able to obtain thermal images of the circuit (Figure~\ref{fig:thermal_front} and \ref{fig:thermal_back}), which show the areas with the highest temperatures. Unfortunately, the image is of poor quality and shows a discrepancy between the thermal image and the normal image. In any case, it appears that the inductor is the element that heats up the most, and you can also see clear heat radiation coming from it. It is also possible to see the area of the highest temperature over the capacitors and the area where the current sensors are located. On the back side, the only element heating is the transistors.
 
-            \textcolor{red}{Inicialmente os condesadores aqueciam mais devido aos picos de corrente gerados pelo ruido.}
+            
 
-            \textcolor{red}{É interesante notar tambem um aumento de temperatura em alguns traces. Nomeadamente a linha que contorna a PCB é onde está localizado o trace que aliemnta os dcdcs para 5V e 3.3V que alimenta toda a eletronica auxiliar da placa. Isto significa que deveria ser um tace mais largo.}
-
-            \textcolor{red}{O mesmo aconte na zona dos sensors de current. }
-
-            \textcolor{red}{Já np lado de baixo da placa, apenas observamos um aumento de temperatura no transistor (a imagem está shiftada para baixo/cima), porem muito menor do que o aumento no condesador.}
-
-            \begin{figure}[!ht] 
+        \begin{figure}[!ht] 
+            \centering 
+            \begin{minipage}{0.49\textwidth}
                 \centering 
-                \begin{minipage}{0.49\textwidth}
-                    \centering 
-                    \includegraphics[width=0.9\linewidth]{Images/LAB_res/IMG00022.png} 
-                    \caption{} 
-                    \label{fig:} 
-                \end{minipage} 
-                \hfill 
-                \begin{minipage}{0.49\textwidth} 
-                    \centering 
-                    \includegraphics[width=0.9\linewidth]{Images/LAB_res/IMG00024.png} 
-                    \caption{} 
-                    \label{fig:} 
-                \end{minipage} 
-            \end{figure}
+                \includegraphics[width=0.9\linewidth]{Images/LAB_res/IMG00022.png} 
+                \caption{Front side thermal image.} 
+                \label{fig:thermal_front} 
+            \end{minipage} 
+            \hfill 
+            \begin{minipage}{0.49\textwidth} 
+                \centering 
+                \includegraphics[width=0.9\linewidth]{Images/LAB_res/IMG00024.png} 
+                \caption{Back side Thermal image.} 
+                \label{fig:thermal_back} 
+            \end{minipage} 
+        \end{figure}
 
 
-        \subsubsection{Efficiency and voltage and current ripples.}
+        \subsection{Efficiency and voltage and current ripples.}
+
         
             Potencia perdida com o circuito desligado, + boost, e todos os casos.
 
@@ -151,14 +140,34 @@
             Muitas perdas nos cabos. Resitencia dos cabos de entrada = 0.09 Ohm e dos cabos de saida 0.2 ohm
 
 
-            \textcolor{red}{Efficiency, voltage and current ripple}
+            \begin{table}[!ht]
+                \caption{Measured efficiency for each point in CC-CV curve.}
+                \centering
+                \begin{tabular}{|c|cccc|}
+                \hline
+                \textbf{Case \#} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} \\
+                \hline
+                Eff (\%)& 94.7 & 94.6 & 94.4 & 94.5 \\
+                \hline
+                \end{tabular}
+                \label{tab:eff_measured}
+            \end{table}
 
-            \textcolor{red}{Losses analysis}
+            \begin{figure}[!ht] 
+                \centering 
+                \includegraphics[width=0.6\linewidth]{Images/LAB_res/eff 50V.png} 
+                \caption{Converter efficiency over different input currents and voltages. \textcolor{red}{Just a place holder image. No real data!!}} 
+                \label{fig:eff over current}
+            \end{figure}
 
-            \textcolor{red}{temperature analysis}
+            \begin{figure}[!ht] 
+                \centering 
+                \includegraphics[width=0.6\linewidth]{Images/LAB_res/eff_vout.png} 
+                \caption{Converter efficiency over output voltage for different input voltages. \textcolor{red}{Just a place holder image. No real data!!}} 
+                \label{fig:eff over voltage}
+            \end{figure}         
 
 \section{MPPT}
-    \subsection{Setup}
         \textcolor{red}{Describe the setup}
 
         \textcolor{red}{Utilização da fonte da delta o que faz com que os resultados não dependam de fatores externos. É necessario configura la com painel solar via lan e atravez de um script que envia mensagens TCP altera a irradiancia do "painel"}
@@ -168,5 +177,11 @@
     \subsection{Tracking speed}
         \textcolor{red}{Give steps of irradiation and measure the tracking speed}
 
+    \subsection{State machine}
+        \textcolor{red}{Show the MPPT in difrent states. No load->Sweep->CC->CV->no load->CV->CC}
+    
     \subsection{Battery charging}
-        \textcolor{red}{Do a full charge, validate CC-CV, battery temperature, MPPT temperature and robustness }
+        \textcolor{red}{Do a full charge, validate CC-CV, battery temperature, MPPT temperature and robustness.}
+
+        \textcolor{blue}{Como é que eu vou fazer isto!?! Vai demorar imenso tempo. Talvez precise de uma bat menor}
+    

@@ -3,17 +3,17 @@
 
 \section{Overview}
 
-\ac{sg01} is the most recent vessel built by \acs{tsb}, which was designed to compete in Sea Lab category of Monaco energy boat challenge. To compete in this category a vessel with 8 x 2.5~m was designed creating new challenges for the team. This vessel was designed to use boat hydrogen and solar energy, using hydro foils to hydroplane which highly increases efficiency. Additionally, it will use actuators and sensors to drive autonomously to compete in AI class of Monaco Energy Boat Challenge.
+\ac{sg01} is the most recent vessel built by \acs{tsb}, which was designed to compete in Sea Lab category of Monaco energy boat challenge. To compete in this category a vessel with 8 x 2.5~m was designed creating new challenges for the team. This vessel was designed to use both hydrogen and solar energy, using hydro foils to hydroplane which highly increases efficiency. Additionally, it will use actuators and sensors to drive autonomously to compete in AI class of Monaco Energy Boat Challenge.
 
 Since it is a larger and heavier boat than the previous ones built by \acs{tsb} it needs more power than the others. So a motor with 130~KW peak power was chosen. This much power is only possible to provide with high voltages, so for the first time in \acs{tsb} history this vessel have a High Voltage system (300-600~V) and a Low Voltage system (30-50~V). 
 
-The High Voltage system is responsible for the drive train, powering a motor. Since the energy consumed by this motor is much larger than solar panels can ever achieve, the boat is designed to be powered by hydrogen (not installed yet).
+The High Voltage system is responsible for the drive train, powering a motor. Since the energy consumed by this motor is much larger than solar panels can ever achieve, the boat is designed to be powered by hydrogen, however it is not implemented yet due to budget constraints.
 
-As for the low voltage system, it is designed to power all auxiliary system (dashboard, telemetry, flight control, electrical string, throttle, etc.). Some of this auxiliary systems are critical for the normal use of the vessel, for example if the dashboard turns of, the pilot will not know the state of the high voltage system (temperature, voltage, state of charge, etc.). Or even more critical, if the throttle does not work, the boat can not electrically move.
+As for the low voltage system, it is designed to power all auxiliary system (dashboard, telemetry, flight control, electrical string, throttle, etc.). Some of this auxiliary systems are critical for the normal use of the vessel, for example if the dashboard turns off, the pilot will not know the state of the high voltage system (temperature, voltage, state of charge, etc.). Or even more critical, if the throttle does not work, the boat can not electrically move.
 
-The auxiliary systems are always changing and growing, so it is difficult to estimate the power consumption of this system. For this work it is considered 1000~W of continuous consumption. It is not a perfect estimation because the power consumption will depend on the driving mode (autonomous driving, hydroplaning or normal drive) which can create different power profiles due to the actuators. Additionally, the cooling system (which is planed to be moved to the High Voltage system) have high power consumption too. 
+The auxiliary systems are always changing and growing, so it is difficult to estimate the power consumption of this system. For this work it is considered 1000~W of continuous consumption. It is not a perfect estimation because the power consumption will depend on the driving mode (autonomous driving, hydroplaning or normal drive) which can create different power profiles due to the actuators. Additionally, the cooling system (which is planed to be moved to the High Voltage system) have high power consumption that is not considered in this estimation. 
 
-To help to maintain the low voltage system always live, we use solar panels which are connected to several \acp{mppt}.
+To help to maintain the low voltage system always powered, it is used solar panels which are connected to several \acp{mppt}.
 
 For better understanding of the system architecture see Figure~\ref{fig:SG01_sch} which represent highly simplified diagram of the overall system.
 
@@ -61,7 +61,7 @@ Assuming \ac{stc} with an irradiance of $1000~\mathrm{W/m^2}$, the photovoltaic 
 
 The photovoltaic energy is processed by four commercial Genasun \acp{mppt}, which are grouped in a dedicated \ac{mppt} box. The \acp{mppt} convert the variable voltage produced by the solar panels into a stable charging voltage suitable for the low-voltage battery system. This architecture allows each photovoltaic group to operate close to its maximum power point independently, improving energy extraction under non-uniform illumination conditions that are common in maritime environments.
 
-To ensure long-term reliability, the photovoltaic modules were manufactured in house using materials selected specifically for marine operation. 
+To ensure high performance and shape configurability, the photovoltaic modules were manufactured in house using materials selected specifically for marine operation. This process begins by soldering all cells in a module together and then a lamination is performed using vacuum and heat blacks.
 
 Prior to installation, all panels underwent electroluminescence testing to detect manufacturing defects such as microcracks, broken cells, or interconnection failures, Figure~\ref{fig:ilu_test}. These tests were performed before integration into the vessel to ensure that only panels with acceptable electrical and structural integrity were installed. This quality-control procedure reduces the likelihood of premature degradation and enables comparison before and after competitions.
 
@@ -89,6 +89,16 @@ Although the current photovoltaic installation already provides a significant co
 
 
 \section{Battery}
+In the past years we have been producing our batteries achieving a lower cost and highly customizable solution. In \ac{sg01} we chose lithium-ion cells due to its ease of use quick assembly. The assembly is done by the members. It begins by placing the cells on plastic holder to increase structural strength, then using a spot welder, the series and parallel connections are made with nickel tabs (Figure~\ref{fig:SG01_battery}). In parallel, some thermistors are place in different locations of the battery to ensuring a precise a robust temperature reading. In the end, the battery is placed in a case with a \ac{bms} and all the necessary connections.
+
+\begin{figure} [!ht]
+    \centering
+    \includegraphics[width=0.50 \textwidth]{Images/System/lv spot welding.pdf}
+    \qquad
+    \caption{Low voltage battery assembly.}
+    \label{fig:SG01_battery}
+\end{figure}
+
 The current low voltage battery uses Samsung INR21700-50G cells in a 12s28p configuration. This configuration results in the specifications written in Table~\ref{tab:battery_comparison}.
 
 
@@ -115,7 +125,7 @@ The current low voltage battery uses Samsung INR21700-50G cells in a 12s28p conf
 \end{table}
 
 
-\ac{sg01} battery was designed for a different vessel which needed a substantial high capacity. The battery is too heavy, and overall overdimensioned. 
+\ac{sg01} battery was designed for a different vessel which needed a substantial higher capacity. The battery is too heavy, and overall overdimensioned. 
 
 For lab tests and for a more realistic impact analysis, \ac{sr03} battery will be used. This is a much smaller battery 
 with a reasonable capacity for this vessel. It uses Samsung INR21700-50s cells in a 12s7p configuration. This configuration results in the specifications also written in Table~\ref{tab:battery_comparison}.
@@ -146,8 +156,6 @@ I think the wave frequency wasn’t the dominant factor because the amplitude is
 It’s not the only visible frequency. The rest of the spectrum could be due to: tiny wavelets and wake reflections, mooring line forces, wind gusts, and water motion reflected from seawalls and neighboring boats.
 
 If I’m wrong, the data might be correct and simply show a frequency of 0.5 Hz (higher than the expected 0.05 to 0.3) because we’re very close to the coast
-
-Translated with DeepL.com (free version)
 
 \textcolor{red}{rewrite when new results are available}
 % https://geo.libretexts.org/Bookshelves/Oceanography/Introduction_to_Physical_Oceanography_(Stewart)/16%3A_Ocean_Waves/16.4%3A_Ocean-Wave_Spectra

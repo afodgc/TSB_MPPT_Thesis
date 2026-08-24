@@ -352,88 +352,88 @@
 % Package 'minitoc' creates a mini-table of contents (a “minitoc”) at
 % the beginning of each chapter of a document.
 % This packages are required for the \fancychapter configuration
-% \usepackage{minitoc}
-% \setcounter{minitocdepth}{1}
-% \setlength{\mtcindent}{24pt}
-% \renewcommand{\mtcfont}{\small\rm}
-% \renewcommand{\mtcSfont}{\small\bf}
-% \renewcommand*{\kernafterminitoc}{\kern0.\baselineskip\kern0.ex}
-% \mtcselectlanguage{\languagename}
-% % Now prepare the MINITOC
-% \def\boxedverbatim{%
-%   \def\verbatim@processline{%
-%     {\setbox0=\hbox{\the\verbatim@line}%
-%     \hsize=\wd0 \the\verbatim@line\par}}%
-%   \@minipagetrue%%%DPC%%%
-%   \@tempswatrue%%%DPC%%%
-%   \setbox0=\vbox\bgroup\vspace*{0.2cm}\footnotesize\verbatim
-% }
-% \def\endboxedverbatim{%
-%   \endverbatim
-%   \unskip\setbox0=\lastbox %%%DPC%%%
-%   \hspace*{0.2cm}
-%   \vspace*{-0.2cm}
-%   \egroup
-%   \fbox{\box0}% <<<=== change here for centering,...
-% }
-% % Now prepare the CHAPTER Number
-% \newcommand*{\chapnumfont}{%
-% %   \usefont{T1}{\@defaultcnfont}{b}{n}\fontsize{100}{130}\selectfont%
-%   \usefont{T1}{pbk}{b}{n}
-%   \fontsize{150}{130}
-%   \selectfont
-%   \color{chaptergrey}
-% }
-% \makeatletter
-% \def\@makechapterhead#1{%
-%   \vspace*{50\p@}%
-%   {\parindent \z@ \raggedright \normalfont
-%     {\chapnumfont\ifnum \c@secnumdepth >\m@ne
-% %         \huge\bfseries \@chapapp\space \thechapter
-%         \raggedleft\bfseries \thechapter
-%         \par\nobreak
-%         \vskip 20\p@
-%     \fi}
-%     \interlinepenalty\@M
-%     {\raggedleft\Huge \bfseries #1\par\nobreak}
-%     \vskip 40\p@
-%   }}
-% \makeatother
-% % Now put it all together as a command \fancychapter
-% \newcommand{\fancychapter}[1]{\chapter{#1}\vfill\minitoc\pagebreak}
-
-\usepackage{xcolor}
-\usepackage{titlesec}
-% \usepackage{minitoc}
-% % (Optional) configure minitoc
-% \setcounter{minitocdepth}{1}
-% \renewcommand{\mtcfont}{\small\rm}
-% \renewcommand{\mtcSfont}{\small\bf}
-
-% Chapter number font
-\newcommand{\chapnumfont}{%
-    \fontsize{90}{100}\bfseries\color{gray!60}
+\usepackage{minitoc}
+\setcounter{minitocdepth}{1}
+\setlength{\mtcindent}{24pt}
+\renewcommand{\mtcfont}{\small\rm}
+\renewcommand{\mtcSfont}{\small\bf}
+\renewcommand*{\kernafterminitoc}{\kern0.\baselineskip\kern0.ex}
+\mtcselectlanguage{\languagename}
+% Now prepare the MINITOC
+\def\boxedverbatim{%
+  \def\verbatim@processline{%
+    {\setbox0=\hbox{\the\verbatim@line}%
+    \hsize=\wd0 \the\verbatim@line\par}}%
+  \@minipagetrue%%%DPC%%%
+  \@tempswatrue%%%DPC%%%
+  \setbox0=\vbox\bgroup\vspace*{0.2cm}\footnotesize\verbatim
 }
-
-% ---------- Chapter Format ----------
-% Use 'block' instead of 'display' to keep title and number on the same line
-\titleformat{\chapter}[block]
-  {\normalfont}
-  {\chapnumfont\thechapter}
-  {2em} % horizontal spacing between number and title
-  {\Huge\bfseries} % title appearance
-
-% ---------- Spacing ----------
-\titlespacing*{\chapter}{0pt}{0cm}{1cm}
-
-% ---------------------------------------------
-%   The required command
-% ---------------------------------------------
-\newcommand{\fancychapter}[1]{%
-    \chapter{#1}%
-    % \minitoc %creates a table of contents for the chapter 
-    % \clearpage
+\def\endboxedverbatim{%
+  \endverbatim
+  \unskip\setbox0=\lastbox %%%DPC%%%
+  \hspace*{0.2cm}
+  \vspace*{-0.2cm}
+  \egroup
+  \fbox{\box0}% <<<=== change here for centering,...
 }
+% Now prepare the CHAPTER Number
+\newcommand*{\chapnumfont}{%
+%   \usefont{T1}{\@defaultcnfont}{b}{n}\fontsize{100}{130}\selectfont%
+  \usefont{T1}{pbk}{b}{n}
+  \fontsize{150}{130}
+  \selectfont
+  \color{chaptergrey}
+}
+\makeatletter
+\def\@makechapterhead#1{%
+  \vspace*{50\p@}%
+  {\parindent \z@ \raggedright \normalfont
+    {\chapnumfont\ifnum \c@secnumdepth >\m@ne
+%         \huge\bfseries \@chapapp\space \thechapter
+        \raggedleft\bfseries \thechapter
+        \par\nobreak
+        \vskip 20\p@
+    \fi}
+    \interlinepenalty\@M
+    {\raggedleft\Huge \bfseries #1\par\nobreak}
+    \vskip 40\p@
+  }}
+\makeatother
+% Now put it all together as a command \fancychapter
+\newcommand{\fancychapter}[1]{\chapter{#1}\vfill\minitoc\pagebreak}
+
+% \usepackage{xcolor}
+% \usepackage{titlesec}
+% % \usepackage{minitoc}
+% % % (Optional) configure minitoc
+% % \setcounter{minitocdepth}{1}
+% % \renewcommand{\mtcfont}{\small\rm}
+% % \renewcommand{\mtcSfont}{\small\bf}
+
+% % Chapter number font
+% \newcommand{\chapnumfont}{%
+%     \fontsize{90}{100}\bfseries\color{gray!60}
+% }
+
+% % ---------- Chapter Format ----------
+% % Use 'block' instead of 'display' to keep title and number on the same line
+% \titleformat{\chapter}[block]
+%   {\normalfont}
+%   {\chapnumfont\thechapter}
+%   {2em} % horizontal spacing between number and title
+%   {\Huge\bfseries} % title appearance
+
+% % ---------- Spacing ----------
+% \titlespacing*{\chapter}{0pt}{0cm}{1cm}
+
+% % ---------------------------------------------
+% %   The required command
+% % ---------------------------------------------
+% \newcommand{\fancychapter}[1]{%
+%     \chapter{#1}%
+%     % \minitoc %creates a table of contents for the chapter 
+%     % \clearpage
+% }
 %
 % #############################################################################
 % ADDITIONAL COMMANDS AND CONFIGURATIONS

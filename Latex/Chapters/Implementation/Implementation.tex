@@ -276,266 +276,22 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
         \label{fig:tech_transistor}
     \end{figure}
 
-    \subsection{Simulations}
-        \textcolor{red}{Objective}
-
-        \subsubsection{Solar Panel model}
-
-            The simulations started at LTspice with the aim to test the converter at different conditions. To achieve that, a \ac{pv} electrical model of the cells were designed using a five parameter model (1M5P) configuration. There are more electrical models that can simulate a solar panel, some with more accuracy but more complex. This model was perfect for the aim of the simulation since it is both reliable and simple.
-
-            The 1M5P model represents the solar cell through a single diode equivalent circuit composed of a current source in parallel with one diode, a series resistance $R_s$, and a shunt (parallel) resistance $R_{sh}$, as shown in Figure~\ref{fig:pv_model}. The current source represents the photogenerated current $I_{ph}$, which is proportional to the incident irradiance, while the diode accounts for the non linear $I$-$V$ characteristic of the p-n junction. The series resistance models the losses associated with the material bulk resistance, metal contacts and interconnections, whereas the shunt resistance represents the leakage currents through the cell, typically caused by manufacturing defects.
-
-            The output current of the model is given by the characteristic equation~\ref{eq:1m5p}, where $I_0$ is the diode saturation current, $n$ is the diode ideality factor, and $V_t$ is the thermal voltage \cite{LOBRANO2013894}. Together with $I_{ph}$, $R_s$ and $R_{sh}$, these constitute the five parameters that give the model its name.
-
-            \begin{equation}
-                I = I_{ph} - I_0 \left[ \exp\left(\frac{V + I R_s}{n V_t}\right) - 1 \right] - \frac{V + I R_s}{R_{sh}}
-                \label{eq:1m5p}
-            \end{equation}
-
-            These parameters are not directly provided by manufacturers, but can be extracted from the standard datasheet values, namely the open-circuit voltage ($V_{oc}$), short-circuit current ($I_{sc}$), voltage and current at the \ac{mpp} ($V_{mp}$, $I_{mp}$), and the respective temperature coefficients, through a set of equations that ensure the model matches these reference points under Standard Test Conditions (STC). There are several ways to do it, however it is outside the range of this work. To simplify, calculations were carried using online tools and will not be explained in detailed here. 
-            \textcolor{red}{se achar necessario posso escrever as equações aqui}
-
-            This approach allows the panel behavior to be accurately reproduced under different irradiance and temperature conditions, while keeping the circuit implementation simple enough to be integrated directly into LTspice.
-
-            \begin{figure}[!ht]
-                \centering
-                \includegraphics[width=0.9\textwidth]{Images/Implementation/PV model.png}
-                \caption{Solar panel model diagram (1M5P configuration).}
-                \label{fig:pv_model}
-            \end{figure}
-        
-        \subsubsection{Boost Converter}
-        \label{subsubsect:Sim_Boost}
-            To validate the theoretical  calculations, simulations in LTspice were carried using the boost converter in steady state mode and a fix duty cycle. 
-
-            Considering a solar panel with 35 cells, five points of CC-CV charging curve were chosen to test the performance of the converter. These five points are represented in Figure~\ref{fig:cc-cv points}.
-            
-            \begin{figure}[!ht]
-                \centering
-                \includegraphics[width=0.9\textwidth]{Images/Implementation/cc_cv_points.png}
-                \caption{CC-CV charge characteristics and analysis point selection.}
-                \label{fig:cc-cv points}
-            \end{figure}
-
-            It is important to note that in this CC-CV curve the constant current is given by the solar panel and not by the battery as it is usually expected. This is only truth due to the maximum charge current of the battery being lower than the current that can be provided by the solar panel. So at CC, the converter is working at \ac{mpp}.
-
-            With this five points chosen, some simulations were carried using capacitors and inductors that would fit the requirements calculated earlier. The objective of these simulations is to optimize the performance of the converter, leading to better choices.
-
-            The model was built in LTspice with approximated models given by the manufactures for higher precision. Only the solar panel model was designed by hand, as previously mentioned.
-
-            The battery was simulated using a voltage source and a resistor representing the internal resistance of the battery.
-
-            The dead time of the transistors was implemented too. Using laboratory measurements, the rising and falling timing was measured and used in simulation. Has for the dead time, it is used the same as in the final prototype.
-
-             \begin{figure}[!ht]
-                \centering
-                \includegraphics[width=0.9\textwidth]{Images/Implementation/Sim_circuit.png}
-                \caption{Simulation circuit schematic.}
-                \label{}
-            \end{figure}
-
-
-            The first simulations were carried to choose the input and output capacitors. The idea is to simulate the circuit using a known inductor (68~uH) and change the capacitors for different configurations. All configurations are overdimensioned to give low ripples (current and voltage). So the main factor is the efficiency of the converter.
-
-            In Table~\ref{tab:loss_capacitors_2} is shown the results. The efficiency of all combinations are very high however the highest is the one with two 56~uF as input capacitors and tree 220~uF capacitors as output capacitors. Unfortunately the 220~uF were not available at the moment, so the second best option was chosen, the five 100~uF capacitors.
-
-            It is worth noting that this is a simulation and therefore the efficiency is higher than what will be measured in laboratory results. Additionally, the difference between each combination it is very small. To make the product cheaper the third option would be as great as the one chosen.
-
-            
-            \begin{table}[!ht]
-                \caption{Loss (\%) for different capacitor configurations (Cin, Cout).}
-                \centering
-                \begin{tabular}{|c|cccc|}
-                \hline
-                \textbf{Case \#} & \textbf{2x56 $\mu$F, 3x220 $\mu$F} & \textbf{100 $\mu$F, 3x220 $\mu$F} & \textbf{100 $\mu$F, 5x100 $\mu$F} & \textbf{2x56 $\mu$F, 5x100 $\mu$F} \\
-                \hline
-                1 & 0.5729 & 0.5796 & 0.5856 & 0.5788 \\
-                2 & 0.6762 & 0.6985 & 0.7069 & 0.6844 \\
-                3 & 0.7359 & 0.7655 & 0.7743 & 0.7449 \\
-                4 & 0.6654 & 0.7091 & 0.7161 & 0.6735 \\
-                5 & 3.4177 & 3.7148 & 3.7554 & 3.4671 \\
-                \hline
-                \end{tabular}
-                
-                \label{tab:loss_capacitors_2}
-            \end{table}
-
-            Similar to the previous simulation, the inductor was chosen by keeping all components with the same values (the capacitors used were Cin = 2x56uF and Cout = 5x100uF) and changing the inductor. Similar to before, all inductors simulated are within the minimum required.
-
-            The losses for each case are represented in Table~\ref{tab:loss_inductance_2}. Similar to before, the efficiency difference is very low but not as linear as in the previous simulation, likely due to the inductor models chosen.
-
-            The inductor chosen will highly influence the input ripple which can generate heat, and electrical interference. Table~\ref{tab:delta_iin_inductance} shows the different ripple currents for each inductor in each case of the CC-CV curve. The 22~uF inductor showed higher ripple current reaching values close to the input current. The inductor chosen was the 68~uF since it has overall good efficiency and reasonable input current ripple.
-
-
-            \begin{table}[!ht]
-                \caption{Loss (\%) for different inductance values.}
-                \centering
-                \begin{tabular}{|c|ccccc|}
-                \hline
-                \textbf{Case \#} & \textbf{22 $\mu$H} & \textbf{33 $\mu$H} & \textbf{47 $\mu$H} & \textbf{68 $\mu$H} & \textbf{100 $\mu$H} \\
-                \hline
-                1 & 0.4206 & 0.4439 & 0.5453 & 0.5788 & 1.2659 \\
-                2 & 0.6645 & 0.6793 & 0.6627 & 0.6844 & 1.3664 \\
-                3 & 0.7883 & 0.8076 & 0.7290 & 0.7449 & 1.4193 \\
-                4 & 1.0556 & 1.0583 & 0.6867 & 0.6735 & 0.9624 \\
-                5 & 6.7045 & 6.6230 & 3.6556 & 3.4671 & 3.8177 \\
-                \hline
-                \end{tabular}
-                \label{tab:loss_inductance_2}
-            \end{table}
-
-
-            \begin{table}[!ht]
-                \caption{$\Delta i_{in}$ ($I_{in,\max} - I_{in,\min}$) for different inductance values.}
-                \centering
-                \begin{tabular}{|c|ccccc|}
-                \hline
-                \textbf{Case \#} & \textbf{22 $\mu$H} & \textbf{33 $\mu$H} & \textbf{47 $\mu$H} & \textbf{68 $\mu$H} & \textbf{100 $\mu$H} \\
-                \hline
-                1 & 2.6939 & 1.8906 & 1.3256 & 0.9781 & 0.6251 \\
-                2 & 4.7934 & 3.3416 & 2.3354 & 1.7066 & 1.0707 \\
-                3 & 5.4733 & 3.8253 & 2.6813 & 1.9644 & 1.2839 \\
-                4 & 5.5596 & 3.8565 & 2.7075 & 2.0139 & 1.2925 \\
-                5 & 5.5520 & 3.8510 & 2.6903 & 1.9636 & 1.2344 \\
-                \hline
-                \end{tabular}
-                \label{tab:delta_iin_inductance}
-            \end{table}
-
-           Now that the converter components are all chosen, the following measurements were taken in LTspice:
-
-            \begin{table}[!ht]
-            \centering
-            \caption{Ripple and Power Loss Summary for Each Operating Step}
-            \label{tab:ripple_loss}
-            \begin{tabular}{|c|cccc|}
-            \hline
-            \textbf{Case \#} & \textbf{$\Delta V_{bat}$ (V)} & \textbf{$\Delta V_{pv}$ (V)} & \textbf{$\Delta I_{in}$ (A)} & \textbf{Loss (\%)} \\
-            \hline
-            1 & 0.0406 & 0.0145 & 0.9781 & 0.578 \\
-            2 & 0.0491 & 0.0212 & 1.7066 & 0.684 \\
-            3 & 0.0529 & 0.0244 & 1.9644 & 0.745 \\
-            4 & 0.0406 & 0.0220 & 2.0139 & 0.674 \\
-            5 & 0.0302 & 0.0215 & 1.9636 & 3.464 \\
-            \hline
-            \end{tabular}
-            \end{table}
-
-            \textcolor{red}{Iin é difrente de IL. O Iin tem quase nada de ripple}
-
-
-            Both voltage ripples are lower than what was defined as the goal in Table~\ref{tab:converter_constraints}. As for the current ripple it is still reasonable. The losses/efficiency are also higher than what was aimed, reaching values up to 99.4\%, in simulation. 
-
-           A voltage sweep were performed, and as expected the efficiency drop with the increase of output voltage (Figure~\ref{fig:voltage_sweep}). Also, as mentioned earlier, the output current drop because in \ac{cc} mode the solar panel current is constant, so the output current drops with the increase of battery voltage due to the power conservation principle.
-
-            \begin{figure}[!ht]
-                \centering
-                \includegraphics[width=0.7\textwidth]{Images/Implementation/vbat__sweep_sim_res.pdf}
-                \caption{Battery voltage sweep simulation results.}
-                \label{fig:voltage_sweep}
-            \end{figure}
-
-            Note: in Section~\ref{subsec:PCB_design_MPPT} it is mention the addition of two shotcky diodes that were not considered in simulations. These diodes slightly increase the efficiency of the converter (+0.03\%) due to their lower forward voltage.
-
-            \textcolor{red}{Add wave forms??!?!?!}
-
-    \subsection{Power Loss Estimation}
-        \label{subsubsec:loss_estimation}
-
-        Although LTspice provides an accurate estimation of the converter efficiency, it does not directly identify the contribution of each component to the total power dissipation. Therefore, an analytical power loss model was developed in MATLAB to estimate the individual losses of each component of the proposed synchronous boost converter. The model uses the electrical parameters of the selected components obtained from their datasheets together with the converter operating conditions.
-
-        The total converter losses are obtained by summing the losses associated with the GaN transistors, inductor, capacitors, dead time and gate driver,
-
-        \begin{equation}
-        P_{loss}=P_{cond_{HS}}+P_{cond_{LS}}+P_{sw_{HS}}+P_{sw_{LS}}+P_{L}+P_{C}+P_{dead}+P_{gate}.
-        \end{equation}
-
-        The converter efficiency is then calculated as
-
-        \begin{equation}
-        \eta=\frac{P_{out}}{P_{out}+P_{loss}}\times100\%.
-        \end{equation}
-
-        The conduction losses of each GaN transistor are given by
-
-        \begin{equation}
-        P_{cond}=I_{RMS}^{2}R_{DS(on)}.
-        \end{equation}
-
-        These losses are primarily caused by the on state resistance of the transistors, resulting in power dissipation whenever current flows through the channel. 
-
-        The switching losses are estimated using Equation~\ref{eq:psw}, 
-        which takes into account the loses during the period when the transistor is not fully nor fully off. Also, the losses associated with charging and discharging the output capacitance of each transistor.
-
-        \begin{equation}
-        P_{sw}=\frac{1}{2}V_{out}I_{L_{AVG}}(t_r+t_f)f_{sw} + \frac{1}{2}C_{oss}V_{out}^{2}f_{sw}
-        \label{eq:psw}
-        \end{equation}
-
-        The dead-time losses are calculated using Equation~\ref{eq:pdead}. These losses originate from the conduction of the reverse conduction path during the dead-time interval required to prevent shoot through. This reverse condition path is either from the third quadrant conduction from the GaN device or from the parallel schottky diode added later in version 1.1 (this is explained in Section \textcolor{red}{?})
-
-        \begin{equation}
-        P_{dead}=2\cdot  V_f \cdot I_{L_{AVG}} \cdot t_{dead} \cdot f_{sw}.
-        \label{eq:pdead}
-        \end{equation}
-
-
-
-        The inductor and capacitor losses are estimated using the RMS current passing through them and their \ac{esr}
-
-        \begin{equation}
-        P_L=I_{L_{RMS}}^{2}ESR.
-        \end{equation}
-
-        \begin{equation}
-        P_C=I_{C_{RMS}}^{2}ESR,
-        \end{equation}
-
-        Although magnetic core losses of the inductor could be estimated too, the selected manufacturer does not provide the required magnetic material parameters. Consequently, only the winding copper losses are considered, leading to a slight underestimation of the total converter losses.
-
-        Finally, the gate driver losses are estimated using Equation~\ref{eq:gate_drive} which takes into account the energy needed to drive the transistors. Although the EPC23102 has an internal gate driver, this is still relevant.
-
-        \begin{equation}
-        P_{gate}= (Qg_{LS} + Qg_{HS})* Vdrv * fsw.
-        \label{eq:gate_drive}
-        \end{equation}
-
-        Figure~\ref{fig:loss_breakdown} presents the resulting power loss distribution. The calculated total power loss is approximately 1.188~W, corresponding to an efficiency of 99.10\%, which agrees well with the LTspice simulation results presented in the previous section.
-
-        \begin{figure}[!ht]
-            \centering
-            \includegraphics[width=0.6\textwidth]{Images/Implementation/Losses.pdf}
-            \caption{Analytical power loss distribution of the synchronous boost converter for Case~1.}
-            \label{fig:loss_breakdown}
-        \end{figure}
-
-        The largest contributors to the total losses are the inductor copper losses and the capacitor ESR losses, each accounting for approximately 31.5\% of the total power dissipation. This highlights the importance of selecting an inductor with low winding resistance and capacitors with low ESR, as these passive components dominate the converter losses.
-
-        The conduction losses of the GaN transistors account for approximately 16\% of the total losses, showing the importance of choosing transistors with low conduction resistance. The high-side device dissipating more power than the low-side transistor due to its longer conduction interval. Switching losses represent approximately 12\% of the total losses, including both transition losses and the energy required to charge and discharge the output capacitances. Dead-time losses contribute approximately 7\%, while the gate driver losses are almost negligible (only 2.7\%).
-
-        Additionally, all \ac{pcb} connections have an inductance that will represent losses too. 
-
-        Overall, the analysis indicates that nearly two-thirds of the converter losses originate from the passive components, whereas the semiconductor devices account for approximately one-third. It should be noted that the presented values are based on analytical equations and datasheet parameters. Since magnetic core losses were not considered, the calculated efficiency represents a slight overestimation of the actual converter performance.
-
-        However, both simulation and theoretical analysis indicate that the choice of each components lead to a highly efficient converter.
-
-
-
 \clearpage
 \section{Processing unit}
+    \subsection{MCU selection}
 
-    \textcolor{red}{Maybe i will remove this part \{}
-    Several types of processing units can be considered for this project, including \acp{mcu}, \acp{fpga}, and \acp{asic}.  
+    \textcolor{green}{I removed th FPGA and ASIC text. Is it ok?}
 
-    \acp{asic} are custom-designed integrated circuits optimized for specific applications, offering high efficiency and performance. However, they are typically expensive and time-consuming to design and manufacture. Although commercially available \acp{asic}, commonly referred to as \acp{ic}, mitigate these drawbacks, they are usually made for a specific application and therefore not suitable for the high performance and flexibility required in this project, as discussed in Section~\ref{sec:ICs}.  
+    % Several types of processing units can be considered for this project, including \acp{mcu}, \acp{fpga}, and \acp{asic}.  
 
-        \acp{fpga} are reconfigurable devices capable of implementing custom digital circuits through programmable logic blocks based on look-up tables (LUTs) and interconnections~\cite{231340}. Their main advantage lies in their inherent parallel processing capability, which enables high-performance operation. Nevertheless, \acp{fpga} generally present high costs, high design complexity, and volatile configuration memory, requiring reprogramming after power loss~\cite{ampheo_fpga_vs_microcontroller_2025,FPGA_Implementation_MPPT}.  
+    % \acp{asic} are custom-designed integrated circuits optimized for specific applications, offering high efficiency and performance. However, they are typically expensive and time-consuming to design and manufacture. Although commercially available \acp{asic}, commonly referred to as \acp{ic}, mitigate these drawbacks, they are usually made for a specific application and therefore not suitable for the high performance and flexibility required in this project, as discussed in Section~\ref{sec:ICs}.  
 
-        In contrast, \acp{mcu} are widely adopted in embedded systems due to their low cost, ease of use, and versatility. They integrate processing, memory, and peripherals in a single non-volatile device, simplifying hardware design and development. Although their sequential execution limits parallel processing performance compared to \acp{fpga}, modern \acp{mcu} provide sufficient computational capability for many control and signal-processing tasks~\cite{ampheo_fpga_vs_microcontroller_2025}.  
+    %     \acp{fpga} are reconfigurable devices capable of implementing custom digital circuits through programmable logic blocks based on look-up tables (LUTs) and interconnections~\cite{231340}. Their main advantage lies in their inherent parallel processing capability, which enables high-performance operation. Nevertheless, \acp{fpga} generally present high costs, high design complexity, and volatile configuration memory, requiring reprogramming after power loss~\cite{ampheo_fpga_vs_microcontroller_2025,FPGA_Implementation_MPPT}.  
 
-        Considering the emphasis on low cost, reduced development time, and implementation simplicity, a \ac{mcu} is selected for this application. Furthermore, the performance of current \acp{mcu} is adequate to meet the requirements of the \ac{mppt} algorithm and the battery charging strategy.
+    %     In contrast, \acp{mcu} are widely adopted in embedded systems due to their low cost, ease of use, and versatility. They integrate processing, memory, and peripherals in a single non-volatile device, simplifying hardware design and development. Although their sequential execution limits parallel processing performance compared to \acp{fpga}, modern \acp{mcu} provide sufficient computational capability for many control and signal-processing tasks~\cite{ampheo_fpga_vs_microcontroller_2025}.  
 
-        \textcolor{red}{------------\}}
+    %     Considering the emphasis on low cost, reduced development time, and implementation simplicity, a \ac{mcu} is selected for this application. Furthermore, the performance of current \acp{mcu} is adequate to meet the requirements of the \ac{mppt} algorithm and the battery charging strategy.
+
 
         A \acf{mcu} typically consists of three fundamental components: a central processing unit (CPU), memory, and peripheral modules. The CPU executes program instructions and performs arithmetic and logical operations. Memory is generally divided into non-volatile memory (Flash) for program storage and volatile memory (SRAM) for data and runtime variables. Peripheral modules provide interfaces to the external environment and may include analog-to-digital converters (ADCs), timers, pulse-width modulation (PWM) units, communication interfaces (such as UART, SPI, I²C and \acs{can}), and general-purpose input/output (GPIO) ports. The integration of these components enables standalone operation without the need for extensive external circuitry~\cite{ibm_microcontroller_2025}.
 
@@ -560,6 +316,30 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
 
         If there were no limitations, a microcontroller with a higher clock frequency would have been selected, increasing both the PWM duty-cycle resolution and the available computational power. Additionally, a device with native 16-bit ADCs would improve measurement accuracy and reduce quantization effects. Nevertheless, the STM32L476 provides sufficient performance and peripheral resources to meet the requirements of this application.
 
+    \subsection{Configuration}
+        Since the designed board is custom-made, there is any pre-configuration of the \ac{mcu} in use. In this particular case, the STM32 project needs to be configured in a STM32CubeMX, which is a tool that simplifies the configuration process. In this tool it is defined the Clock frequency, Peripherals working frequency, pin-maping (GPIOs, ADCs, UART, CAN, etc.) and respective configuration, Interrups, Timers, PWMs, etc. This tool generates a project base on C programming language with all drivers and configurations needed. These files serve as based for firmware development, and can be modified during the project.
+
+        Since it is not possible to describe all the configurations used lets highlight the most important ones for this project.
+
+        The \ac{mcu} works at 80~MHz, with an external ceramic resonator of 16~MHz. This frequency is enough for the computational time, and a minimal PWM resolution. It can be flashed using JTAG and it uses an Independent Watchdog (IWDG) time interrupt. The IWDG is a safety feature that resets the \ac{mcu} in case of a crash or infinite loops. It works by resetting the timer periodically in a specific part of the code, if the timer is not reseted during a specified period, the interrupt is triaged and the \ac{mcu} resets.
+
+        As for timers, one timer was configured with 100~KHz for PWM and two pins were configured as complementary PWMs with a specific dead time. The dead time was inserted as a safety feature too. The dead time is calculated using Formula~\ref{eq: dead time}, where the "value" needs to be in the range from 0 to 255. 
+
+        \begin{equation}
+            Dead Time = Value / F_{CLK}
+            \label{eq: dead time}
+        \end{equation}
+        
+        For this project it was tested several values using an oscilloscope. The smallest the value that ensures that both signals are never high at the same time is 2, however 3 was used to add margin. \textcolor{red}{Poderei fazer o teste de reduzir o valor e ver no que dá. Em principio o mosfet consegue se proteger contra á enventualidade de dar shoot-through}. The measured dead time was \textcolor{red}{Valor}, and the rising and falling time were \textcolor{red}{Valor} and \textcolor{red}{Valor} respectively. The measured values were used to tune simulations.
+
+        \textcolor{red}{Meto uma imagem do osciloscopio?}
+
+        With 100~KHz PWM and 80~MHz internal clock, the dutty cycle resolution is 0.125~\%.
+        
+        Another timer was configured to trigger every millisecond, and it is used to serve as task interrupts however each task is called at difrent periods (always around milliseconds) which is implemented with a counter and comparators.
+
+
+        \textcolor{red}{ADC config (SCAN mode + DMA), sample rate, resolution, mode}
 
 \section{Sensors} 
 
@@ -612,180 +392,320 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
 
 
 \section{Software}
-    \subsection{MPPT algorithm}
-        \textcolor{red}{simulação em Matlab..}
-    \subsection{Firmware}
-        \textcolor{red}{Tool de STM32 usada, flow chart}
+    In this section it is explained how does the firmware inside the \ac{mcu} is structured and how it works. Also, the basic idea behind the communication protocols used and how they are applied to this project as well as the \ac{gui} developed for configuration and data analysis. 
+    
+    \subsection{Firmware Overview}
+        The firmware is a flag based scheduler with two main task, the \ac{mppt} and ADC task. 
 
-        Flag-based scheduler, Timers, PWM resolution, ADC mode, APP conection, CAN com, serial comm, watchdog,...
+        The ADC task is responsible to convert the analog readings into another units such as current, voltage and temperature. If any of the values exceed the limits configured by the user, a fault is detected and blocks the \ac{mppt} to run during 1 second. After this time the ADC task runs again and checks if the faults was removed. \textcolor{red}{possivelmente pode mode ligeiramente}
 
         \begin{figure}[!ht]
             \centering
             \includegraphics[width=0.6\textwidth]{Images/Implementation/Block diagram-Firmware_flowchart.drawio.pdf}
-            \caption{.}
-            \label{fig:}
+            \caption{Firmware flowchart.}
+            \label{fig:Firmware flowchart}
         \end{figure}
+        
+        The \ac{mppt} task is responsible to run the state machine which changes the operation mode depending  on the measurements and outputs a PWM duty cycle value. In Figure~\ref{fig: charging state machine}, is represented how does the code transit between states. The idea is, if the board is not connected to a battery, the output voltage is set to the \ac{cv} target (No load state), then if enough current is detected in the battery side it switches to Sweep mode (if enabled) which sweeps the \ac{pv} operating point to find the \ac{mpp}. Once the sweep is finished it changes to the CC-CV charging phase, where depending on the battery current and voltage, the mode will be \ac{mppt} algorithm, \ac{cc} or \ac{cv}. Once the battery finish the charging cycle or disconnects from the board, it changes to No load mode again. 
+        When designing these state machine, one of the most important aspects was the ability of moving forward in terms of charge (first \ac{cc} then \ac{cv}) or backwards in cases where the battery discharge current is higher in comparison with the energy provided by the solar panels.
 
         \begin{figure}[!ht]
             \centering
-            \includegraphics[width=0.6\textwidth]{Images/Implementation/Block diagram-MPPT_flowchart.drawio.pdf}
-            \caption{.}
-            \label{fig:}
+            \includegraphics[width=\textwidth]{Images/Implementation/MPPT_state_machine.drawio.pdf}
+            \caption{Charging state machine state.}
+            \label{fig: charging state machine}
         \end{figure}
 
+        Besides the main tasks, the board is able to send CAN and Serial messages and therefore the respective tasks. 
+
+    \subsection{Serial and CAN communication}
+        One of the most important features of this circuit board is the communication with the rest of the boat. This will enable better decision making relating to energy budget. Also, it will be easier to detect broken or malfunction solar panels or human errors such as bad or forgotten connections.
+
+        The main communication protocol is \ac{can}. This is the \ac{tsb} standard protocol and widely use in automotive industry due to its high robustness. The protocol was developed by Bosh in 1986 to let microcontrollers and devices talk to each other without a central host computer. 
+        
+        In the hardware point of view, \ac{can} uses a bus instead of wire to wire communication. Also, it uses twisted wires (\ac{can} High and \ac{can} Low) to block electrical noise. In a software point of view, it uses an error checking system (CRC) ensuring reliability.
+
+        For \ac{tsb} electrical system we developed our \ac{can} protocol on top of the standard \ac{can} communication. Each message is structured as shown in Figure~\ref{} following the \ac{can} 2.0A standard.
+        
         \begin{figure}[!ht]
             \centering
-            \includegraphics[width=0.6\textwidth]{Images/Implementation/Block diagram-MPPT_state_machine.drawio.pdf}
-            \caption{.}
+            \includegraphics[width=0.95\textwidth]{Images/Implementation/CAN protocol.png}
+            \caption{Dashboard.}
             \label{fig:}
         \end{figure}
+        
+        The 11 bits marked in green (Arbitration Field) can be used by each protocol differently. Usually, it is used to send priority bits, device ID and message ID. In the current vessel (\ac{sg01}), the priority bits were removed and used to increase the number of devices on bus. With the current structure Tab~\ref{tab:Arbitration Field}, the protocol supports up to 32 devices with 63 messages each. 
+
+        \begin{table}[!ht]
+            \caption{\ac{tsb} CAN messages Arbitration Field.}
+            \centering
+            \begin{tabular}{|c|c|}
+            \hline
+            Message ID & Device ID \\
+            \hline
+            6 bits & 5 bits \\
+            \hline
+            \end{tabular}
+            \label{tab:Arbitration Field}
+        \end{table}
+
+        In Control field, the first bit is to use Extended IDs and next one is reserved. The yellow field is called Data Length Code (DLC) and is where the length of the data is defined. The maximum lenght is 8 bytes. Then there is the Data field (represented in red). 
+
+        The rest of the fields are treated by the \ac{can} library which is an adaptation of the open source library called \texttt{STM32\_CAN} by pazi88.
+
+        For the \ac{mppt} it was defined an ID structure, where the device ID is maintained intact, and Message ID is divided in two. The 3 most significant bits represent the \ac{mppt} number from 0 to 7 and the rest of the bits identifies the messages. This structure gets enough message IDs for each \ac{mppt} as well as not occupying a lot of Device IDs. In Table~\ref{tab:mppt_message_ids} is showed an example of the corresponding IDs when the Device ID is 0x0D (default ID).
+
+        \begin{table}[!ht]
+            \caption{CAN IDs for each MPPT number and message.}
+            \centering
+            \begin{tabular}{|c|c|c|c|c|}
+                \hline
+                \textbf{MPPT Number} & \textbf{MSG:MPPT\_bat} & \textbf{MSG:MPPT\_pv} & \textbf{MSG:MPPT\_aux1} & \textbf{MSG:MPPT\_aux2} \\
+                \hline
+                \textbf{0} & \texttt{0x00D} & \texttt{0x02D} & \texttt{0x04D} & \texttt{0x06D} \\
+                \hline
+                \textbf{1} & \texttt{0x10D} & \texttt{0x12D} & \texttt{0x14D} & \texttt{0x16D} \\
+                \hline
+                \textbf{2} & \texttt{0x20D} & \texttt{0x22D} & \texttt{0x24D} & \texttt{0x26D} \\
+                \hline
+                \textbf{3} & \texttt{0x30D} & \texttt{0x32D} & \texttt{0x34D} & \texttt{0x36D} \\
+                \hline
+                \textbf{4} & \texttt{0x40D} & \texttt{0x42D} & \texttt{0x44D} & \texttt{0x46D} \\
+                \hline
+                \textbf{5} & \texttt{0x50D} & \texttt{0x52D} & \texttt{0x54D} & \texttt{0x56D} \\
+                \hline
+                \textbf{6} & \texttt{0x60D} & \texttt{0x62D} & \texttt{0x64D} & \texttt{0x66D} \\
+                \hline
+                \textbf{7} & \texttt{0x70D} & \texttt{0x72D} & \texttt{0x74D} & \texttt{0x76D} \\
+                \hline
+            \end{tabular}
+            \label{tab:mppt_message_ids}
+        \end{table}
+
+        The Device ID can be configured/changed via \ac{gui} however the logic is maintained.
+
+        The CAN protocol is excellent for communication between boards however it is not the most practical protocol for configuration because the \ac{can} IDs can change between vessels and implies the use of an external hardware to communicate between the board and a computer.
+
+        In contrast, serial communication is done by just connecting a wire to the board and since the protocol is only used for configuration and data analysis it can be the same forever and if it needs to be changed, it does not depend on any vessel. 
+
+        There is no default protocol to send data over serial, however in \ac{bms} thesis a serial protocol was created and used and will serve has based for this project. Unfortunately the firmware library is not compatible with STMs, so it was created from scratch.
+
+        The protocol uses the strocture defined in Table~\ref{tab:serial_message_format}. It begins with the Start Byte which is defined as 0xAC, followed by the device ID which defines the source of the message and the message ID defining what message is the device sending, the data length, the data, checksum byte and the end byte (0xAD) marking the end of the message.
+
+        \begin{table}[!h]
+            \centering
+            \caption{\ac{tsb} Serial messages format.}
+            \label{tab:serial_message_format}
+            \begin{tabular}{|c|c|c|c|c|c|c|}
+                \hline
+                \textbf{Start} & \textbf{Device ID} & \textbf{MSG ID} & \textbf{LEN} & \textbf{Data} & \textbf{Checksum} & \textbf{END} \\ \hline
+                1 Byte & 1 Byte & 1 Byte & 1 Byte & 8 Bytes & 1 Byte & 1 Byte \\ \hline
+            \end{tabular}
+        \end{table}
+        
+        Similar to CAN protocol, for each message it was defined a Message ID respecting the same logic. This ID alongside with the Device ID and length is initialized in the beginning of the code, the rest of the variable are treated by the library except the data field that is changed before sending any message.
+        
+        The Data of each message is structured in the same way as in \ac{CAN} protocol however it was added 4 messages for configuration. These messages enable the change of current limits, voltage limits, \ac{mppt} parameters, \ac{can} settings and CC-CV targets.
+        
+
+    \subsection{EEPROM Emolation}
+        To save the configuration received from the serial protocol, a library was used that emulates an EEPROM which ia a type of non-volatile memory that retains its contents after power-down. EEPROMs have been used for many years in a wide range of devices to store settings, calibration data, and backups. In this project, no external EEPROM was added to the board, and the \ac{mcu} does not include one internally. However, the library can use internal flash memory, which is normally reserved for program code, to store data, thereby emulating EEPROM behavior.
+
+        The main disadvantages of this approach are limited storage capacity and reduced write endurance compared with a dedicated EEPROM. The STM32 internal flash can typically withstand on the order of 10,000 erase cycles per page, whereas external EEPROM devices often support roughly one order of magnitude more. Even so, this is not a practical limitation in this application. Configuration data is stored as a small set of 16-bit variables, and each save operation appends new records to flash rather than overwriting the previous value in place. Each page can hold 252 variables. For this project, a full board configuration requires 13 write operations, therefore, one flash page can hold many configuration updates before it becomes full and must be erased. Furthermore, the emulation is configured to use ten flash pages, with wear levelling implemented through page transfer and cleanup. When a page is full, the latest values are copied to another page and the old page is eventually erased. This distributes erase cycles across multiple pages and extends the effective lifetime of the memory.
+
+        In conclusion, neither storage capacity nor endurance is expected to be a problem for this project. Under the current configuration, a complete configuration upload would need to be performed hundreds of thousands of times before the theoretical endurance limit of a flash page is reached—far beyond the expected use case of occasional configuration updates over serial.
+
+        Since the emulated EEPROM shares the same physical flash as the firmware, care must be taken to ensure that program code is never placed in the reserved EEPROM region. This was achieved by modifying the linker script, which defines the memory map used during the build process. The length of the program flash region was reduced so that firmware is linked only below the first address saved for EEPROM emulation.
 
 
     \subsection{Graphical User Interface}
-        \textcolor{red}{Funcionalidade, protocoolo de comunicação, como  foi feita, Qt widget, etc.}
+        In parallel with the design and test of the \ac{mppt} board, a \ac{gui} was designed to make this project more accessible and easy to use. The application was built from scratch, however it was inspired in the application built during \ac{bms} thesis. It was built using QT framework, which is a powerful, cross platform software toolkit used to build high-performance applications and \acp{gui} that run on multiple operating systems like Windows, macOS, Linux. 
 
+        This \ac{gui} communicates with the board with Serial or \ac{can} communication. To use \ac{can} communication, the computer should be connected to the bus with a tool called PEAK-CAN.
+        
+        After connecting the computer to the board, the application is able to identified which board is connected and show it to the user in the Dashboard page, Figure~\ref{fig:Dashboard}. In this page the user selects which board he is working on. The application is prepared for several \acp{pcb}, however only the \ac{bms} and \ac{mppt} are correctly working. The rest are placeholders for future improvements.
 
-\section{Precharge Circuit}
-    The precharge circuit is used to safely energize high-capacitance loads by limiting inrush currents during system startup. This section introduces the problem of inrush currents, discusses the adopted mitigation strategy, and presents the final circuit implementation.
+        \begin{figure}[!ht]
+            \centering
+            \includegraphics[width=0.95\textwidth]{Images/Implementation/GUI_main_windowh.png}
+            \caption{Dashboard. \textcolor{red}{Change it to a image while connecting.}}
+            \label{fig:Dashboard}
+        \end{figure}
+
+        When the \ac{mppt} page is selected (Figure~\ref{fig:MPPT monitor GUI}), a new tab opens showing the most important variables, such as voltage, current, power temperature, efficiency, irradiance and duty cycle. Additionally, there are two visual representations. On the left there is a P-V graph with theoretical curves for different irradiance values and a blue dot placed on the current point of operation and updated with the received data.
+
+        On the right, it is represented the CC-CV curve, where the received battery side data is represented over time.
+
+        \begin{figure}[!ht]
+            \centering
+            \includegraphics[width=0.95\textwidth]{Images/Implementation/GUI_MPPT_main.png}
+            \caption{MPPT tab.\textcolor{red}{Update it with a print runing MPPT}}
+            \label{fig:MPPT monitor GUI}
+        \end{figure}
+
+        On top of the page, the user can switch to the configuration tab (Figure~\ref{fig:MPPT config tab}). In this tab the user can read the configuration currently installed on the board, reset this configuration or upload a new one.
+
+        \begin{figure}[!ht]
+            \centering
+            \includegraphics[width=0.95\textwidth]{Images/Implementation/GUI_MPPT_config.png}
+            \caption{MPPT configuration tab.}
+            \label{fig:MPPT config tab}
+        \end{figure}
+
+        The last page is the debug page (Figure~\ref{fig:Debug page}), where the user can visualize both Serial protocol messages and serial prints at the same time.
+
+        \begin{figure}[!ht]
+            \centering
+            \includegraphics[width=0.95\textwidth]{Images/Implementation/GUI_Terminal.png}
+            \caption{Debug page.}
+            \label{fig:Debug page}
+        \end{figure}
+
+        \clearpage
+
+% \section{Precharge Circuit}
+%     \textcolor{red}{This section will be removed or rewritten to explain why this is not needed anymore, and what is the solution.}
+
+%     The precharge circuit is used to safely energize high-capacitance loads by limiting inrush currents during system startup. This section introduces the problem of inrush currents, discusses the adopted mitigation strategy, and presents the final circuit implementation.
     
-    \subsection{Problem}
+%     \subsection{Problem}
 
-        In the automotive sector, high-capacitance loads such as inverters, motor controllers, and DC/DC converters are commonly encountered. When these systems are connected to a power source, their large input capacitance can lead to significant inrush currents during the transient period. These currents, which can reach the order of kiloamperes, may generate electrical arcing, stress or damage the contactors, and in severe cases cause contact welding, preventing proper disconnection of the circuit. Additionally, such high transient currents can also stress or damage the load itself, particularly sensitive power electronics at the input stage, potentially leading to component failure or reduced operational lifetime.
+%         In the automotive sector, high-capacitance loads such as inverters, motor controllers, and DC/DC converters are commonly encountered. When these systems are connected to a power source, their large input capacitance can lead to significant inrush currents during the transient period. These currents, which can reach the order of kiloamperes, may generate electrical arcing, stress or damage the contactors, and in severe cases cause contact welding, preventing proper disconnection of the circuit. Additionally, such high transient currents can also stress or damage the load itself, particularly sensitive power electronics at the input stage, potentially leading to component failure or reduced operational lifetime.
 
-        In the context of the \ac{mppt}, the battery is connected and disconnected through a relay depending on the system operating conditions, such as the battery state of charge. When the relay closes, the input capacitors of the \ac{mppt} act as an initially uncharged capacitive load, resulting in a high transient current as they are charged from the battery.
+%         In the context of the \ac{mppt}, the battery is connected and disconnected through a relay depending on the system operating conditions, such as the battery state of charge. When the relay closes, the input capacitors of the \ac{mppt} act as an initially uncharged capacitive load, resulting in a high transient current as they are charged from the battery.
 
-        As an example, consider the battery operating at its maximum voltage ($V_{bat} = 50.4~V$) connected to a single \ac{mppt} with an input capacitance of 500~$\mu$F. Initially, the capacitors are fully discharged ($V_c = 0~V$). The total series resistance of the circuit is composed of the internal battery resistance ($R_{bat} = 6~m\Omega$), the equivalent capacitor resistance, and the resistance of the connection cables.
+%         As an example, consider the battery operating at its maximum voltage ($V_{bat} = 50.4~V$) connected to a single \ac{mppt} with an input capacitance of 500~$\mu$F. Initially, the capacitors are fully discharged ($V_c = 0~V$). The total series resistance of the circuit is composed of the internal battery resistance ($R_{bat} = 6~m\Omega$), the equivalent capacitor resistance, and the resistance of the connection cables.
 
-        The cable resistance can vary depending on length and cross-section, but it is typically small and is therefore neglected in this analysis. The equivalent resistance of the capacitors is given by the resistance of a single capacitor ($R_{cap} = 200~m\Omega$) divided by the number of capacitors in parallel ($n = 5$), resulting in:
+%         The cable resistance can vary depending on length and cross-section, but it is typically small and is therefore neglected in this analysis. The equivalent resistance of the capacitors is given by the resistance of a single capacitor ($R_{cap} = 200~m\Omega$) divided by the number of capacitors in parallel ($n = 5$), resulting in:
 
-        \begin{equation}
-        R_{caps} = \frac{200~m\Omega}{5} = 40~m\Omega
-        \end{equation}
+%         \begin{equation}
+%         R_{caps} = \frac{200~m\Omega}{5} = 40~m\Omega
+%         \end{equation}
 
-        The total circuit resistance is therefore:
+%         The total circuit resistance is therefore:
 
-        \begin{equation}
-        R_{total} = R_{bat} + R_{caps} + R_{cables} \approx 46~m\Omega
-        \end{equation}
+%         \begin{equation}
+%         R_{total} = R_{bat} + R_{caps} + R_{cables} \approx 46~m\Omega
+%         \end{equation}
 
-        The current flowing into the capacitors at any time can be described by:
+%         The current flowing into the capacitors at any time can be described by:
 
-        \begin{equation}
-        i(t) = \frac{V_s - V_c(t)}{R}
-        \label{eq:current_cap}
-        \end{equation}
+%         \begin{equation}
+%         i(t) = \frac{V_s - V_c(t)}{R}
+%         \label{eq:current_cap}
+%         \end{equation}
 
-        From this, the worst-case inrush current occurs at $t = 0$, when $V_c = 0$:
+%         From this, the worst-case inrush current occurs at $t = 0$, when $V_c = 0$:
 
-        \begin{equation}
-        i(0) = \frac{50.4}{0.046} = 1097~A
-        \end{equation}
+%         \begin{equation}
+%         i(0) = \frac{50.4}{0.046} = 1097~A
+%         \end{equation}
 
-        Such current levels can severely degrade or destroy the contactors over time. Even if immediate failure does not occur, the repeated exposure significantly reduces their operational lifetime.
+%         Such current levels can severely degrade or destroy the contactors over time. Even if immediate failure does not occur, the repeated exposure significantly reduces their operational lifetime.
 
-        This issue becomes even more critical when multiple \acp{mppt} are connected in parallel. In the \ac{sg01} system, four \acp{mppt} are used, resulting in a total capacitance of 2000~$\mu$F and a reduced equivalent resistance of approximately 16~m$\Omega$. In this case, the inrush current increases to approximately 3150~A, further emphasizing the necessity of a precharge strategy.
+%         This issue becomes even more critical when multiple \acp{mppt} are connected in parallel. In the \ac{sg01} system, four \acp{mppt} are used, resulting in a total capacitance of 2000~$\mu$F and a reduced equivalent resistance of approximately 16~m$\Omega$. In this case, the inrush current increases to approximately 3150~A, further emphasizing the necessity of a precharge strategy.
 
-    \subsection{Solution}
+%     \subsection{Solution}
 
-        A common approach to mitigate inrush current in capacitive loads is to introduce a controlled precharge phase, in which the load is temporarily connected to the power source through a series resistance. This resistance limits the initial charging current, allowing the capacitors to charge gradually. Once the voltage across the load reaches a predefined threshold, the resistor is bypassed and the system transitions to normal operation, eliminating the associated power losses.
+%         A common approach to mitigate inrush current in capacitive loads is to introduce a controlled precharge phase, in which the load is temporarily connected to the power source through a series resistance. This resistance limits the initial charging current, allowing the capacitors to charge gradually. Once the voltage across the load reaches a predefined threshold, the resistor is bypassed and the system transitions to normal operation, eliminating the associated power losses.
 
-        Figure~\ref{fig:precharge} illustrates the fundamental concept of the proposed precharge circuit. In this topology, K3 is used to connect the load through a precharge resistor, while K2 is responsible for bypassing the resistor after the precharge phase is completed. The optional contactor K1 may be used to provide galvanic isolation between the battery and the load when required.
+%         Figure~\ref{fig:precharge} illustrates the fundamental concept of the proposed precharge circuit. In this topology, K3 is used to connect the load through a precharge resistor, while K2 is responsible for bypassing the resistor after the precharge phase is completed. The optional contactor K1 may be used to provide galvanic isolation between the battery and the load when required.
 
-        \begin{figure}[!ht]
-            \centering
-            \includegraphics[width=0.7\textwidth]{Images/Implementation/precharge_basics.png}
-            \caption{Typical precharge circuit \cite{munari2020precharge}.}
-            \label{fig:precharge}
-        \end{figure}
+%         \begin{figure}[!ht]
+%             \centering
+%             \includegraphics[width=0.7\textwidth]{Images/Implementation/precharge_basics.png}
+%             \caption{Typical precharge circuit \cite{munari2020precharge}.}
+%             \label{fig:precharge}
+%         \end{figure}
 
-        This strategy ensures that the initial charging current is limited by design, significantly reducing electrical stress on the contactors and load, therefore improving system reliability. Once the precharge phase is completed, the resistor is removed from the current path, ensuring that no additional conduction losses are introduced during normal operation.
+%         This strategy ensures that the initial charging current is limited by design, significantly reducing electrical stress on the contactors and load, therefore improving system reliability. Once the precharge phase is completed, the resistor is removed from the current path, ensuring that no additional conduction losses are introduced during normal operation.
 
-    \subsection{Design}
+%     \subsection{Design}
 
-        The precharge process can be modelled as an RC charging circuit, where the load capacitance is gradually charged through a series resistance. The voltage across the capacitor during the precharge phase is given by:
+%         The precharge process can be modelled as an RC charging circuit, where the load capacitance is gradually charged through a series resistance. The voltage across the capacitor during the precharge phase is given by:
 
-        \begin{equation}
-        V_c(t) = V_s \left(1 - e^{-t/RC}\right)
-        \label{eq:vcap}
-        \end{equation}
+%         \begin{equation}
+%         V_c(t) = V_s \left(1 - e^{-t/RC}\right)
+%         \label{eq:vcap}
+%         \end{equation}
 
-        Combining Equation~\ref{eq:vcap} with Equation~\ref{eq:current_cap}, the instantaneous current during the precharge process can be expressed as:
+%         Combining Equation~\ref{eq:vcap} with Equation~\ref{eq:current_cap}, the instantaneous current during the precharge process can be expressed as:
 
-        \begin{equation}
-        i(t) = \frac{V_s e^{-t/RC}}{R}
-        \end{equation}
+%         \begin{equation}
+%         i(t) = \frac{V_s e^{-t/RC}}{R}
+%         \end{equation}
 
-        These expressions show that both the current and voltage evolution are governed by the time constant $\tau = RC$, which directly determines the precharge duration and the peak inrush current. After one time constant ($t = \tau$), the current decreases to approximately 36.7\% of its initial value, while the capacitor voltage reaches approximately 63.2\% of the final value, as illustrated in Figure~\ref{fig:precharge2}.
+%         These expressions show that both the current and voltage evolution are governed by the time constant $\tau = RC$, which directly determines the precharge duration and the peak inrush current. After one time constant ($t = \tau$), the current decreases to approximately 36.7\% of its initial value, while the capacitor voltage reaches approximately 63.2\% of the final value, as illustrated in Figure~\ref{fig:precharge2}.
 
-        \begin{figure}[!ht]
-            \centering
-            \includegraphics[width=0.5\textwidth]{Images/Implementation/precharge_curve.png}
-            \caption{Precharge current and voltage evolution \cite{munari2020precharge}.}
-            \label{fig:precharge2}
-        \end{figure}
+%         \begin{figure}[!ht]
+%             \centering
+%             \includegraphics[width=0.5\textwidth]{Images/Implementation/precharge_curve.png}
+%             \caption{Precharge current and voltage evolution \cite{munari2020precharge}.}
+%             \label{fig:precharge2}
+%         \end{figure}
 
-        The transient period is typically considered to span from $0\tau$ to $4\tau$, during which the capacitor reaches approximately 98.17\% of its final voltage. Beyond this point, the system enters the steady-state region, and at approximately $5\tau$, the capacitor is effectively fully charged (99.33\%), although the charging process is asymptotic and never reaches exactly 100\%.
+%         The transient period is typically considered to span from $0\tau$ to $4\tau$, during which the capacitor reaches approximately 98.17\% of its final voltage. Beyond this point, the system enters the steady-state region, and at approximately $5\tau$, the capacitor is effectively fully charged (99.33\%), although the charging process is asymptotic and never reaches exactly 100\%.
 
-        In practical implementations, the switching between precharge and normal operation is typically performed after approximately $4\tau$ to minimise stress on the contactors while ensuring a sufficiently high load voltage.
+%         In practical implementations, the switching between precharge and normal operation is typically performed after approximately $4\tau$ to minimise stress on the contactors while ensuring a sufficiently high load voltage.
 
-        Based on this criterion, the resulting inrush currents can be estimated as:
+%         Based on this criterion, the resulting inrush currents can be estimated as:
 
-        \begin{equation}
-        I_{inrush}(1\times MPPT) = \frac{50.4 - 50.4 \cdot 0.9817}{0.046} = 20.05~A
-        \end{equation}
+%         \begin{equation}
+%         I_{inrush}(1\times MPPT) = \frac{50.4 - 50.4 \cdot 0.9817}{0.046} = 20.05~A
+%         \end{equation}
 
-        \begin{equation}
-        I_{inrush}(4\times MPPTs) = \frac{50.4 - 50.4 \cdot 0.9817}{0.016} = 57.65~A
-        \end{equation}
+%         \begin{equation}
+%         I_{inrush}(4\times MPPTs) = \frac{50.4 - 50.4 \cdot 0.9817}{0.016} = 57.65~A
+%         \end{equation}
 
-        To achieve the desired precharge threshold, a differential comparator circuit was implemented using two voltage dividers as inputs. These dividers scale both the battery-side and load-side voltages to a range compatible with the comparator while simultaneously defining the switching threshold corresponding to the target precharge percentage. The implemented circuit is shown in Figure~\ref{fig:precharge_comp}. The precharge threshold can be adjusted by modifying the value of resistor R2.
+%         To achieve the desired precharge threshold, a differential comparator circuit was implemented using two voltage dividers as inputs. These dividers scale both the battery-side and load-side voltages to a range compatible with the comparator while simultaneously defining the switching threshold corresponding to the target precharge percentage. The implemented circuit is shown in Figure~\ref{fig:precharge_comp}. The precharge threshold can be adjusted by modifying the value of resistor R2.
 
-        \begin{figure}[!ht]
-            \centering
-            \includegraphics[width=0.5\textwidth]{Images/Implementation/precharge_comp.png}
-            \caption{Precharge comparator.}
-            \label{fig:precharge_comp}
-        \end{figure}
+%         \begin{figure}[!ht]
+%             \centering
+%             \includegraphics[width=0.5\textwidth]{Images/Implementation/precharge_comp.png}
+%             \caption{Precharge comparator.}
+%             \label{fig:precharge_comp}
+%         \end{figure}
 
-        The remaining circuitry, presented in Appendix~\textcolor{red}{X}, consists of an optocoupler, relays, and the associated control logic implementing the precharge state machine. The system operates through three distinct states:
+%         The remaining circuitry, presented in Appendix~\textcolor{red}{X}, consists of an optocoupler, relays, and the associated control logic implementing the precharge state machine. The system operates through three distinct states:
 
-        \begin{enumerate}
-        \item \textbf{System Off:} When either the Battery Management System (BMS) enable signal or the kill switch (KS) is inactive (in the case where the motor controller is the load), all relays remain de-energised, fully isolating the battery from the load.
+%         \begin{enumerate}
+%         \item \textbf{System Off:} When either the Battery Management System (BMS) enable signal or the kill switch (KS) is inactive (in the case where the motor controller is the load), all relays remain de-energised, fully isolating the battery from the load.
 
-        \item \textbf{Precharge State:} When both the BMS enable signal and the kill switch are active, the precharge relay (K3) is energised while the main relay remains open. In this state, the load capacitors are charged through the precharge resistor, limiting the inrush current.
+%         \item \textbf{Precharge State:} When both the BMS enable signal and the kill switch are active, the precharge relay (K3) is energised while the main relay remains open. In this state, the load capacitors are charged through the precharge resistor, limiting the inrush current.
 
-        \item \textbf{Normal Operation:} The comparator continuously monitors the voltage difference between the battery side and the load side. Once the load-side voltage reaches approximately 98\% of the battery voltage, the comparator switches state, de-energising the precharge relay (K3) and closing the main relay. The precharge resistor is thereby bypassed, and the system operates under full load voltage conditions.
-        \end{enumerate}
+%         \item \textbf{Normal Operation:} The comparator continuously monitors the voltage difference between the battery side and the load side. Once the load-side voltage reaches approximately 98\% of the battery voltage, the comparator switches state, de-energising the precharge relay (K3) and closing the main relay. The precharge resistor is thereby bypassed, and the system operates under full load voltage conditions.
+%         \end{enumerate}
 
-        This sequence ensures a controlled energisation of the capacitive load, significantly reducing inrush current and improving the reliability and lifetime of the switching components.
+%         This sequence ensures a controlled energisation of the capacitive load, significantly reducing inrush current and improving the reliability and lifetime of the switching components.
 
-        The precharge duration is primarily determined by the value of the precharge resistor. A higher resistance results in a longer precharge time but lower inrush current, while a lower resistance reduces precharge time at the expense of increased power dissipation. In this design, a $1~k\Omega$ resistor was selected as a compromise between precharge time and power losses, resulting in a precharge duration of approximately 2 seconds, with an average power dissipation of 0.317~W and a peak power of 2.540~W.
+%         The precharge duration is primarily determined by the value of the precharge resistor. A higher resistance results in a longer precharge time but lower inrush current, while a lower resistance reduces precharge time at the expense of increased power dissipation. In this design, a $1~k\Omega$ resistor was selected as a compromise between precharge time and power losses, resulting in a precharge duration of approximately 2 seconds, with an average power dissipation of 0.317~W and a peak power of 2.540~W.
         
  
-\section{PCB design}
-    \subsection{MPPT V1}
-    \label{subsec:PCB_design_MPPT}
-        \textcolor{red}{High level explanation of the components and interconections}
+% \section{PCB design}
+%     \subsection{MPPT V1}
+%     \label{subsec:PCB_design_MPPT}
+%         \textcolor{red}{High level explanation of the components and interconections}
 
-        \textcolor{red}{software used, falar sobre o design de 4 layers, pontos de debug, coisas adicionais não faladas anteriormente (pq de cada conector, porta fusiveis, serial to UART, LEDs de debug), posicionamento, segurança adicional de temperatura, dcdcs de power, can, I2C }
+%         \textcolor{red}{software used, falar sobre o design de 4 layers, pontos de debug, coisas adicionais não faladas anteriormente (pq de cada conector, porta fusiveis, serial to UART, LEDs de debug), posicionamento, segurança adicional de temperatura, dcdcs de power, can, I2C }
 
-        \textcolor{red}{Image of V1 and V1.1.}
+%         \textcolor{red}{Image of V1 and V1.1.}
     
-    \subsection{MPPT V1.1}
-        \textcolor{red}{Improvments}
+%     \subsection{MPPT V1.1}
+%         \textcolor{red}{Improvments}
 
 
         
-    \subsection{Pre charge}
-        The Pre charge \ac{pcb} was designed with the intention of being reusable across other \ac{pcb} systems. For this reason, particular attention was given to achieving a compact and versatile layout. The design uses a two-layer stack-up, as the circuit is relatively simple, which reduces manufacturing complexity and overall cost while still meeting the electrical requirements. The \ac{pcb} is mechanically mounted directly onto the main relay contactors, which simplifies assembly and reduces wiring complexity, Figure~\ref{fig:3D_precharge}.
+%     \subsection{Pre charge}
+%         The Pre charge \ac{pcb} was designed with the intention of being reusable across other \ac{pcb} systems. For this reason, particular attention was given to achieving a compact and versatile layout. The design uses a two-layer stack-up, as the circuit is relatively simple, which reduces manufacturing complexity and overall cost while still meeting the electrical requirements. The \ac{pcb} is mechanically mounted directly onto the main relay contactors, which simplifies assembly and reduces wiring complexity, Figure~\ref{fig:3D_precharge}.
 
-        \begin{figure}[!ht]
-            \centering
-            \includegraphics[width=0.5\textwidth]{Images/Implementation/precharge_3D.png}
-            \caption{Precharge 3D design.}
-            \label{fig:3D_precharge}
-        \end{figure}
+%         \begin{figure}[!ht]
+%             \centering
+%             \includegraphics[width=0.5\textwidth]{Images/Implementation/precharge_3D.png}
+%             \caption{Precharge 3D design.}
+%             \label{fig:3D_precharge}
+%         \end{figure}
 
-        In addition, the pre charge resistor was intentionally placed outside the \ac{pcb}, mounted to a costume 3D holder. This design choice facilitates easy replacement or adjustment of the resistor value while also contributing to a more compact board footprint. The resistor is electrically connected to the \ac{pcb} by soldering wires directly to dedicated copper pads, ensuring a simple and reliable interface between the external component and the board.
+%         In addition, the pre charge resistor was intentionally placed outside the \ac{pcb}, mounted to a costume 3D holder. This design choice facilitates easy replacement or adjustment of the resistor value while also contributing to a more compact board footprint. The resistor is electrically connected to the \ac{pcb} by soldering wires directly to dedicated copper pads, ensuring a simple and reliable interface between the external component and the board.
 
         
