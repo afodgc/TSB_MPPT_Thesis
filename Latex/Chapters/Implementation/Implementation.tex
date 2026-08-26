@@ -330,9 +330,14 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
             \label{eq: dead time}
         \end{equation}
         
-        For this project it was tested several values using an oscilloscope. The smallest the value that ensures that both signals are never high at the same time is 2, however 3 was used to add margin. \textcolor{red}{Poderei fazer o teste de reduzir o valor e ver no que dá. Em principio o mosfet consegue se proteger contra á enventualidade de dar shoot-through}. The measured dead time was \textcolor{red}{Valor}, and the rising and falling time were \textcolor{red}{Valor} and \textcolor{red}{Valor} respectively. The measured values were used to tune simulations.
+        For this project it was tested several values using an oscilloscope. The smallest the value that ensures that both signals are never high at the same time is 2, however 3 was used to add margin. \textcolor{red}{Poderei fazer o teste de reduzir o valor e ver no que dá. Em principio o mosfet consegue se proteger contra á enventualidade de dar shoot-through}. The measured dead time was 32ns, and the rising and falling time were 19ns and 22ns respectively. The measured values were used to tune simulations.
 
-        \textcolor{red}{Meto uma imagem do osciloscopio?}
+        \begin{figure}[!ht]
+            \centering
+            \includegraphics[width=0.6\textwidth]{Images/Implementation/dead3_zoom.pdf}
+            \caption{Dead time measurement with oscilloscope (value=3).}
+            \label{fig:dead time}
+        \end{figure}
 
         With 100~KHz PWM and 80~MHz internal clock, the dutty cycle resolution is 0.125~\%.
         
@@ -397,7 +402,7 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
     \subsection{Firmware Overview}
         The firmware is a flag based scheduler with two main task, the \ac{mppt} and ADC task. 
 
-        The ADC task is responsible to convert the analog readings into another units such as current, voltage and temperature. If any of the values exceed the limits configured by the user, a fault is detected and blocks the \ac{mppt} to run during 1 second. After this time the ADC task runs again and checks if the faults was removed. \textcolor{red}{possivelmente pode mode ligeiramente}
+        The ADC task is responsible to convert the analog readings into another units such as current, voltage and temperature. If any of the values exceed the limits configured by the user, a fault is detected and blocks the \ac{mppt} to run during 1 second. After this time the ADC task runs again and checks if the faults was removed. 
 
         \begin{figure}[!ht]
             \centering
