@@ -36,8 +36,8 @@
             
             \begin{figure}[!ht]
                 \centering
-                \includegraphics[width=0.9\textwidth]{Images/Implementation/cc_cv_points.png}
-                \caption{CC-CV charge characteristics and analysis point selection. \textcolor{red}{Circulo laranja errado}}
+                \includegraphics[width=0.9\textwidth]{Images/Implementation/cc_cv_points.pdf}
+                \caption{CC-CV charge characteristics and analysis point selection.}
                 \label{fig:cc-cv points}
             \end{figure}
 
@@ -161,7 +161,7 @@
 
             Note: in Section~\ref{subsec:PCB_design_MPPT} it is mention the addition of two shotcky diodes that were not considered in simulations. These diodes slightly increase the efficiency of the converter (+0.03\%) due to their lower forward voltage.
 
-            \textcolor{red}{Add wave forms??!?!?!}
+            \textcolor{blue}{Add wave forms??!?!?!}
 
     \section{Power Loss Estimation}
         \label{subsubsec:loss_estimation}
@@ -215,7 +215,7 @@
         P_C=I_{C_{RMS}}^{2}ESR,
         \end{equation}
 
-        Although magnetic core losses of the inductor could be estimated too, the selected manufacturer does not provide the required magnetic material parameters. Consequently, only the winding copper losses are considered, leading to a slight underestimation of the total converter losses. \textcolor{green}{In REDEXPERT i found a graph telling me that the impedance at 100kHz is 41.1 Ohm. Can i use this?}
+        Although magnetic core losses of the inductor could be estimated too, the selected manufacturer does not provide the required magnetic material parameters. Consequently, only the winding copper losses are considered, leading to a slight underestimation of the total converter losses. \textcolor{blue}{In REDEXPERT i found a graph telling me that the impedance at 100kHz is 41.1 Ohm. Can i use this?}
 
         Finally, the gate driver losses are estimated using Equation~\ref{eq:gate_drive} which takes into account the energy needed to drive the transistors. Although the EPC23102 has an internal gate driver, this is still relevant.
 

@@ -89,6 +89,7 @@ Although the current photovoltaic installation already provides a significant co
 
 
 \section{Battery}
+\label{sec:battery}
 In the past years we have been producing our batteries achieving a lower cost and highly customizable solution. In \ac{sg01} we chose lithium-ion cells due to its ease of use quick assembly. The assembly is done by the members. It begins by placing the cells on plastic holder to increase structural strength, then using a spot welder, the series and parallel connections are made with nickel tabs (Figure~\ref{fig:SG01_battery}). In parallel, some thermistors are place in different locations of the battery to ensuring a precise a robust temperature reading. In the end, the battery is placed in a case with a \ac{bms} and all the necessary connections.
 
 \begin{figure} [!ht]
@@ -147,15 +148,44 @@ By reducing the battery capacity and increase the solar panel area, the battery 
 
 \section{Environmental changes}
 
-In engineer, the word "fast", used in the title of this thesis, needs to be associated with a unit. It is only classified as fast compared to a slower unit. In this section, a brief study was made about waves frequency, boat oscillations and the effect on \ac{mppt} algorithm speed.
+In engineer, the word "fast", used in the title of this thesis, needs to be associated with a unit. It is only classified as fast compared to a slower unit. In this section, a brief study was made about boat oscillations and the effect on \ac{mppt} algorithm speed.
 
-Tests in Cascais at the marina: I collected 3 datasets—1 while moored at the marina, 2 while underway, and 3 while unmoored at the marina.
+When analyzing \ac{mpp} variations, there two main factors: temperature and irradiance. The temperature usually varies slowly, however it can have fast cooling when water covers the solar panels, but this is unusual, and therefore it will not be considered. As for the irradiation it varies periodically with the vessel oscillation, mainly roll and pitch. 
 
-I think the wave frequency wasn’t the dominant factor because the amplitude is very low, so the boat was oscillating at its natural frequency. I need to calculate the natural frequency to confirm this
+The frequency of the oscillations of a vessel can be defined by the frequency of the waves or the natural frequency of the vessel. If the waves' frequency are higher than the natural frequency of the vessel, the vessel will oscillate at his natural frequency. In the reverse case the where the waves' frequency are lower than the natural frequency, the vessel will oscillate at the waves' frequency. 
 
-It’s not the only visible frequency. The rest of the spectrum could be due to: tiny wavelets and wake reflections, mooring line forces, wind gusts, and water motion reflected from seawalls and neighboring boats.
+The natural frequency of a vessel can be calculated using the natural period Formula~\ref{eq:fundamental period} where m is the mass and the k is the ??.
 
-If I’m wrong, the data might be correct and simply show a frequency of 0.5 Hz (higher than the expected 0.05 to 0.3) because we’re very close to the coast
+\begin{equation}
+    T = 2\pi \sqrt{\frac{m}{k}}
+    \label{eq:fundamental period}
+\end{equation}
+
+When applied to a vessel for roll and pitch oscillations, the mass is the inertial mass (I) and the ?? (k) is the restoring stiffness given by the mass (m), gravity (g) and metacentric height ($GM_L$ for pitch and $GM_t$ for roll). Since the inertia mass was not given, the equation was further simplified using the radius of gyration in pitch or roll ($k_{yy}$ or $k_{xx}$) which is equivalent to Formula~\ref{eq:radius of gyration}. The final Formula~\ref{eq: natural period} is written for pitch natural period.
+
+\begin{equation}
+    k = \sqrt{\frac{I}{m}}
+    \label{eq:radius of gyration}
+\end{equation}
+
+\begin{equation}
+    T = 2\pi \sqrt{\frac{I}{mgGM}} \leftrightarrow T = 2\pi \sqrt{\frac{k_{yy}^2}{gGM_L}}
+    \label{eq: natural period}
+\end{equation}
+
+This formula is used with results given by the hydrostatic simulations which were provided by \ac{tsb}, where $GM_L$ is 21.515~unit and $GM_t$ is 1.867~unit. Also, the radius of gyration is calculated based on the langitude (L=8~m) and width/beam (B=2.5~m). Based on the ITTC recommendation \cite{}, when the radius of gyration for pitch and roll is unknown a value of 0.25L and 0.35B, respectively, should be used.
+
+Based on the given values, the pitch and roll natural period is 0.8654 and 1.2853 respectively, which is equivalent to 1.1555~Hz and 0.7780~Hz.
+
+
+
+% Tests in Cascais at the marina: I collected 3 datasets—1 while moored at the marina, 2 while underway, and 3 while unmoored at the marina.
+
+% I think the wave frequency wasn’t the dominant factor because the amplitude is very low, so the boat was oscillating at its natural frequency. I need to calculate the natural frequency to confirm this
+
+% It’s not the only visible frequency. The rest of the spectrum could be due to: tiny wavelets and wake reflections, mooring line forces, wind gusts, and water motion reflected from seawalls and neighboring boats.
+
+% If I’m wrong, the data might be correct and simply show a frequency of 0.5 Hz (higher than the expected 0.05 to 0.3) because we’re very close to the coast
 
 \textcolor{red}{rewrite when new results are available}
 % https://geo.libretexts.org/Bookshelves/Oceanography/Introduction_to_Physical_Oceanography_(Stewart)/16%3A_Ocean_Waves/16.4%3A_Ocean-Wave_Spectra

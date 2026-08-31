@@ -330,7 +330,7 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
             \label{eq: dead time}
         \end{equation}
         
-        For this project it was tested several values using an oscilloscope. The smallest the value that ensures that both signals are never high at the same time is 2, however 3 was used to add margin. \textcolor{red}{Poderei fazer o teste de reduzir o valor e ver no que dá. Em principio o mosfet consegue se proteger contra á enventualidade de dar shoot-through}. The measured dead time was 32ns, and the rising and falling time were 19ns and 22ns respectively. The measured values were used to tune simulations.
+        For this project it was tested several values using an oscilloscope. The smallest the value that ensures that both signals are never high at the same time is 2, however 3 was used to add margin. The measured dead time was 32ns, and the rising and falling time were 19ns and 22ns respectively (Figure~\ref{eq: dead time}). 
 
         \begin{figure}[!ht]
             \centering
@@ -338,6 +338,8 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
             \caption{Dead time measurement with oscilloscope (value=3).}
             \label{fig:dead time}
         \end{figure}
+
+        In simulations the dead time values of 2 and 3 were compared and the difference in efficiency is only 0.01\% and therefore the margin is justified. 
 
         With 100~KHz PWM and 80~MHz internal clock, the dutty cycle resolution is 0.125~\%.
         
@@ -544,7 +546,7 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
         \begin{figure}[!ht]
             \centering
             \includegraphics[width=0.95\textwidth]{Images/Implementation/GUI_MPPT_main.png}
-            \caption{MPPT tab.\textcolor{red}{Update it with a print runing MPPT}}
+            \caption{MPPT tab.}
             \label{fig:MPPT monitor GUI}
         \end{figure}
 

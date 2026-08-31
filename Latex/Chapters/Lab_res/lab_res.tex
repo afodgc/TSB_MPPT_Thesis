@@ -168,20 +168,40 @@
             \end{figure}         
 
 \section{MPPT}
-        \textcolor{red}{Describe the setup}
+    In this section the charging sate machine is tested as well as the \ac{mppt} algorithm to ensure the functionality of the prototype.
 
-        \textcolor{red}{Utilização da fonte da delta o que faz com que os resultados não dependam de fatores externos. É necessario configura la com painel solar via lan e atravez de um script que envia mensagens TCP altera a irradiancia do "painel"}
+    In the following tests a laboratory setup was used, where a power supply (the SM 1500-CP-30) was used with an internal function which can simulate the behavior of a solar panel. This function was configured as a 35 cells solar panel at 25ºC and variable irradiance controlled by sending TCP messages. 
 
-        \textcolor{red}{a bateria pode ou não estar com problemas}
+    The load was battery from \ac{sr03}, which is described in section~\ref{sec:battery}.
+
+    This setup ensures a controlled environment where the solar panel works at a specified temperature and irradiance parameters increasing the scientific value. Since the environment conditions are set by the user, this setup can be easily replicated for future comparisons.
+
 
     \subsection{Tracking speed}
-        \textcolor{red}{Give steps of irradiation and measure the tracking speed}
+        For this test in specific, a python script was written which sends TCP messages (using LAN) to the power supply to change the irradiance periodically. First, the script sets the irradiance to 200~$\mathrm{W/m^2}$. Subsequently, the irradiance is increased by 200~$\mathrm{W/m^2}$ with 2 seconds intervals until a final value of 1000~$\mathrm{W/m^2}$ is reached.
+
+        It is worth noting that the timing is not perfect and therefore the steps do not have perfect 2 seconds intervals. This is caused by a delay between the instant of which the power supply receives the message from the computer and actually changing the parameters.
+
+        The result represented in Figure~\ref{fig:steps test} show a quick response from the Perturb and Observe Algorithm. The algorithm is working at 100~Hz and with steps of 0.1\% of duty cycle. 
+
+        \begin{figure}[!ht] 
+            \centering 
+            \includegraphics[width=0.6\linewidth]{Images/LAB_res/Steps test.pdf} 
+            \caption{\ac{pv} Power over time with steps of 200~$\mathrm{W/m^2}$, from 200 to 1000~$\mathrm{W/m^2}$.} 
+            \label{fig:steps test}
+        \end{figure} 
+
+        The result shows some noise, however they were acquired by the sensors present on the prototype and therefore the noise is from the sensors and not from the algorithm.
+
+        Overall, the algorithm showed a satisfactory fast response. In almost every scenario the algorithm act immediately except in step from 600~$\mathrm{W/m^2}$ to 800~$\mathrm{W/m^2}$, which is not a consistent and therefore there is no obvious explanation. \textcolor{red}{Confirm this statement.}
 
     \subsection{State machine}
-        \textcolor{red}{Show the MPPT in difrent states. No load->Sweep->CC->CV->no load->CV->CC}
+        \textcolor{red}{Show the MPPT in difrent states. No load-Sweep-CC-CV-no load-CV-CC}
     
     \subsection{Battery charging}
         \textcolor{red}{Do a full charge, validate CC-CV, battery temperature, MPPT temperature and robustness.}
 
-        \textcolor{blue}{Como é que eu vou fazer isto!?! Vai demorar imenso tempo. Talvez precise de uma bat menor}
+        \textcolor{blue}{Como é que eu vou fazer isto!?! Vai demorar imenso tempo. Talvez faça com uma bateria da NAVICTUS ou do SP01. Tem menos capacidade e por isso demoram menos tempo a carregar.}
     
+\section{Field test}
+        \textcolor{red}{Ou teste em terra com um painel solar e uma bateria. Ou um teste em em água. Ou os dois.}
