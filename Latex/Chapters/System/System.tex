@@ -148,20 +148,20 @@ By reducing the battery capacity and increase the solar panel area, the battery 
 
 \section{Environmental changes}
 
-In engineer, the word "fast", used in the title of this thesis, needs to be associated with a unit. It is only classified as fast compared to a slower unit. In this section, a brief study was made about boat oscillations and the effect on \ac{mppt} algorithm speed.
+In engineering, the term ``fast'', used in the title of this thesis, needs to be associated with a time scale. A process can only be considered fast when compared with another process with a longer characteristic time. Therefore, this section investigates the characteristic time scales associated with variations in the \ac{mpp} caused by environmental changes, with particular emphasis on the oscillatory motion of the vessel and its implications for the required speed of the MPPT algorithm.
 
-When analyzing \ac{mpp} variations, there two main factors: temperature and irradiance. The temperature usually varies slowly, however it can have fast cooling when water covers the solar panels, but this is unusual, and therefore it will not be considered. As for the irradiation it varies periodically with the vessel oscillation, mainly roll and pitch. 
+When analyzing \ac{mpp} variations, there two main factors: temperature and irradiance. Temperature variations are generally slower than variations in irradiance. Although rapid temperature changes can occur, for example when water comes into contact with the photovoltaic panels, such events are considered unusual during normal operation and are therefore not considered in this analysis. Irradiation on the other hand, can vary more rapidly as the angle of the solar panels changed with the vessel angle, particularly roll and pitch. 
 
-The frequency of the oscillations of a vessel can be defined by the frequency of the waves or the natural frequency of the vessel. If the waves' frequency are higher than the natural frequency of the vessel, the vessel will oscillate at his natural frequency. In the reverse case the where the waves' frequency are lower than the natural frequency, the vessel will oscillate at the waves' frequency. 
+The motion of a vessel subjected to waves can be described as a forced dynamic system. The vessel has characteristic natural frequencies associated with its different modes of motion, including roll, pitch and heave. The response to wave excitation depends on the relationship between the excitation frequency and the corresponding natural frequency of the vessel. In particular, when the excitation frequency approaches a natural frequency, the response amplitude can increase significantly due to resonance. The vessel does not, however, necessarily oscillate at its natural frequency when subjected to excitation at another frequency; the steady-state response occurs primarily at the excitation frequency, while the natural frequency determines the dynamic response and its amplitude.
 
-The natural frequency of a vessel can be calculated using the natural period Formula~\ref{eq:fundamental period} where m is the mass and the k is the ??.
+Considering a simplified undamped free oscillation system, the natural frequency of a vessel can be calculated using the natural period Formula~\ref{eq:fundamental period} where $I$ is the mass moment of inertia and $C$ is the restoring stiffness.
 
 \begin{equation}
-    T = 2\pi \sqrt{\frac{m}{k}}
+    T = 2\pi \sqrt{\frac{I}{C}}
     \label{eq:fundamental period}
 \end{equation}
 
-When applied to a vessel for roll and pitch oscillations, the mass is the inertial mass (I) and the ?? (k) is the restoring stiffness given by the mass (m), gravity (g) and metacentric height ($GM_L$ for pitch and $GM_t$ for roll). Since the inertia mass was not given, the equation was further simplified using the radius of gyration in pitch or roll ($k_{yy}$ or $k_{xx}$) which is equivalent to Formula~\ref{eq:radius of gyration}. The final Formula~\ref{eq: natural period} is written for pitch natural period.
+When applied to pitch and roll, the restoring stiffness is given by the mass (m), gravity (g) and metacentric height ($GM_L$ for pitch and $GM_t$ for roll). Since the inertia mass was not given, the equation was further simplified using the radius of gyration in pitch or roll ($k_{yy}$ or $k_{xx}$) which is equivalent to Formula~\ref{eq:radius of gyration}.
 
 \begin{equation}
     k = \sqrt{\frac{I}{m}}
@@ -173,21 +173,34 @@ When applied to a vessel for roll and pitch oscillations, the mass is the inerti
     \label{eq: natural period}
 \end{equation}
 
-This formula is used with results given by the hydrostatic simulations which were provided by \ac{tsb}, where $GM_L$ is 21.515~unit and $GM_t$ is 1.867~unit. Also, the radius of gyration is calculated based on the langitude (L=8~m) and width/beam (B=2.5~m). Based on the ITTC recommendation \cite{}, when the radius of gyration for pitch and roll is unknown a value of 0.25L and 0.35B, respectively, should be used.
+For pitch, $k=k_{yy}$ and $GM=GM_L$, whereas for roll, $k=k_{xx}$ and $GM=GM_T$.
 
-Based on the given values, the pitch and roll natural period is 0.8654 and 1.2853 respectively, which is equivalent to 1.1555~Hz and 0.7780~Hz.
+This formula is used with results given by the hydrostatic simulations which were provided by \ac{tsb}, where $GM_L$ is 21.515~unit and $GM_t$ is 1.867~unit. Also, the radius of gyration is calculated based on the longitude (L=8~m) and width/beam (B=2.5~m). Based on the International Towing Tank Conference (ITTC) recommendation \cite{ittc_seakeeping_2024}, when the radius of gyration for pitch and roll is unknown a value of 0.25L and 0.35B to 0.40B, respectively, should be used.
 
+Based on the given values, the pitch and roll natural period is 0.8654 and 1.2853 respectively, which is equivalent to 1.1555~Hz and 0.7780~Hz. These values represent estimates of the natural frequencies of the vessel.
 
+As for the frequency of the waves it has an extensive range and depends on several factors. Studies on this subject show higher energy for waves with 1 to 30 seconds periods which is equivalent to 0.033~Hz to 1~Hz, Figure~\ref{fig:wave by period}.
 
-% Tests in Cascais at the marina: I collected 3 datasets—1 while moored at the marina, 2 while underway, and 3 while unmoored at the marina.
+\begin{figure} [!ht]
+    \centering
+    \includegraphics[width=0.90 \textwidth]{Images/System/wave_by_period.png}
+    \qquad
+    \caption{Classification of waves by period and respective energy \cite{newfrontiers2018}.}
+    \label{fig:wave by period}
+\end{figure}
 
-% I think the wave frequency wasn’t the dominant factor because the amplitude is very low, so the boat was oscillating at its natural frequency. I need to calculate the natural frequency to confirm this
+The environmental excitation experienced by \ac{sg01} was further investigated using experimental data collected while the vessel was adrift at sea. Ten datasets containing the roll and pitch angles were collected and combined to obtain the frequency-domain response shown in Figure~\ref{fig:sg01 wave}. The results show significant spectral components at approximately 0.05~Hz and 0.5~Hz. the lower frequency can be explained by the fast winds, and it is consistent with the local forecast wave period. The faster frequency can be caused by the natural frequency of vessel which in real conditions can be lower from what was calculated. 
 
-% It’s not the only visible frequency. The rest of the spectrum could be due to: tiny wavelets and wake reflections, mooring line forces, wind gusts, and water motion reflected from seawalls and neighboring boats.
+\begin{figure} [!ht]
+    \centering
+    \includegraphics[width=0.90 \textwidth]{Images/System/sg01_osc.pdf}
+    \qquad
+    \caption{Measured oscillations from sg01.}
+    \label{fig:sg01 wave}
+\end{figure}
 
-% If I’m wrong, the data might be correct and simply show a frequency of 0.5 Hz (higher than the expected 0.05 to 0.3) because we’re very close to the coast
+Both theoretical and experimental results predict or measure frequency up to 1~Hz. In the context of the \ac{mppt} algorithm, the goal will be a minimum speed of 2~Hz or 0.5 seconds of tracking time to give some margin.
 
-\textcolor{red}{rewrite when new results are available}
 % https://geo.libretexts.org/Bookshelves/Oceanography/Introduction_to_Physical_Oceanography_(Stewart)/16%3A_Ocean_Waves/16.4%3A_Ocean-Wave_Spectra
 
 % See Swell Period and hight here https://bigsalty.com/en/weather/forecast/8350/
