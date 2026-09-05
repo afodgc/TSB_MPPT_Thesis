@@ -374,20 +374,22 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
     Both circuits are represented in Appendix~\ref{}. \textcolor{red}{place the apendix reference }
 
 \subsection{Temperature and Irradiance sensors}
-    For security reasons it is important to monitor the temperature of the \ac{pcb}. Also, the temperature and irradiance of the \ac{pv} panel are important to monitor for performance analysis and defect detection. Also, this measurements can be used to improve the \ac{mppt} algorithm, since the maximum power point is dependent on temperature and irradiance.
+    For security reasons it is important to monitor the temperature of the \ac{pcb}. Also, the temperature and irradiance of the \ac{pv} panel are important to monitor for performance analysis and defect detection. These measurements can also be used to improve the \ac{mppt} algorithm, since the \ac{mpp} is dependent on temperature and irradiance.
 
-    For temperature sensisng there is a wide range of options, from simple thermistors to more complex digital temperature sensors. For this application a simple thermistor was used, since it is cheap and easy to implement. The thermistor is connected to a voltage divider and the voltage is read by the ADC. The thermistor used to measure ambient temperature and transistor temperature was the ERT-J1VS104FA, which has a resistance of 100k$\Omega$ at 25°C and a B value of 4330K. As for the thermistor used to measure the \ac{pv} panel temperature, it was the 104JT-025, which has a resistance of 100k$\Omega$ at 25°C and a B value of 4390K. 
+    For temperature sensing there is a wide range of options, from simple thermistors to more complex digital temperature sensors. For this application a simple thermistor was used, since it is cheap and easy to implement. The thermistor is connected to a voltage divider and the voltage is read by the ADC. The thermistor used to measure ambient temperature and transistor temperature was the ERT-J1VS104FA, which has a resistance of 100k$\Omega$ at 25~°C and a B value of 4330K. As for the thermistor used to measure the \ac{pv} panel temperature, it was the 104JT-025, which has a resistance of 100k$\Omega$ at 25~°C and a B value of 4390K. 
     The temperature can be calculated using the Steinhart-Hart equation \cite{arduinodiy2015ntc}.
 
     \begin{equation}
         \frac{1}{T} = A + B \cdot ln(R) + C \cdot ln(R)^3
     \end{equation}
 
-    This equation uses 3 parameters (A, B and C) that are usaly not provided in data sheet but can be calculated using 3 measurements of temperature and resistance. However, the most common approach is to use a simplified version of the equation, which uses only 2 parameters (B and R0). The temperature can be calculated using the following equation:
+    This equation uses 3 parameters (A, B and C) that are usually not provided in data sheet but can be calculated using 3 measurements of temperature and resistance. However, the most common approach is to use a simplified version of the equation, which uses only 2 parameters (B and R0). The temperature can be calculated using the following equation:
 
     \begin{equation}
         \frac{1}{T} = \frac{1}{T_0} + \frac{1}{B} \cdot ln(\frac{R}{R_0})
     \end{equation}
+
+    The thermistor that measures the transistor temperature is also used in an analog protection. This protection uses a comparator to disable the transistors after a temperature threshold that can be modified by changing on resistor in the comparator circuit. 
 
     As for the irradiance sensor, the TSL2591 was used, which is a digital light sensor with a wide dynamic range and high sensitivity. It can measure light intensity from 0.000118 lux to 88,000 lux, making it suitable for various lighting conditions. The sensor communicates with the \ac{mcu} via the I2C protocol, allowing for easy integration and data acquisition.
 

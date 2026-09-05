@@ -159,24 +159,23 @@ Following the design and simulation stages, a prototype was manufactured and ass
     \subsection{Temperature rise}
         The temperature of each element was measured before each test and after 10 min. All test show similar result, a temperature rise of up to 10ºC. The inductor is the main heat element, reaching 43ºC, the capacitors also reach around 40ºC hover they are placed side by side with the inductor which heats the capacitors. As expected, the transistors do not overheat. The maximum temperature measured was 39.5ºC. 
 
-        The results are close to what was expected. In Section~\ref{subsubsec:loss_estimation}, we concluded that the component with the highest losses is the inductor, followed by the capacitors and the transistors. In this section, we observe that the temperatures of these three components follow the same order. This makes sense, since the temperature of these components is related to their losses. However, the estimated losses for the inductors and capacitors are very similar, but the temperature of the inductor is higher. This can be explained by the fact that the inductor has a smaller surface area, and therefore it is more difficult to dissipate heat.
+        The results are close to what was expected. In Section~\ref{subsubsec:loss_estimation}, we concluded that the component with the highest losses is the inductor, followed by the capacitors and the transistors. In this section, 
+        it is expected that the temperature follows the same order since it is related to the losses. However, the measurements do not follow the expected results. This is explained by the fact that each of these components have different surface areas, and therefore there heat dissipation is not comparable. 
 
-        We were also able to obtain thermal images of the circuit (Figure~\ref{fig:thermal_front} and \ref{fig:thermal_back}), which show the areas with the highest temperatures. Unfortunately, the image is of poor quality and shows a discrepancy between the thermal image and the normal image. In any case, it appears that the inductor is the element that heats up the most, and you can also see clear heat radiation coming from it. It is also possible to see the area of the highest temperature over the capacitors and the area where the current sensors are located. On the back side, the only element heating is the transistors.
-
-            
+        We were also able to obtain thermal images of the circuit (Figure~\ref{fig:thermal_front} and \ref{fig:thermal_back}), which show the areas with the highest temperatures. Unfortunately, the image is of poor quality and shows a vertical shift between the thermal image and the normal image. Additionally, the device show some vertical lines that are a defect from the measuring device and not an actual reading. In any case, it appears that the inductor is the element that heats up the most, it is also seen a clear heat spread coming from it. The capacitors also show some heat dissipation but not from the same magnitude. On the back side, the only element heating is the transistors.
 
         \begin{figure}[!ht] 
             \centering 
             \begin{minipage}{0.49\textwidth}
                 \centering 
-                \includegraphics[width=0.9\linewidth]{Images/LAB_res/IMG00022.png} 
+                \includegraphics[width=0.9\linewidth]{Images/LAB_res/IMG00029.pdf} 
                 \caption{Front side thermal image.} 
                 \label{fig:thermal_front} 
             \end{minipage} 
             \hfill 
             \begin{minipage}{0.49\textwidth} 
                 \centering 
-                \includegraphics[width=0.9\linewidth]{Images/LAB_res/IMG00024.png} 
+                \includegraphics[width=0.9\linewidth]{Images/LAB_res/IMG00030.pdf} 
                 \caption{Back side Thermal image.} 
                 \label{fig:thermal_back} 
             \end{minipage} 
@@ -189,15 +188,23 @@ Following the design and simulation stages, a prototype was manufactured and ass
         \begin{figure}[!ht] 
             \centering 
             \includegraphics[width=0.6\linewidth]{Images/LAB_res/Temperatures vs time.pdf} 
-            \caption{Temperature evolution during 3 hours. \textcolor{red}{Preciso do DBC para adicionar o Tfets e o Tamb}} 
+            \caption{Temperature evolution during 3 hours.} 
             \label{fig:3h_temp_test}
         \end{figure} 
         
-        From Figure~\ref{fig:3h_temp_test}, it can be concluded that after 40~min at maximum power, all the temperatures stop rising. \textcolor{red}{acabar de concluir isto quando a figura estiver certa}
+        From Figure~\ref{fig:3h_temp_test}, it can be concluded that after 40~min at maximum power, all the temperatures stop rising. Some oscillations were measured during the experiment due to the fact that ambient temperature also oscillated. As seen earlier the inductor is the element which heats the most, followed by the transistor and capacitors. After 3 hours, none of the elements reached a concerning temperature.
 
-        With this test it is concluded that there is no need for cooling. At least in the same conditions of the test. If the device is place inside a box/compartment, the temperature must be monitored and if it rises to a concerning level, the user must add force ventilation. 
+        With this test it is concluded that there is no need for cooling. At least in the same conditions of the test. To confirm this statement, the board was placed inside a cardboard box since it is how \ac{tsb} usually places boards in a vessel. If the components inside the box need cooling, an Fan or a water cooling place is added.
 
-        \textcolor{red}{talvez repetir o teste com uma caixa de cartão a tampara o MPPT}
+        \begin{figure}[!ht] 
+            \centering 
+            \includegraphics[width=0.6\linewidth]{Images/LAB_res/Temperatures_vs_time_close box.pdf} 
+            \caption{Temperature evolution during 3 hours in a close box.} 
+            \label{fig:3h_temp_test}
+        \end{figure} 
+
+        In Figure~\ref{fig:3h_temp_test} is represented the described test. Since there is no air flow, the ambient temperature reading is more constant and therefore the others too. As in the previous test, after 60 minutes the temperatures remained approximately constant and the maximum temperature was 51.6ºC. Since none of the temperatures show concerning values, it is safe to conclude that no additional cooling is needed
+
 
 \section{MPPT}
     In this section the charging sate machine is tested as well as the \ac{mppt} algorithm to ensure the functionality of the prototype.
