@@ -9,3 +9,5 @@ outpcoupler
 LTspice
 overdimensionded
 datasheets
+schottky
+infrarot

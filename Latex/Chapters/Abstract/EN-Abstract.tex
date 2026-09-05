@@ -5,12 +5,15 @@
 % use \noindent in first paragraph
 
 
-\noindent Solar-powered vehicles rely on solar energy to charge their batteries and maximize their range, particularly solar-powered boats need an effective energy conversion in rapidly changing environmental conditions. In this context, the \ac{mppt} charger plays a critical role in energy conversion, by ensuring that the solar panels operate on their \ac{mpp} while charging a battery. This work focus on the study, design, simulation and test of a fast response \ac{mppt} charger for \ac{tsb}.
+\noindent Solar-powered vehicles rely on solar energy to charge their batteries and maximize their range, particularly solar-powered boats need an effective energy conversion in rapidly changing environmental conditions. In this context, the \ac{mppt} charger plays a critical role in energy conversion, by ensuring that the solar panels operate on their \ac{mpp} while charging a battery. This work focus on the study, design, simulation, development and test of a fast response \ac{mppt} charger for \ac{tsb}.
 
-This document contains the State-of-the-Art review covering photovoltaic principles, \ac{mppt} algorithms, \acs{dc}-\acs{dc} converter topologies, charging techniques, processing units, and commercial solutions. Special attention is given to the algorithms suitable for dynamic conditions, and \acs{dc}-\acs{dc} topologies. 
+This thesis present the design and implementation of a \ac{mppt} charger with fast response capable of being used in \ac{sg01}. The prototype was designed to charge a lithium-ion battery of 43.2~V nominal voltage, converting the energy provided by the solar panel with high efficiency. The proposed charger is based on a synchronous boost converter operating at 100 kHz. 
+% The power stage, sensing circuits, processing unit, and communication interfaces were designed according to the requirements of the application. 
+An STM32 \ac{mcu} was used to implement the control firmware, including the \ac{mppt} algorithm, battery charging state machine, protections, and CAN and serial communication.
 
-Based on the conduct study and the project requirements, a solution was proposed capable of effectively convert energy, operating the solar panels on their \ac{mpp}, and without compromising the product cost. Preliminary simulations were conduct to validate the software tools chosen and gain familiarity with the given tools. The ultimate objective of this project is to develop a reliable, efficient, and customizable \ac{mppt} solution that improves energy extraction, enhances system monitoring through CAN communication, and contributes to the overall performance and competitiveness of the \ac{tsb}.
+Different \ac{mppt} techniques and DC-DC converter topologies were analyzed to identify a suitable solution for the dynamic operating conditions of the vessel. Particular attention was given to the trade-off between tracking speed and accuracy, leading to the implementation of a \ac{peo} algorithm. The converter and \ac{pv} system were simulated in both LTspice and Matlab to validate the component selection and algorithm parameters. A custom \ac{pcb} was designed, manufactured and solder by hand. 
+% Experimental results were obtained to optimize and validate the functionality of the prototype.
 
-\textcolor{red}{Needs to be rewritten}
+The experimental results demonstrate success of the proposed architecture and show that the implemented \ac{mppt} algorithm can respond rapidly to changes in irradiance, with the measured tracking response being suitable for the environmental variations identified for \ac{sg01}. The devolved prototype also provides a practical method to configure the device using a computer application which can also be used for data analysis. The resulting system provides a dedicated, configurable, and low-cost \ac{mppt} charger for \ac{tsb}, while establishing a platform for further improvements in efficiency, tracking performance, and integration into future vessels.
 
-\vspace{3cm}
+\vspace{1cm}

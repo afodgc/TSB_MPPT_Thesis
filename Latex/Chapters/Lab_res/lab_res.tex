@@ -1,112 +1,165 @@
 \fancychapter{Laboratory results}
 \label{chap:lab_res}
 
-\textcolor{red}{intro}
+Following the design and simulation stages, a prototype was manufactured and assembled. However, practical implementations may differ from simulation results, as simulations generally rely on idealized component models and do not fully account for parasitic effects associated with the components and the \ac{pcb}. Therefore, laboratory testing was conducted to experimentally validate the design and verify that the prototype operates as expected.
+
+\section{Assembly and first iteration}
+
+    All boards developed in this project were manufactured by Eurocircuits and assembled by hand in order to reduce costs.
+
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=0.6\textwidth]{Images/LAB_res/PCBsV1.1_1.2.jpeg}
+        \caption{First and second iteration side by side. \textcolor{red}{place a better image}}
+        \label{fig:prototypes}
+    \end{figure}
+
+    The first prototype iteration presented several issues that were identified during the initial testing phase. For instance, an incorrect 3D model resulted in the main connector being positioned incorrectly (Figure~\ref{fig:prototypes}).
+    Additionally, the flash connector did not provide 5V which made test more difficult. The UART signals connected to the usb-c connector were swapped, and therefore the communication was only possible using a external USB to UART adapter. 
+
+    Although none of these issues were critical for the fundamental operation of the circuit, they made the testing phase more time-consuming and complex. Therefore, a second iteration was designed and manufactured with all the issues fixed. 
+
+    In the second iteration two schottky diodes were placed in parallel with the boost transistors which accordingly to the datasheet of the transistors, should improve the efficiency of the boost converter. This will be tested later in this section. 
+
+    Furthermore, during testing of the first iteration, an increase in the inductor temperature was observed. To address the possibility of requiring additional cooling,  a connector was added to place a fan if needed. These will also be analyzed in this section.
 
 \section{Voltage and Current sensor}
     Both current and voltage sensors were tested in the laboratory to validate the performance and accuracy of the measurements. 
 
-    The voltage sensor test was performed by applying a known voltage to the input and measuring the output of the voltage divider and the MCU readings. 
+    The voltage sensor test was performed by applying a known voltage to the input and measuring MCU readings. 
 
-    The test was performed for the entire range of voltages needed for this application, which is from 0~V to 51~V. The results show that the voltage sensor is accurate and has a resolution of 15.34~mV,  which is close to the theoretical value of 15.38~mV and a average error of 40~mV. However, this could be improved even further by using resistors with less tolerance and lower temperature coefficient or by increasing the ADC resolution. Another option that does not increase the cost of the system is to do a linearization of the results. In Figure~\ref{fig:voltage_sense_error} the error of the voltage readings is shown, and it can be seen that the error is linear and can be corrected by applying a linearization in the software. None of this is necessary for this application, since the resolution is already good enough for the \ac{mppt} operation.
+    The test was performed for the entire range of voltages needed for this application, which is from 0~V to 51~V. The results show that the voltage sensor is accurate and has an average error of 60~mV and 112~mV for battery and solar panel respectively. The error is different for each sensor because it depends on the actual resistance of the resistors used in the voltage dividers and the \ac{pcb} layout. For each board the error will be different, but it is expected to be in the same order of magnitude since the tolerance of the resistors are equal.
+
+    These could be improved even further by using resistors with less tolerance and lower temperature coefficient or by increasing the ADC resolution. Another option that does not increase the cost of the system is to subtract the linear error of the results. The magnitude of the error is small, and therefore it does not affect the \ac{mppt} operation, however, for the purpose of this project, the linearization was not implemented in firmware to improve the accuracy of the measurements made during the testing phase.
+
+    In Figure~\ref{fig:voltage_sense_error} the error of the voltage readings is represented. Since the error is linear, the trend line is also represented, which was used to correct the results and improve the accuracy of the measurements. The results after subtracting the linear error are also represented in the figure, and it can be seen that the error is significantly reduced. The average error reduced to 28.325~mV and 29.825~mV for battery and solar panel respectively. 
 
     \begin{figure}[!ht]
         \centering
-        \includegraphics[width=0.6\textwidth]{Images/LAB_res/ErrorVmeas.png}
-        \caption{Voltage sensor performance.}
+        \includegraphics[width=0.6\textwidth]{Images/LAB_res/Voltage_sensor_test.png}
+        \caption{Voltage sensor error over voltage.}
         \label{fig:voltage_sense_error}
     \end{figure}
 
-    The same test was performed for the current sensor, the measured resolution was 3.72~mA, which is close to the theoretical value of 3.66~mA. The average error was 52~mA, which is very good for this application. The error of the current sensor is shown in Figure~\ref{fig:current_sense_error}, and it can be seen that the error is linear, but it is still very small and does not affect the \ac{mppt} operation.
+    The same test was performed for the current sensors, the average error was 99.93~mA and 8.5~mA for battery and solar panel respectively, which is acceptable for this application. The error of the current sensors is shown in Figure~\ref{fig:current_sense_error}, and it can be seen that the error is linear for the battery side and non-linear for the solar panel side. This can be explained by the fact that at low currents, the error is smaller and probably the shunt resistor value in the solar panel side is more accurate than the shunt resistor in the battery side. However, it is still very small and does not affect the \ac{mppt} operation.
+
+    As in the case of the voltage sensor, the subtraction of the linear error would highly increase the accuracy of the measurements. However, it takes a lot of time to do the measurements and calculate the linearization for each \ac{pcb} which is not realistic for a student prototype project like \ac{tsb}. However, to increase the accuracy of the laboratory results, the error correction was implemented to the battery side current sensor. The results after subtracting the linear error are also represented in the figure, and it can be seen that the error is significantly reduced. The average error reduced to 5.28~mA.
 
     \begin{figure}[!ht]
         \centering
-        \includegraphics[width=0.6\textwidth]{Images/LAB_res/ErrorCmeas.png}
-        \caption{Current sensor performance.}
+        \includegraphics[width=0.6\textwidth]{Images/LAB_res/Current_sensor_test.png}
+        \caption{Current sensor error over current.}
         \label{fig:current_sense_error}
     \end{figure}
 
-    In both cases the linearization whould highly increase the accuracy of the measurements and it is highly recommended. However, it takes a lot of time to do the measurements and calculate the linearization for each \ac{pcb} which is not realistic for a student prototype project like \ac{tsb}. So the linearization was not implemented in this project, but it is highly recommended for future work. 
-
-    \textcolor{green}{Tenho imagens do setup, tabelas de excel com os resultados e mais graficos que posso por aqui ou em anexos}
-
 
 \section{Boost}
-    The Boost test is essential to identifie the efficiency and electrical parameters of the board without the influence of the control system. Aditionaly, it is essential to confirm the correct dimensioning of the power converter enabling a comparison with simulations and theoretical calculations.
+    The Boost test is essential to identify the efficiency and electrical parameters of the board without the influence of the control system. Additionally, it is essential to confirm the correct dimensioning of the power converter enabling a comparison with simulations and theoretical calculations.
 
-    The test was performed using a voltage source on the input side and two power resistors on the load side. As in simulations, both duty cycle and load resistance were varied to obtain the results in all different cases represented in Figure~\ref{fig:cc-cv points}.
+    The test was performed using a voltage source on the input side and two power resistors on the load side. As in simulations, both duty cycle and load resistance were varied to obtain the results in all different points of the charging curve, Figure~\ref{fig:cc-cv points}.
 
-    All the measurements were performed with multimeters with high precision. The voltage readings were performed as close as possible to the \ac{pcb}, as for the current readings, they have to be performed in line and due to cable losses they are not as precise.
+    All the measurements were performed with multimeter with high precision. The voltage readings were performed as close as possible to the \ac{pcb}, as for the current readings, they have to be performed in line.
 
-    It is important to note that this board uses the battery side to power itself, however in this test the battery side is not connected to a battery but since the \ac{pv} side is connected to a voltage source, this energy flows to the battery side through the boost converter diodes and therefore powering the control system.
+    It is important to note that this board uses the battery side to power itself, however in this test the battery side is not connected to a battery but since the \ac{pv} side is connected to a voltage source, this energy flows to the battery side through the boost converter diodes/body diodes and therefore powering the control system.
         
     \subsection{Switching noise}
+        During the initial experimental tests, a significant amount of electrical noise was observed in all measured signals. The measured noise caused the current to exceed the configured \ac{oc} protection thresholds, resulting in repeated activation of the protection mechanism. Initially, it was assumed that the problem originated from the \ac{pcb} measurement system. Consequently, several modifications were implemented in the firmware, mainly increasing the ADC sampling time and increasing the number of samples acquired for each measurement, with the final measurement being obtained by averaging the collected samples. Furthermore, the fault-handling logic was modified because, once a \ac{oc} fault occurred, the converter entered an oscillatory state in which it repeatedly enabled and disabled itself. Now when a fault occurred, it waits 1 second and verifies if the fault was removed. Although these software modifications improved the stability and accuracy of the measurements, they did not eliminate the excessive noise.
 
-            During the initial experimental tests, a significant amount of electrical noise was observed in all measured signals. This noise caused the measured current to exceed the configured \ac{oc} protection thresholds, resulting in repeated activation of the protection mechanism. Initially, it was assumed that the problem originated from the measurement system. Consequently, several modifications were implemented in the firmware, mainly increasing the ADC sampling time to improve measurement accuracy. Furthermore, the fault-handling logic was modified because, once a \ac{oc} fault occurred, the converter entered an oscillatory state in which it repeatedly enabled and disabled itself. Now when a fault occurred, it waits 1 second and verifies if the fault was removed. Although these software modifications improved the stability and accuracy of the measurements, they did not eliminate the excessive noise.
+        During the \ac{oc} events, a large oscillation in the input current was also observed, varying approximately between 4~A and 12~A. One possible explanation considered was that the laboratory power supply was operating close to its current limit, causing it to become unstable. Replacing the power supply was therefore considered as a potential solution. However, since the observed noise was considerably higher than expected, it was believed that the root cause was located elsewhere.
 
-            During the \ac{oc} events, a large oscillation in the input current was also observed, varying approximately between 4~A and 12~A. One possible explanation considered was that the laboratory power supply was operating close to its current limit, causing it to become unstable. Replacing the power supply was therefore considered as a potential solution. However, since the observed noise was considerably higher than expected, it was believed that the root cause was located elsewhere.
+        A detailed analysis of the reference evaluation board revealed a significant difference in the output decoupling network. While the initial prototype employed a single 1~$\mu$F ceramic capacitor, which completely eliminated the switching noise in simulation, the reference evaluation board used ten 1~$\mu$F ceramic capacitors connected in parallel.
 
-            A detailed analysis of the reference evaluation board revealed a significant difference in the output decoupling network. While the initial prototype employed a single 1~$\mu$F ceramic capacitor, which completely eliminated the switching noise in simulation, the reference evaluation board used ten 1~$\mu$F ceramic capacitors connected in parallel.
+        To evaluate the impact of the output capacitance, the converter was characterized without any changes. Figure~\ref{fig:ruido inicial} shows the initial noise.
 
-            To evaluate the impact of the output capacitance, the converter was characterized without any changes. Figure~\ref{fig:ruido inicial} shows the initial noise.
+        In all oscilloscope captures, Channel~1 (yellow) corresponds to the output current ($I_{out}$), Channel~2 (blue) to the input voltage ($V_{in}$), Channel~3 (orange) to the input current ($I_{in}$), and Channel~4 (green) to the output voltage ($V_{out}$). Although the screenshots are not of optimal quality, they clearly illustrate the reduction in switching noise obtained after increasing the output decoupling capacitance.
 
-            In all oscilloscope captures, Channel~1 (yellow) corresponds to the output current ($I_{out}$), Channel~2 (blue) to the input voltage ($V_{in}$), Channel~3 (orange) to the input current ($I_{in}$), and Channel~4 (green) to the output voltage ($V_{out}$). Although the screenshots are not of optimal quality, they clearly illustrate the reduction in switching noise obtained after increasing the output decoupling capacitance.
+        To increase the local output decoupling, nine additional 1~$\mu$F ceramic capacitors were soldered in parallel with the existing capacitor, matching the total capacitance used in the evaluation board. After this modification, a significant reduction in the measured noise was observed, as shown in Figure~\ref{fig:ruido final}.
 
-            To increase the local output decoupling, nine additional 1~$\mu$F ceramic capacitors were soldered in parallel with the existing capacitor, matching the total capacitance used in the evaluation board. After this modification, a significant reduction in the measured noise was observed, as shown in Figure~\ref{fig:ruido final}.
+        These results confirm that the insufficient output decoupling capacitance was the primary contributor to the observed electrical noise. Increasing the number of ceramic capacitors substantially improved the converter performance and reduced measurement fluctuations. 
+        
+        Although the results were already satisfactory, the reference evaluation board also includes seven additional 220~nF ceramic capacitors distributed across the output stage. Initially the board also had one smaller capacitor (100~nF) and since it was not possible to get 220~nF with 100~V rating, a six 100~nF capacitors were added. The result should be similar. These capacitors are expected to further reduce the high frequency switching noise. The results are presented in Figure~\ref{fig:ruido final 2}.
 
-            These results confirm that the insufficient output decoupling capacitance was the primary contributor to the observed electrical noise. Increasing the number of ceramic capacitors substantially improved the converter performance and reduced measurement fluctuations. 
-           
-            Although the results were already satisfactory, the reference evaluation board also includes seven additional 220~nF ceramic capacitors distributed across the output stage. Initially I also had one smaller capacitor (100~nF) and since i did not had any 220~nF with 100~V rating, i added six 100~nF capacitors. The result should be similar. These capacitors are expected to further reduce the high frequency switching noise. The results are presented in Figure~\ref{fig:ruido final 2}.
+        The approximate peak noise amplitudes measured for each hardware configuration are summarized in Table~\ref{tab:noise_comparison}. Adding nine 1~$\mu$F ceramic capacitors significantly reduced both the current and voltage noise. Subsequently, the six additional 100~nF ceramic capacitors further reduced the current noise, although the input voltage increased but it may be due to imprecise measurements from the oscilloscope. x
 
-            The approximate peak noise amplitudes measured for each hardware configuration are summarized in Table~\ref{tab:noise_comparison}. Adding nine 1~$\mu$F ceramic capacitors significantly reduced both the current and voltage noise. Subsequently, the six additional 100~nF ceramic capacitors further reduced the current noise, although the input voltage increased but it may be due to imprecise measurements from the oscilloscope. I tried to do the same measurements with a multimeter, however the precision was similar.
+        \begin{table}[!ht]
+            \centering
+            \caption{Approximate noise amplitudes measured for the three hardware configurations. \textcolor{red}{I do not like how these values were measured. In reality the values are less than a quarter. They must be measured separately with a good trigger. I may redo it in V1.3. }}
+            \label{tab:noise_comparison}
+            \begin{tabular}{|l|cccc|}
+                \hline
+                Quantity &
+                Original &
+                +9 $\times$ 1~$\mu$F &
+                +9 $\times$ 1~$\mu$F +6 $\times$ 100~nF &
+                ...+ schottky diode\\
+                \hline
+                $I_{in}$  & 1.8 A   & 640 mA & 292 mA & 140 mA \\
+                $I_{out}$ & 0.8 A   & 300 mA & 220 mA & 272 mA \\
+                $V_{in}$  & 2.0 V   & 350 mV & 380 mV & 490 mV \\
+                $V_{out}$ & 8.0 V   & 2.3 V  & 2.2 V  & 1.440 V \\
+                \hline 
+            \end{tabular}
+        \end{table}
 
-            \begin{table}[!ht]
-                \centering
-                \caption{Approximate noise amplitudes measured for the three hardware configurations.}
-                \label{tab:noise_comparison}
-                \begin{tabular}{|l|ccc|}
-                    \hline
-                    Quantity &
-                    Original &
-                    +9 $\times$ 1~$\mu$F &
-                    +9 $\times$ 1~$\mu$F +6 $\times$ 100~nF \\
-                    \hline
-                    $I_{in}$  & 1.8 A   & 640 mA & 292 mA \\
-                    $I_{out}$ & 0.8 A   & 300 mA & 220 mA \\
-                    $V_{in}$  & 2.0 V   & 350 mV & 380 mV \\
-                    $V_{out}$ & 8.0 V   & 2.3 V  & 2.2 V \\
-                    \hline 
-                \end{tabular}
-            \end{table}
+        \begin{figure}[!ht] 
+            \centering 
+            \includegraphics[width=0.6\linewidth]{Images/LAB_res/case2-1.pdf} 
+            \caption{Measured waveforms before adding the additional ceramic capacitors.} 
+            \label{fig:ruido inicial}
+        \end{figure}
 
-            \begin{figure}[!ht] 
+        \begin{figure}[!ht] 
+            \centering 
+            \begin{minipage}{0.49\textwidth}
                 \centering 
-                \includegraphics[width=0.6\linewidth]{Images/LAB_res/case2-1.pdf} 
-                \caption{Measured waveforms before adding the additional ceramic capacitors.} 
-                \label{fig:ruido inicial}
-            \end{figure}
-
-            \begin{figure}[!ht] 
+                \includegraphics[width=\linewidth]{Images/LAB_res/case2-2.pdf}
+                \caption{Measured waveforms after adding nine additional 1~$\mu$F ceramic capacitors.} 
+                \label{fig:ruido final} 
+            \end{minipage} 
+            \hfill 
+            \begin{minipage}{0.49\textwidth} 
                 \centering 
-                \begin{minipage}{0.49\textwidth}
-                    \centering 
-                    \includegraphics[width=\linewidth]{Images/LAB_res/case2-2.pdf}
-                    \caption{Measured waveforms after adding nine additional 1~$\mu$F ceramic capacitors.} 
-                    \label{fig:ruido final} 
-                \end{minipage} 
-                \hfill 
-                \begin{minipage}{0.49\textwidth} 
-                    \centering 
-                    \includegraphics[width=0.9\linewidth]{Images/LAB_res/case2-3.pdf} 
-                    \caption{Measured waveforms after adding nine additional 1~$\mu$F ceramic capacitors.} 
-                    \label{fig:ruido final 2} 
-                \end{minipage} 
-            \end{figure}
+                \includegraphics[width=0.9\linewidth]{Images/LAB_res/case2-3.pdf} 
+                \caption{Measured waveforms after adding nine additional 1~$\mu$F ceramic capacitors.} 
+                \label{fig:ruido final 2} 
+            \end{minipage} 
+        \end{figure}
+
+    \subsection{Efficiency and voltage and current ripples.}
+        The efficiency of the \ac{mppt} charger is one of the most important parameters to be measured since it directly affects the power that is effectively extracted from the solar panel and delivered to the battery. As in simulations, the efficiency was measured for each point of the charging curve. All the measurements were taken with the multimeter and the results are presented in Table~\ref{tab:efficiency_results}.
+
+        \begin{table}[!ht]
+            \centering
+            \caption{Efficiency measurements for the different test cases.}
+            \label{tab:efficiency_results}
+            \begin{tabular}{|l|ccc|cc|}
+                \hline
+                & \multicolumn{3}{c|}{Multimeter} 
+                & - OC power 
+                & - OC+Transistors power \\
+                \hline
+                Case & Power in & Power out & Efficiency 
+                & Efficiency & Efficiency \\
+                \hline
+                Case 1 & 127.444 & 123.413 & 96.84\% & 97.23\% & 97.64\% \\
+                Case 2 & 129.108 & 124.685 & 96.57\% & 96.96\% & 97.36\% \\
+                Case 3 & 127.523 & 123.232 & 96.64\% & 97.02\% & 97.43\% \\
+                Case 4 & 73.1277 & 70.818 & 96.84\% & 97.52\% & 98.24\% \\
+                \hline
+                OC & 0.5103 & 0 & -- & -- & -- \\
+                OC+Transistors & 1.04279 & 0 & -- & -- & -- \\
+                \hline
+            \end{tabular}
+        \end{table}
+
+        The measured efficiency is more than 96\% for all test cases, which is a very good result. This efficiency takes into account all the losses in the converter, including the measurement system and control system. When compared with the power losses estimation made in section~\ref{subsubsec:loss_estimation}, the efficiency is around 2\% lower than expected. This difference can be explained by the fact that the components used can have slightly different characteristics. Also, the losses caused by the parasitic elements of the \ac{pcb} were not considered in the estimation.
+
+        The \ac{pcb} was also tested in open circuit with and without driving the transistors. The results show the losses of the circuit without the boost converter. Around 0.5~w of losses are caused only by the measurement and control system. When the transistors are driven without any load, the loses of the converter are negligible since the current is too low. So the measured losses are approximately equal to the driving circuit + the measurement and control system. Based on these values, in table~\ref{tab:efficiency_results} it is also present a estimate of the efficiency without the measurement and control system and another without the driving circuit too. The efficiency is around 97\% to 98\% for all test cases, which is a very good result for a boost converter. From another perspective, it shows just how significant the losses are on the rest of the circuit.         
 
     \subsection{Temperature rise}
-        The temperature of each element was measured before each test and after 10 min. All test show similar result, a temperature rise of approximately 10ºC, starting with in case 1 to 3. The inductor is the main heat element, reaching 42ºC, the capacitors also reach around 41ºC hover they are placed side by side with the inductor which heats the capacitors. As expected, the transistors do not overheat. The maximum temperature measured was 38.5ºC, so there is no need for cooling. 
+        The temperature of each element was measured before each test and after 10 min. All test show similar result, a temperature rise of up to 10ºC. The inductor is the main heat element, reaching 43ºC, the capacitors also reach around 40ºC hover they are placed side by side with the inductor which heats the capacitors. As expected, the transistors do not overheat. The maximum temperature measured was 39.5ºC. 
 
-        The results are close to what was expected. In Section~\ref{subsubsec:loss_estimation}, we concluded that the component with the highest losses is the inductor, followed by the capacitors and the transistors. In this section, we observe that the temperatures of these three components follow the same order. This makes sense, since the temperature of these components is related to their losses. 
+        The results are close to what was expected. In Section~\ref{subsubsec:loss_estimation}, we concluded that the component with the highest losses is the inductor, followed by the capacitors and the transistors. In this section, we observe that the temperatures of these three components follow the same order. This makes sense, since the temperature of these components is related to their losses. However, the estimated losses for the inductors and capacitors are very similar, but the temperature of the inductor is higher. This can be explained by the fact that the inductor has a smaller surface area, and therefore it is more difficult to dissipate heat.
 
         We were also able to obtain thermal images of the circuit (Figure~\ref{fig:thermal_front} and \ref{fig:thermal_back}), which show the areas with the highest temperatures. Unfortunately, the image is of poor quality and shows a discrepancy between the thermal image and the normal image. In any case, it appears that the inductor is the element that heats up the most, and you can also see clear heat radiation coming from it. It is also possible to see the area of the highest temperature over the capacitors and the area where the current sensors are located. On the back side, the only element heating is the transistors.
 
@@ -129,60 +182,53 @@
             \end{minipage} 
         \end{figure}
 
+        To confirm that the temperature does not rise to a concerning level, a test of 3 hours was performed with the converter operation at Case 3. In figure~\ref{fig:3h_temp_test} it is represented the temperature evolution over the 3 hours for the inductor, capacitors, transistors and the ambient temperature. These results were acquired using the thermistors placed on the board which measure the ambient temperature and the transistors' temperature. The other measurements where acquired using additional external thermistors that can read by the board using the connector placed for thermistors. 
 
-        \subsection{Efficiency and voltage and current ripples.}
-
+        The measured values were confirmed using an infrared thermometer which show a slightly different temperature, confirming the quality of the measurements.
         
-            Potencia perdida com o circuito desligado, + boost, e todos os casos.
+        \begin{figure}[!ht] 
+            \centering 
+            \includegraphics[width=0.6\linewidth]{Images/LAB_res/Temperatures vs time.pdf} 
+            \caption{Temperature evolution during 3 hours. \textcolor{red}{Preciso do DBC para adicionar o Tfets e o Tamb}} 
+            \label{fig:3h_temp_test}
+        \end{figure} 
+        
+        From Figure~\ref{fig:3h_temp_test}, it can be concluded that after 40~min at maximum power, all the temperatures stop rising. \textcolor{red}{acabar de concluir isto quando a figura estiver certa}
 
-            cerca de 0.43w só para ter tudo ligado á volta do boost. Se ligarmos o PWM sem load esta potencia aumenta para 1.01w. O sensor de corrente não mede esta corrente e por isso mede sempre 0 A no caso de OC. (neste caso a corrente é tão baixa que praticamente não há perdas nos cabos)
+        With this test it is concluded that there is no need for cooling. At least in the same conditions of the test. If the device is place inside a box/compartment, the temperature must be monitored and if it rises to a concerning level, the user must add force ventilation. 
 
-            Muitas perdas nos cabos. Resitencia dos cabos de entrada = 0.09 Ohm e dos cabos de saida 0.2 ohm
-
-
-            \begin{table}[!ht]
-                \caption{Measured efficiency for each point in CC-CV curve.}
-                \centering
-                \begin{tabular}{|c|cccc|}
-                \hline
-                \textbf{Case \#} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} \\
-                \hline
-                Eff (\%)& 94.7 & 94.6 & 94.4 & 94.5 \\
-                \hline
-                \end{tabular}
-                \label{tab:eff_measured}
-            \end{table}
-
-            \begin{figure}[!ht] 
-                \centering 
-                \includegraphics[width=0.6\linewidth]{Images/LAB_res/eff 50V.png} 
-                \caption{Converter efficiency over different input currents and voltages. \textcolor{red}{Just a place holder image. No real data!!}} 
-                \label{fig:eff over current}
-            \end{figure}
-
-            \begin{figure}[!ht] 
-                \centering 
-                \includegraphics[width=0.6\linewidth]{Images/LAB_res/eff_vout.png} 
-                \caption{Converter efficiency over output voltage for different input voltages. \textcolor{red}{Just a place holder image. No real data!!}} 
-                \label{fig:eff over voltage}
-            \end{figure}         
+        \textcolor{red}{talvez repetir o teste com uma caixa de cartão a tampara o MPPT}
 
 \section{MPPT}
     In this section the charging sate machine is tested as well as the \ac{mppt} algorithm to ensure the functionality of the prototype.
 
     In the following tests a laboratory setup was used, where a power supply (the SM 1500-CP-30) was used with an internal function which can simulate the behavior of a solar panel. This function was configured as a 35 cells solar panel at 25ºC and variable irradiance controlled by sending TCP messages. 
 
-    The load was battery from \ac{sr03}, which is described in section~\ref{sec:battery}.
+    The load was the battery from \ac{sr03}, which is described in section~\ref{sec:battery}.
 
-    This setup ensures a controlled environment where the solar panel works at a specified temperature and irradiance parameters increasing the scientific value. Since the environment conditions are set by the user, this setup can be easily replicated for future comparisons.
+    This setup ensures a controlled environment where the solar panel works at a specified temperature and irradiance parameters increasing the number of controlled variables. Since the environment conditions are set by the user, this setup can be easily replicated for future comparisons and therefore increasing the scientific value of the tests.
 
+    \subsection{Efficiency}
+        \begin{figure}[!ht] 
+            \centering 
+            \includegraphics[width=0.6\linewidth]{Images/LAB_res/eff 50V.png} 
+            \caption{Converter efficiency over different input currents and voltages. \textcolor{red}{Just a place holder image. No real data!!}} 
+            \label{fig:eff over current}
+        \end{figure}
+
+        \begin{figure}[!ht] 
+            \centering 
+            \includegraphics[width=0.6\linewidth]{Images/LAB_res/eff_vout.png} 
+            \caption{Converter efficiency over output voltage for different input voltages. \textcolor{red}{Just a place holder image. No real data!!}} 
+            \label{fig:eff over voltage}
+        \end{figure}
 
     \subsection{Tracking speed}
-        For this test in specific, a python script was written which sends TCP messages (using LAN) to the power supply to change the irradiance periodically. First, the script sets the irradiance to 200~$\mathrm{W/m^2}$. Subsequently, the irradiance is increased by 200~$\mathrm{W/m^2}$ with 2 seconds intervals until a final value of 1000~$\mathrm{W/m^2}$ is reached.
+        For this test in specific, a python script was written which sends TCP messages (using LAN connection) to the power supply to change the irradiance periodically. First, the script sets the irradiance to 200~$\mathrm{W/m^2}$. Subsequently, the irradiance is increased by 200~$\mathrm{W/m^2}$ with 2 seconds intervals until a final value of 1000~$\mathrm{W/m^2}$ is reached.
 
         It is worth noting that the timing is not perfect and therefore the steps do not have perfect 2 seconds intervals. This is caused by a delay between the instant of which the power supply receives the message from the computer and actually changing the parameters.
 
-        The result represented in Figure~\ref{fig:steps test} show a quick response from the Perturb and Observe Algorithm. The algorithm is working at 100~Hz and with steps of 0.1\% of duty cycle. 
+        The result represented in Figure~\ref{fig:steps test} show an almost instantaneous response from the Perturb and Observe Algorithm. The algorithm is working at 100~Hz and with steps of 0.1\% of duty cycle. 
 
         \begin{figure}[!ht] 
             \centering 

@@ -17,7 +17,7 @@
             \end{equation}
 
             These parameters are not directly provided by manufacturers, but can be extracted from the standard datasheet values, namely the open-circuit voltage ($V_{oc}$), short-circuit current ($I_{sc}$), voltage and current at the \ac{mpp} ($V_{mp}$, $I_{mp}$), and the respective temperature coefficients, through a set of equations that ensure the model matches these reference points under Standard Test Conditions (STC). There are several ways to do it, however it is outside the range of this work. To simplify, calculations were carried using online tools and will not be explained in detailed here. 
-            \textcolor{red}{se achar necessario posso escrever as equações aqui}
+            \textcolor{blue}{Se achar necessario posso escrever as equações aqui!?!?}
 
             This approach allows the panel behavior to be accurately reproduced under different irradiance and temperature conditions, while keeping the circuit implementation simple enough to be integrated directly into LTspice.
 
@@ -215,7 +215,9 @@
         P_C=I_{C_{RMS}}^{2}ESR,
         \end{equation}
 
-        Although magnetic core losses of the inductor could be estimated too, the selected manufacturer does not provide the required magnetic material parameters. Consequently, only the winding copper losses are considered, leading to a slight underestimation of the total converter losses. \textcolor{blue}{In REDEXPERT i found a graph telling me that the impedance at 100kHz is 41.1 Ohm. Can i use this?}
+        Although magnetic core losses of the inductor could be estimated too, the selected manufacturer does not provide the required magnetic material parameters. Consequently, only the winding copper losses are considered, leading to a slight underestimation of the total converter losses. 
+
+        \textcolor{red}{reler o texto, inserir as perdas do circuito auxiliar, inserir as perdas vindas do REDEEXPERT, adicionar as perdas vinda do sensor de corrente, simplificar ou não a pie chart}
 
         Finally, the gate driver losses are estimated using Equation~\ref{eq:gate_drive} which takes into account the energy needed to drive the transistors. Although the EPC23102 has an internal gate driver, this is still relevant.
 
@@ -228,8 +230,8 @@
 
         \begin{figure}[!ht]
             \centering
-            \includegraphics[width=0.6\textwidth]{Images/Implementation/Losses.pdf}
-            \caption{Analytical power loss distribution of the synchronous boost converter for Case~1.}
+            \includegraphics[width=0.9\textwidth]{Images/Implementation/fig_loss_breakdown.pdf}
+            \caption{Analytical power loss distribution of the synchronous boost converter for Case~1. \textcolor{red}{change for the case 2}}
             \label{fig:loss_breakdown}
         \end{figure}
 
@@ -244,3 +246,4 @@
         However, both simulation and theoretical analysis indicate that the choice of each components lead to a highly efficient converter.
 
     \section{MPPT algorithm}
+    \textcolor{red}{Simulik MPPT algorithm simulation.}
