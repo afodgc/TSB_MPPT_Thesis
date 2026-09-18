@@ -5,6 +5,8 @@ Following the design and simulation stages, a prototype was manufactured and ass
 
 \section{Assembly and first iteration}
 
+    \textcolor{red}{talk about altium andthe design of the PCB}
+
     All boards developed in this project were manufactured by Eurocircuits and assembled by hand in order to reduce costs.
 
     \begin{figure}[!ht]
@@ -216,19 +218,30 @@ Following the design and simulation stages, a prototype was manufactured and ass
     This setup ensures a controlled environment where the solar panel works at a specified temperature and irradiance parameters increasing the number of controlled variables. Since the environment conditions are set by the user, this setup can be easily replicated for future comparisons and therefore increasing the scientific value of the tests.
 
     \subsection{Efficiency}
-        \begin{figure}[!ht] 
-            \centering 
-            \includegraphics[width=0.6\linewidth]{Images/LAB_res/eff 50V.png} 
-            \caption{Converter efficiency over different input currents and voltages. \textcolor{red}{Just a place holder image. No real data!!}} 
-            \label{fig:eff over current}
-        \end{figure}
+        To validate the efficiency of the converter over different current and voltage inputs, an irradiance sweep was performed with $10~w/m^2$ steps from $100~w/m^2$ to $1000~w/m^2$. Each irradiance level is maintained over 2 seconds to ensure that the algorithm is stable. All the values measured during this time are used to perform an average. Additionally, outliers were removed for better results. 
+
+        The result is an efficiency curve (Figure~\ref{fig:eff over current}) that increases with both the input current and the irradiance, which are approximately proportional. Since the test was performed with different solar-panel parameters, three curves were obtained. The converter is clearly more efficient at higher input voltages, that is, for panels with more cells in series.
+
+        Both trends are expected. At low currents the efficiency is lower because the constant losses required to power the electronics (\ac{mcu}, sensors, etc.) have a larger relative impact. As the current increases, those losses become less significant and the efficiency stabilizes. After around 3 A, the converter switching losses become dominant. Since they increase with the input current, a slight downward slope of the curve is expected.
+
+        The higher efficiency at higher input voltage is explained by the fact that a boost converter is more efficient at lower duty cycles. From equation \ref{eq:duty}, for a given output voltage the duty cycle decreases as the input voltage increases. Therefore, increasing the number of cells in series reduces the duty cycle and improves the efficiency.
 
         \begin{figure}[!ht] 
             \centering 
-            \includegraphics[width=0.6\linewidth]{Images/LAB_res/eff_vout.png} 
-            \caption{Converter efficiency over output voltage for different input voltages. \textcolor{red}{Just a place holder image. No real data!!}} 
-            \label{fig:eff over voltage}
+            \includegraphics[width=0.6\linewidth]{Images/LAB_res/eff_ipv.pdf} 
+            \caption{Converter efficiency over different input currents and voltages.} 
+            \label{fig:eff over current}
         \end{figure}
+
+        On the other hand, if the input voltage is constant and the output voltage increases (Figure~\ref{fig:eff over output voltage}), the efficiency will reduce due to the same reason. Equation \ref{eq:duty} tells us that for a fix input voltage the duty cycle will increase and therefore the efficiency will decrease.   
+
+        \begin{figure}[!ht] 
+            \centering 
+            \includegraphics[width=0.6\linewidth]{Images/LAB_res/eff_vout.pdf} 
+            \caption{Converter efficiency over output voltage.} 
+            \label{fig:eff over output voltage}
+        \end{figure}
+
 
     \subsection{Tracking speed}
         For this test in specific, a python script was written which sends TCP messages (using LAN connection) to the power supply to change the irradiance periodically. First, the script sets the irradiance to 200~$\mathrm{W/m^2}$. Subsequently, the irradiance is increased by 200~$\mathrm{W/m^2}$ with 2 seconds intervals until a final value of 1000~$\mathrm{W/m^2}$ is reached.
@@ -246,15 +259,30 @@ Following the design and simulation stages, a prototype was manufactured and ass
 
         The result shows some noise, however they were acquired by the sensors present on the prototype and therefore the noise is from the sensors and not from the algorithm.
 
-        Overall, the algorithm showed a satisfactory fast response. In almost every scenario the algorithm act immediately except in step from 600~$\mathrm{W/m^2}$ to 800~$\mathrm{W/m^2}$, which is not a consistent and therefore there is no obvious explanation. \textcolor{red}{Confirm this statement.}
-
-    \subsection{State machine}
-        \textcolor{red}{Show the MPPT in difrent states. No load-Sweep-CC-CV-no load-CV-CC}
-    
-    \subsection{Battery charging}
-        \textcolor{red}{Do a full charge, validate CC-CV, battery temperature, MPPT temperature and robustness.}
-
-        \textcolor{blue}{Como é que eu vou fazer isto!?! Vai demorar imenso tempo. Talvez faça com uma bateria da NAVICTUS ou do SP01. Tem menos capacidade e por isso demoram menos tempo a carregar.}
+        Overall, the algorithm showed a satisfactory fast response. In almost every scenario the algorithm act immediately except in step from 600~$\mathrm{W/m^2}$ to 800~$\mathrm{W/m^2}$, which is not a consistent and therefore there is no obvious explanation. \textcolor{red}{Confirm this statement.}       
+        
+        \textcolor{red}{Add a test with $1000w/m^2$ e 25ºC, reudz para $100w/m^2$, volta a aumentar para $1000w/m^2$, aumenta para 85ºC}
+        
     
 \section{Field test}
-        \textcolor{red}{Ou teste em terra com um painel solar e uma bateria. Ou um teste em em água. Ou os dois.}
+        Parei o teste duas vezes e é facilmente notavel no grafico. Em cerca de 3h 30min tive de mudar de sitio pq fiquei sem sol. Perto das 6h percebi que os paineis não estavam a operar em MPP devido a uma limitação do duty cycle maximo que aconteceu pela primeira vez devido ao painel ser muito pequeno.
+        \begin{figure}[!ht] 
+            \centering 
+            \includegraphics[width=0.8\linewidth]{Images/LAB_res/charging_test.pdf} 
+            \caption{Battery charging test. Voltage and current curve.} 
+            \label{fig:}
+        \end{figure} 
+
+
+        \begin{figure}[!ht] 
+            \centering 
+            \includegraphics[width=0.8\linewidth]{Images/LAB_res/charging_test_lab.pdf} 
+            \caption{} 
+            \label{fig:}
+        \end{figure} 
+
+        \textcolor{red}{Show the MPPT in difrent states. No load-Sweep-CC-CV-no load-CV-CC}
+
+        \textcolor{red}{Repetir teste.}
+
+        \textcolor{red}{Se possivel adicionar testes em água.}

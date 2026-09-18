@@ -1,9 +1,11 @@
 \fancychapter{System}
 \label{chap:System}
 
+This chapter presents the electrical architecture of \ac{sg01}, providing the necessary context for the development and integration of the proposed \ac{mppt} charger. The main subsystems relevant to solar energy conversion are presented, such as the installed solar panels and battery. The impact of the \ac{pv} system is analyzed as well as the environment changes. 
+
 \section{Overview}
 
-\ac{sg01} is the most recent vessel built by \acs{tsb}, which was designed to compete in Sea Lab category of Monaco energy boat challenge. To compete in this category a vessel with 8 x 2.5~m was designed creating new challenges for the team. This vessel was designed to use both hydrogen and solar energy, using hydro foils to hydroplane which highly increases efficiency. Additionally, it will use actuators and sensors to drive autonomously to compete in AI class of Monaco Energy Boat Challenge.
+\ac{sg01} is the most recent vessel built by \acs{tsb}, which was designed to compete in Sea Lab category of Monaco energy boat challenge. To compete in this category a vessel with 8 x 2.5~m was designed creating new challenges for the team. This vessel was designed to use both hydrogen and solar energy, using hydro foils to hydroplane which highly increases efficiency, by reducing the drag. Additionally, it will use actuators and sensors to drive autonomously to compete in AI class of Monaco Energy Boat Challenge.
 
 Since it is a larger and heavier boat than the previous ones built by \acs{tsb} it needs more power than the others. So a motor with 130~KW peak power was chosen. This much power is only possible to provide with high voltages, so for the first time in \acs{tsb} history this vessel have a High Voltage system (300-600~V) and a Low Voltage system (30-50~V). 
 
@@ -13,7 +15,7 @@ As for the low voltage system, it is designed to power all auxiliary system (das
 
 The auxiliary systems are always changing and growing, so it is difficult to estimate the power consumption of this system. For this work it is considered 1000~W of continuous consumption. It is not a perfect estimation because the power consumption will depend on the driving mode (autonomous driving, hydroplaning or normal drive) which can create different power profiles due to the actuators. Additionally, the cooling system (which is planed to be moved to the High Voltage system) have high power consumption that is not considered in this estimation. 
 
-To help to maintain the low voltage system always powered, it is used solar panels which are connected to several \acp{mppt}.
+To help to maintain the low voltage system always powered, it is used solar panels which are connected to several \acp{mppt}. In the future, there are plans to add a bidirectional DC-DC converter between the low voltage battery and the high voltage battery, enabling power transfer in both directions. 
 
 For better understanding of the system architecture see Figure~\ref{fig:SG01_sch} which represent highly simplified diagram of the overall system.
 
@@ -55,15 +57,15 @@ The current installation consists of 140 Maxeon Gen 3 (Me3) photovoltaic cells d
     % \label{fig:}
 \end{figure}
 
-Each photovoltaic cell has an active area of approximately $155.06~\mathrm{cm^2}$, resulting in a total photovoltaic area of $2.171~\mathrm{m^2}$.
+Each \ac{pv} cell has an active area of approximately $155.06~\mathrm{cm^2}$, resulting in a total photovoltaic area of $2.171~\mathrm{m^2}$.
 
-Assuming \ac{stc} with an irradiance of $1000~\mathrm{W/m^2}$, the photovoltaic array is capable of delivering approximately $526.4~\mathrm{W}$ of peak power (theoretical value). 
+Assuming \ac{stc} (irradiance of $1000~\mathrm{W/m^2}$ AND 25ºc), the photovoltaic array is capable of delivering approximately $526.4~\mathrm{W}$ of peak power (theoretical value). 
 
-The photovoltaic energy is processed by four commercial Genasun \acp{mppt}, which are grouped in a dedicated \ac{mppt} box. The \acp{mppt} convert the variable voltage produced by the solar panels into a stable charging voltage suitable for the low-voltage battery system. This architecture allows each photovoltaic group to operate close to its maximum power point independently, improving energy extraction under non-uniform illumination conditions that are common in maritime environments.
+The \ac{pv} energy is extracted by four commercial Genasun \acp{mppt}, which are grouped in a dedicated \ac{mppt} box. The \acp{mppt} convert the variable voltage produced by the solar panels into a stable charging voltage suitable for the low voltage battery system. This architecture allows each photovoltaic group to operate close to its \ac{mpp}independently, improving energy extraction under non uniform illumination conditions.
 
 To ensure high performance and shape configurability, the photovoltaic modules were manufactured in house using materials selected specifically for marine operation. This process begins by soldering all cells in a module together and then a lamination is performed using vacuum and heat blacks.
 
-Prior to installation, all panels underwent electroluminescence testing to detect manufacturing defects such as microcracks, broken cells, or interconnection failures, Figure~\ref{fig:ilu_test}. These tests were performed before integration into the vessel to ensure that only panels with acceptable electrical and structural integrity were installed. This quality-control procedure reduces the likelihood of premature degradation and enables comparison before and after competitions.
+Prior to installation, all panels underwent electroluminescence testing to detect manufacturing defects such as microcracks, broken cells, or interconnection failures, Figure~\ref{fig:ilu_test}. These tests were performed before integration into the vessel to ensure that only panels with acceptable electrical and structural integrity were installed. This quality control procedure reduces the likelihood of premature degradation and enables comparison before and after competitions.
 
 \begin{figure}[!ht]
     \centering
@@ -82,7 +84,7 @@ Prior to installation, all panels underwent electroluminescence testing to detec
     \label{fig:ilu_test}
 \end{figure}
 
-Although the current photovoltaic installation already provides a significant contribution to the low-voltage energy budget, additional usable deck area remains available. Figure~\ref{fig:renderSG01} presents a conceptual rendering with supplementary solar panels. Preliminary estimates indicate that the total photovoltaic power could be increased to approximately $977~\mathrm{W}$, almost doubling the currently installed capacity. Such an upgrade would substantially reduce battery charging times and significantly increase the operational autonomy of the vessel.
+Although the current photovoltaic installation already provides a significant contribution to the low-voltage energy budget, additional usable deck area remains available. Figure~\ref{fig:renderSG01} presents a conceptual rendering with supplementary solar panels. Preliminary estimates indicate that the total photovoltaic power could be increased to approximately $977~\mathrm{W}$, almost doubling the currently installed capacity. Such an upgrade would substantially reduce battery charging times and significantly increase the autonomy of the vessel.
 
 
 
@@ -90,7 +92,7 @@ Although the current photovoltaic installation already provides a significant co
 
 \section{Battery}
 \label{sec:battery}
-In the past years we have been producing our batteries achieving a lower cost and highly customizable solution. In \ac{sg01} we chose lithium-ion cells due to its ease of use quick assembly. The assembly is done by the members. It begins by placing the cells on plastic holder to increase structural strength, then using a spot welder, the series and parallel connections are made with nickel tabs (Figure~\ref{fig:SG01_battery}). In parallel, some thermistors are place in different locations of the battery to ensuring a precise a robust temperature reading. In the end, the battery is placed in a case with a \ac{bms} and all the necessary connections.
+In the past years we have been producing our batteries achieving a lower cost and highly customizable solution. In \ac{sg01} we chose lithium-ion cells due to its ease of use and quick assembly. The assembly is done by the members. It begins by placing the cells on plastic holder to increase structural strength, then using a spot welder, the series and parallel connections are made with nickel tabs (Figure~\ref{fig:SG01_battery}). In parallel, some thermistors are place in different locations of the battery to ensuring a precise a robust temperature reading. In the end, the battery is placed in a case with a \ac{bms} and all the necessary connections.
 
 \begin{figure} [!ht]
     \centering
@@ -107,29 +109,29 @@ The current low voltage battery uses Samsung INR21700-50G cells in a 12s28p conf
     \centering
     \caption{\ac{sg01} and \ac{sr03} battery specs.}
     \label{tab:battery_comparison}
-    \begin{tabular}{|l|c|c|c|}
+    \begin{tabular}{|l|c|c|c|c|}
         \hline
-        \textbf{Parameter} & \textbf{Unit} & \textbf{SG01 Battery} & \textbf{SR03 Battery} \\ \hline
-        Max Voltage & V & 50.4 & 50.4 \\ \hline
-        Nominal Voltage & V & 43.2 & 43.2 \\ \hline
-        Min Voltage & V & 30 & 30 \\ \hline
-        Configuration & -- & 12s28p & 12s7p \\ \hline
-        Number of cells & -- & 336 & 84 \\ \hline
-        Energy Capacity & Wh & 5855.56 & 1512 \\ \hline
-        Capacity & Ah & 140 & 35 \\ \hline
-        Max charge current & A & 135.8 & 42 \\ \hline
-        Cutoff charge current & A & 3.395 & 1.75 \\ \hline
-        Max discharge current & A & 271.6 & 175 \\ \hline
-        Weight & kg & 25.2 & ? \\ \hline
-        Internal resistance & m$\Omega$ & 6 & 24 \\ \hline
+        \textbf{Parameter} & \textbf{Unit} & \textbf{SG01 Battery} & \textbf{SR03 Battery} & \textbf{NAVICTUS Battery}\\ \hline
+        Max Voltage & V & 50.4 & 50.4 & 50.4\\ \hline
+        Nominal Voltage & V & 43.2 & 43.2 & 43.56\\ \hline
+        Min Voltage & V & 30 & 30 & 30\\ \hline
+        Configuration & -- & 12s28p & 12s7p & 12s1p \\ \hline
+        Number of cells & -- & 336 & 84 & 12\\ \hline
+        Energy Capacity & Wh & 5866.56 & 1512 & 223.9 \\ \hline
+        Capacity & Ah & 135.8 & 35 & 5.140\\ \hline
+        Max charge current & A & 135.8 & 42 & 5.3 \\ \hline
+        Cutoff charge current & A & 3.395 & 1.75 & 0.133 \\ \hline
+        Max discharge current & A & 271.6 & 175 & 15.9\\ \hline
+        Weight & kg & 25.2 & ? & 1\\ \hline
+        Internal resistance & m$\Omega$ & 6 & 24 & 192\\ \hline
     \end{tabular}
 \end{table}
 
-
 \ac{sg01} battery was designed for a different vessel which needed a substantial higher capacity. The battery is too heavy, and overall overdimensioned. 
 
-For lab tests and for a more realistic impact analysis, \ac{sr03} battery will be used. This is a much smaller battery 
-with a reasonable capacity for this vessel. It uses Samsung INR21700-50s cells in a 12s7p configuration. This configuration results in the specifications also written in Table~\ref{tab:battery_comparison}.
+For a more realistic impact analysis, \ac{sr03} battery will be used. This is a much smaller battery with a reasonable capacity for this vessel. It uses Samsung INR21700-50s cells in a 12s7p configuration. This configuration results in the specifications also written in Table~\ref{tab:battery_comparison}.
+
+Additionally, to reduce the time of the charging test another battery is used. This battery was provided by a startup called NAVICTUS and is a 12s1p with INR21700-53G cells from Samsung.
 
 \section{PV System Impact on Autonomy}
 
@@ -140,7 +142,7 @@ Let's consider the case where we reduced the battery capacity of 1512~Wh which i
 
 The charging times are a good to evaluate the \ac{pv} system, but the main goal is to maximize the time on water before full battery discharge. For that lets consider 1000~W of consumption. Considering the original battery it takes 5~h 51~min to fully discharge without solar panels and 12~h 21min with solar panels and approximately 10 days with the additional solar panels. As previously said, this battery is overdimensioned and will be changed in the future.
 
-To get a better idea of the impact of the \ac{pv} system lets consider the battery of \acs{sr03}. This battery takes 1.51~h to fully discharge without solar panels and 3~h 12~min with solar panels and approximately 2 days 18~h with the additional solar panels. 
+To get a better idea of the impact of the \ac{pv} system lets consider the battery of \acs{sr03}. This battery takes 1~h and 30~min to fully discharge without solar panels and 3~h 12~min with solar panels and approximately 2 days 18~h with the additional solar panels. 
 
 By reducing the battery capacity and increase the solar panel area, the battery would never need external charging. In another point of view, the low voltage system can drain more power from the battery.
 
@@ -152,9 +154,9 @@ In engineering, the term ``fast'', used in the title of this thesis, needs to be
 
 When analyzing \ac{mpp} variations, there two main factors: temperature and irradiance. Temperature variations are generally slower than variations in irradiance. Although rapid temperature changes can occur, for example when water comes into contact with the photovoltaic panels, such events are considered unusual during normal operation and are therefore not considered in this analysis. Irradiation on the other hand, can vary more rapidly as the angle of the solar panels changed with the vessel angle, particularly roll and pitch. 
 
-The motion of a vessel subjected to waves can be described as a forced dynamic system. The vessel has characteristic natural frequencies associated with its different modes of motion, including roll, pitch and heave. The response to wave excitation depends on the relationship between the excitation frequency and the corresponding natural frequency of the vessel. In particular, when the excitation frequency approaches a natural frequency, the response amplitude can increase significantly due to resonance. The vessel does not, however, necessarily oscillate at its natural frequency when subjected to excitation at another frequency; the steady-state response occurs primarily at the excitation frequency, while the natural frequency determines the dynamic response and its amplitude.
+The motion of a vessel subjected to waves can be described as a forced dynamic system. The vessel has characteristic natural frequencies associated with its different modes of motion, including roll, pitch and heave. The response to wave excitation depends on the relationship between the excitation frequency and the corresponding natural frequency of the vessel. In particular, when the excitation frequency approaches a natural frequency, the response amplitude can increase significantly due to resonance. The vessel does not, however, necessarily oscillate at its natural frequency when subjected to excitation at another frequency, the steady state response occurs primarily at the excitation frequency, while the natural frequency determines the dynamic response and its amplitude.
 
-Considering a simplified undamped free oscillation system, the natural frequency of a vessel can be calculated using the natural period Formula~\ref{eq:fundamental period} where $I$ is the mass moment of inertia and $C$ is the restoring stiffness.
+Considering a simplified undamped free oscillation system, the natural frequency of a vessel can be calculated using the natural period Formula~\ref{eq:fundamental period} where $I$ is the mass moment of inertia and $C$ is the restoring stiffness \cite{rao2011mechanical}.
 
 \begin{equation}
     T = 2\pi \sqrt{\frac{I}{C}}
@@ -175,9 +177,9 @@ When applied to pitch and roll, the restoring stiffness is given by the mass (m)
 
 For pitch, $k=k_{yy}$ and $GM=GM_L$, whereas for roll, $k=k_{xx}$ and $GM=GM_T$.
 
-This formula is used with results given by the hydrostatic simulations which were provided by \ac{tsb}, where $GM_L$ is 21.515~unit and $GM_t$ is 1.867~unit. Also, the radius of gyration is calculated based on the longitude (L=8~m) and width/beam (B=2.5~m). Based on the International Towing Tank Conference (ITTC) recommendation \cite{ittc_seakeeping_2024}, when the radius of gyration for pitch and roll is unknown a value of 0.25L and 0.35B to 0.40B, respectively, should be used.
+This formula is used with results given by the hydrostatic simulations which were provided by \ac{tsb}, where $GM_L$ is $21.515~\mathrm{m}$ and $GM_t$ is $1.867~\mathrm{m}$. Also, the radius of gyration is calculated based on the longitude (L=8~m) and width/beam (B=2.5~m). Based on the International Towing Tank Conference (ITTC) recommendation \cite{ittc_seakeeping_2024}, when the radius of gyration for pitch and roll is unknown a value of 0.25L and 0.35B to 0.40B, respectively, should be used.
 
-Based on the given values, the pitch and roll natural period is 0.8654 and 1.2853 respectively, which is equivalent to 1.1555~Hz and 0.7780~Hz. These values represent estimates of the natural frequencies of the vessel.
+Based on the given values, the pitch and roll natural period is 0.8654 and 1.2853 respectively, which is equivalent to 1.1555~Hz and 0.7780~Hz. These values represent a estimative of the natural frequencies of the vessel.
 
 As for the frequency of the waves it has an extensive range and depends on several factors. Studies on this subject show higher energy for waves with 1 to 30 seconds periods which is equivalent to 0.033~Hz to 1~Hz, Figure~\ref{fig:wave by period}.
 
@@ -189,7 +191,7 @@ As for the frequency of the waves it has an extensive range and depends on sever
     \label{fig:wave by period}
 \end{figure}
 
-The environmental excitation experienced by \ac{sg01} was further investigated using experimental data collected while the vessel was adrift at sea. Ten datasets containing the roll and pitch angles were collected and combined to obtain the frequency-domain response shown in Figure~\ref{fig:sg01 wave}. The results show significant spectral components at approximately 0.05~Hz and 0.5~Hz. the lower frequency can be explained by the fast winds, and it is consistent with the local forecast wave period. The faster frequency can be caused by the natural frequency of vessel which in real conditions can be lower from what was calculated. 
+The environmental excitation experienced by \ac{sg01} was further investigated using experimental data collected while the vessel was adrift at sea. Ten datasets containing the roll and pitch angles were collected and combined to obtain the frequency domain response shown in Figure~\ref{fig:sg01 wave}. The results show significant spectral components at approximately 0.05~Hz and 0.5~Hz. The lower frequency must be due to the fast winds or transient oscillations, and it is consistent with the local forecast wave period. The higher frequency can be caused by the natural frequency of vessel. The root causes were not investigated further, since it falls outside the scope of this project.
 
 \begin{figure} [!ht]
     \centering
@@ -199,8 +201,9 @@ The environmental excitation experienced by \ac{sg01} was further investigated u
     \label{fig:sg01 wave}
 \end{figure}
 
-Both theoretical and experimental results predict or measure frequency up to 1~Hz. In the context of the \ac{mppt} algorithm, the goal will be a minimum speed of 2~Hz or 0.5 seconds of tracking time to give some margin.
+Both theoretical and experimental results predict or measure frequency up to 1~Hz. In the context of the \ac{mppt} algorithm, the goal will be a minimum speed of 1~Hz or 1 seconds and a typical speed of more than 2~Hz or 0.5~seconds.
 
+These value will have directly influence on the sampling time as will discuss later. 
 % https://geo.libretexts.org/Bookshelves/Oceanography/Introduction_to_Physical_Oceanography_(Stewart)/16%3A_Ocean_Waves/16.4%3A_Ocean-Wave_Spectra
 
 % See Swell Period and hight here https://bigsalty.com/en/weather/forecast/8350/
