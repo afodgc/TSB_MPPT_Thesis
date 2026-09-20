@@ -248,7 +248,7 @@
         However, both simulation and theoretical analysis indicate that the choice of each components lead to a highly efficient converter.
 
     \section{MPPT algorithm}
-        The algorithm has a few parameters like the working frequency, sampling frequency, step size, power dead band, etc. All of this parameters need to be tuned to work on his full potential while keeping it safe. Therefore, a simulation in MATLAB Simulink was implemented which simulates the behavior of the switching converter with all values already defined earlier. The boost converter is connected to a solar panel and a battery, as it is spouse to be use (Figure~\ref{fig:Simulink mode}). To simplify, the simulation uses a diode instead of a transistor making it a basic boost converter. This simplification will not have influence on the results since the idea is to analyze the performance of the converter.
+        The algorithm has a few parameters like the working frequency, sampling frequency, step size, power dead band, etc. All of this parameters need to be tuned to work on his full potential while keeping it safe. Therefore, a simulation in MATLAB Simulink was implemented which simulates the behavior of the switching converter with the values defined earlier. The boost converter is connected to a solar panel and a battery, as it is spouse to be use (Figure~\ref{fig:Simulink mode}). To simplify, the simulation uses a diode instead of a transistor making it a basic boost converter. This simplification will not have influence on the results since the idea is to analyze the performance of the algorithm instead of the converter efficiency.
 
         \begin{figure}[!ht]
             \centering
@@ -257,7 +257,7 @@
             \label{fig:Simulink mode}
         \end{figure}
 
-        The solar panel and battery are both configured with the parameters of the real system. It was used the specifications of solar panel with 35 cells and the \ac{sg01} battery. The \ac{pv} side sensors are inside the solar panel and show some noise as in the real system, to mitigate it, an average of 10 samples was implemented with each sample collected at 1~KHz. The value of the average is sent to the algorithm which runs at 100~Hz. Inside the \ac{mppt} block there is the sweep algorithm and \ac{peo}. The sweep was used to measure the \ac{mpp} point for each case and the \ac{mppt} algorithm that is analyzed further \ac{peo}.
+        The solar panel and battery are both configured with the parameters of the real system. It was used the specifications of solar panel with 35 cells and the \ac{sg01} battery. The \ac{pv} side sensors are inside the solar panel and show some noise as in the real system, to mitigate it, an average of 10 samples was implemented with each sample collected at 1~KHz. The value of the average is sent to the algorithm which runs at 100~Hz. Inside the \ac{mppt} block are the sweep algorithm and \ac{peo}.
 
         To understand the impact of each environment variation on the \ac{mpp} point, a sweep  was performed for different irradiance values and temperatures, Figure~\ref{fig:irr_sweep} and \ref{fig:temp_sweep}. For irradiance variations, the maximum duty cycle difference is 3\%. On the other hand, the maximum duty cycle difference for temperature variations is 9\%. This means that the algorithm will always be slower to temperature variations when compared to irradiance variations. However, it is more common to have a fast changing irradiance than temperature. The solar panels will heat slowly and when covered in water they cool around 10 to 20ºC (values measured during tests).  
 
@@ -280,41 +280,49 @@
 
         Let's consider the worst case which is 9\%. To achieve the desired speed of 0.5~seconds, a combination of the step size and working frequency needs to be tuned. For example, considering a working frequency of 100~Hz, the algorithm have 50 steps to achieve \ac{mpp} under 0.5 seconds. So if the algorithm uses a step size of 9\% divided by 50 (0.18\%), in an ideal situation it would reach the speed goal every time. However, since this is a small step it can be confused with noise. Therefore, always needs to be tuned to the systems where is being applied.
 
-        In simulations, the system can be tested with different parameters to give an idea of how it should behave outside simulation. Fixing the frequency to 100~Hz, a simulation was performed with 3 different step sizes under a few steps of temperature, Figure~\ref{}. The smaller step is to small, and therefore it never reaches the \ac{mpp}. Most likely due to the noise. The other performed similarly. The speed of both is similar, but the higher step show more oscillations around the \ac{mpp}.
+        In simulations, the system can be tested with different parameters to give an idea of how it should behave outside simulation. Fixing the frequency to 100~Hz, a simulation was performed with 3 different step sizes under a few steps of temperature, Figure~\ref{fig:peo_step_comparison}. The smaller step is too small, and therefore it never reaches the \ac{mpp}. Most likely due to the noise. The other two show a similar performed, but the higher step show more oscillations around the \ac{mpp}.
 
-        \textcolor{red}{labels mal colocadas e texto errado}
+
         \begin{figure}[!ht]
             \centering
-            \begin{minipage}[b]{0.49\textwidth}
+
+            \begin{subfigure}[b]{0.49\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{Images/Implementation/Tracking_speed_PEO_step2}
-                \caption{}
-                \label{fig:}
-            \end{minipage}
+                \caption{Complete response.}
+                \label{fig:peo_step_complete}
+            \end{subfigure}
             \hfill
-            \begin{minipage}[b]{0.49\textwidth}
+            \begin{subfigure}[b]{0.49\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{Images/Implementation/Tracking_speed_PEO_step.pdf}
-                \caption{}
-                \label{fig:}
-            \end{minipage}
+                \caption{Zoomed view.}
+                \label{fig:peo_step_zoom}
+            \end{subfigure}
+
+            \caption{Power response for different \ac{peo} step sizes during a temperature variation of $10\,^{\circ}\mathrm{C}$ per second.}
+            \label{fig:peo_step_comparison}
         \end{figure}
 
-        Next the, step was 
+        The analysis was then extended to more severe operating point variations. For a temperature step from $25~^\circ\mathrm{C}$ to $85~^\circ\mathrm{C}$ (Figure~\ref{fig:big_temp_step}), the $0.5\%$ duty-cycle step, which had performed well in the previous test, required the longest tracking time, approximately $1~\mathrm{s}$ to reach within $5\%$ of the \ac{mpp}. Given that the tracking time requirement is at most $1~\mathrm{s}$, and typically below $0.5~\mathrm{s}$, this step size lies at the limit of the specification. The $1\%$ and $2\%$ steps reached the \ac{mpp} faster, but with larger oscillations around the operating point. A step size between $0.5\%$ and $1\%$ is therefore considered the most suitable compromise.
+
+        It should also be noted that the algorithm stalled on a few occasions. This behavior is attributed to measurement noise and to the \ac{peo} deadband. Although not desirable, it is consistent with the expected operation of the method and can be reduced by further tuning.
+
+        A rapid irradiance variation was also simulated. As shown in Figure~\ref{fig:big_irr_step}, the \ac{mpp} is reached almost instantaneously for all step sizes under consideration. This result is expected, as discussed earlier, since the corresponding duty cycle variation is approximately three times smaller than in the temperature case.
 
         \begin{figure}[!ht]
             \centering
             \begin{minipage}[b]{0.49\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{Images/Implementation/temp_step_PEOsteps.pdf}
-                \caption{.}
-                \label{fig:}
+                \caption{Power response for different \ac{peo} step sizes during a temperature variation from 25ºC to 85ºC.}
+                \label{fig:big_temp_step}
             \end{minipage}
             \hfill
             \begin{minipage}[b]{0.49\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{Images/Implementation/Irr_step_PEOsteps.pdf}
-                \caption{.}
-                \label{fig:}
+                \caption{Power response for different \ac{peo} step sizes during a Irradiance variation from 1000~$\mathrm{W/m}^2$ to 200~$\mathrm{W/m}^2$.}
+                \label{fig:big_irr_step}
             \end{minipage}
         \end{figure}
