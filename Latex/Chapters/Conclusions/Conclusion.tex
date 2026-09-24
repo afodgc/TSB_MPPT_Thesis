@@ -5,4 +5,11 @@
 
 \section{Future Work}
 
-\textcolor{red}{last thing to write}
+The prototype developed in this thesis provides a functional platform for \ac{tsb}, but several improvements remain possible.
+
+On the control side, additional \ac{mppt} algorithms should be implemented, tuned and compared under the same operating conditions. A dedicated irradiance measurement, used together with the existing temperature sensing, would also enable a more accurate estimation of conversion losses and could serve as an input to more advanced tracking methods.
+
+Regarding the processing unit, a \ac{mcu} with a native 16-bit ADC would improve measurement resolution. A higher clock frequency would increase the PWM duty cycle resolution, which is particularly relevant for variable step size algorithms.
+
+Finally, both cost and output voltage ripple could be reduced by coordinating the \acp{mppt} that operate in parallel. If the converters are interleaved, that is, operated with a controlled phase shift, the individual output ripples tend to cancel rather than add. A common output capacitor bank could then be shared among chargers, reducing the required capacitance per unit and the overall cost of the installation.
+

@@ -35,7 +35,7 @@
     \label{subsubsect:Sim_Boost}
         To validate the theoretical  calculations, simulations in LTspice were carried using the boost converter in steady state mode and a fix duty cycle. 
 
-        Considering a solar panel with 35 cells, five points of CC-CV charging curve were chosen to test the performance of the converter. These five points are represented in Figure~\ref{fig:cc-cv points}.
+        Considering a solar panel operating at his \ac{mpp} with 35 cells, five points of CC-CV charging curve were chosen to test the performance of the converter. These five points are represented in Figure~\ref{fig:cc-cv points}.
         
         \begin{figure}[!ht]
             \centering
@@ -44,9 +44,9 @@
             \label{fig:cc-cv points}
         \end{figure}
 
-        It is important to note that in this CC-CV curve the constant current is given by the solar panel and not by the battery as it is usually expected. This is only truth due to the maximum charge current of the battery being lower than the current that can be provided by the solar panel. So at CC, the converter is working at \ac{mpp}.
+        It is important to note that in this CC-CV curve the constant current is given by the solar panel and not by the battery as it is usually expected. This is only truth due to the maximum charge current of the battery being lower than the current that can be provided by the solar panel. So at CC, the converter is working at \ac{mpp}. Also, the timescale will depend on the battery capacity.
 
-        With this five points chosen, some simulations were carried using capacitors and inductors that would fit the requirements calculated earlier. The objective of these simulations is to optimize the performance of the converter, leading to better choices.
+        With the chosen five points, some simulations were carried using capacitors and inductors that would fit the requirements calculated earlier. The objective of these simulations is to optimize the performance of the converter, leading to better choices.
 
         The model was built in LTspice with approximated models given by the manufactures for higher precision. Only the solar panel model was designed by hand, as previously mentioned.
 
@@ -133,7 +133,7 @@
 
         \begin{table}[!ht]
         \centering
-        \caption{Ripple and Power Loss Summary for Each Operating Step}
+        \caption{Ripple and power loss summary for each operating point.}
         \label{tab:ripple_loss}
         \begin{tabular}{|c|cccc|}
         \hline
@@ -148,10 +148,8 @@
         \end{tabular}
         \end{table}
 
-        \textcolor{red}{Iin é difrente de IL. O Iin tem quase nada de ripple}
 
-
-        Both voltage ripples are lower than what was defined as the goal in Table~\ref{tab:converter_constraints}. As for the current ripple it is still reasonable. The losses/efficiency are also higher than what was aimed, reaching values up to 99.4\%, in simulation. 
+        Both voltage ripples are lower than what was defined as the goal in Table~\ref{tab:converter_constraints}. As for the current ripple it is still reasonable. The losses/efficiency are also higher than what was aimed, reaching efficiency values up to 99.4\%. 
 
         A voltage sweep were performed, and as expected the efficiency drop with the increase of output voltage (Figure~\ref{fig:voltage_sweep}). Also, as mentioned earlier, the output current drop because in \ac{cc} mode the solar panel current is constant, so the output current drops with the increase of battery voltage due to the power conservation principle.
 
@@ -167,19 +165,23 @@
     \section{Power Loss Estimation}
         \label{subsubsec:loss_estimation}
 
-        Although LTspice provides an accurate estimation of the converter efficiency, it does not directly identify the contribution of each component to the total power dissipation. Therefore, an analytical power loss model was developed in MATLAB to estimate the individual losses of each component of the proposed synchronous boost converter. The model uses the electrical parameters of the selected components obtained from their datasheets together with the converter operating conditions.
+        Although LTspice provides an accurate estimation of the converter efficiency, it does not directly identify the contribution of each component to the total power dissipation. Therefore, an analytical power loss estimation was developed in MATLAB to estimate the individual losses of each component of the proposed synchronous boost converter. This estimation uses the electrical parameters of the selected components obtained from their datasheets together with the converter operating conditions.
 
-        The total converter losses are obtained by summing the losses associated with the GaN transistors, inductor, capacitors, dead time and gate driver:
+        The total prototype losses are obtained by summing the losses associated with the GaN transistors, inductor, capacitors and auxiliary electronics:
 
         \begin{equation}
-        P_{loss}=P_{cond_{HS}}+P_{cond_{LS}}+P_{sw_{HS}}+P_{sw_{LS}}+P_{L}+P_{C}+P_{dead}+P_{gate}.
+        P_{loss}=P_{tran}+P_{L}+P_{C}+P_{aux}.
         \end{equation}
 
-        \textcolor{red}{falta coisas}
-        The converter efficiency is then calculated as:
+        The prototype efficiency is then calculated as:
 
         \begin{equation}
         \eta=\frac{P_{out}}{P_{out}+P_{loss}}\times100\%.
+        \end{equation}
+
+        The transistor losses can be split in three. The conduction, switching and deadtime losses:
+        \begin{equation}
+            P_{tran}=P_{cond_{HS}}+P_{cond_{LS}}+P_{sw_{HS}}+P_{sw_{LS}}+P_{dead}
         \end{equation}
 
         The conduction losses of each GaN transistor are given by:
@@ -198,7 +200,7 @@
         \label{eq:psw}
         \end{equation}
 
-        The dead-time losses are calculated using Equation~\ref{eq:pdead}. These losses originate from the conduction of the reverse conduction path during the dead time interval required to prevent shoot through. This reverse condition path is either from the third quadrant conduction from the GaN device or from the parallel schottky diode added later in version 1.1 (this is explained in Section \textcolor{red}{?})
+        The deadtime losses are calculated using Equation~\ref{eq:pdead}. These losses originate from the conduction of the reverse conduction path during the dead time interval required to prevent shoot through. This reverse condition path is either from the third quadrant conduction from the GaN device or from the parallel schottky diode added later in version 1.1 of the prototype.
 
         \begin{equation}
         P_{dead}=2\cdot  V_f \cdot I_{L_{AVG}} \cdot t_{dead} \cdot f_{sw}.
@@ -207,45 +209,52 @@
 
 
 
-        The inductor and \ac{dc} capacitor losses are estimated using the RMS current passing through them and their \ac{esr}
+        The inductor and \acs{dc} capacitor losses are estimated using the RMS current passing through them and their \ac{esr}. The inductor manufacture does not provide the required magnetic material parameters to estimate the \acs{ac} losses. However, an employee suggested using their own tool called REDEXPERT which can simulate both \acs{dc} and \acs{ac} losses. Therefore, the value \acs{ac} losses were copied from their tool.
 
         \begin{equation}
-        P_L=I_{L_{RMS}}^{2}ESR.
+        P_L=I_{L_{RMS}}^{2}ESR + P_{L_{AC}}.
         \end{equation}
 
         \begin{equation}
         P_C=I_{C_{RMS}}^{2}ESR,
         \end{equation}
 
-        Although magnetic core losses of the inductor could be estimated too, the selected manufacturer does not provide the required magnetic material parameters. Consequently, only the winding copper losses are considered, leading to a slight underestimation of the total converter losses. 
+        
 
-        \textcolor{red}{reler o texto, inserir as perdas do circuito auxiliar, inserir as perdas vindas do REDEEXPERT, adicionar as perdas vinda do sensor de corrente, simplificar ou não a pie chart}
-
-        Finally, the gate driver losses are estimated using Equation~\ref{eq:gate_drive} which takes into account the energy needed to drive the transistors. Although the EPC23102 has an internal gate driver, this is still relevant.
+        The gate driver losses are estimated using Equation~\ref{eq:gate_drive} which takes into account the energy needed to drive the transistors. Although the EPC23102 has an internal gate driver, this is still relevant.
 
         \begin{equation}
         P_{gate}= (Qg_{LS} + Qg_{HS})* Vdrv * fsw.
         \label{eq:gate_drive}
         \end{equation}
 
-        Figure~\ref{fig:loss_breakdown} presents the resulting power loss distribution. The calculated total power loss is approximately 1.188~W, corresponding to an efficiency of 99.10\%, which agrees well with the LTspice simulation results presented in the previous section.
+        Last but not least, the rest of the electronics (\acs{mcu}, \acs{dc}-\acs{dc}, sensors, etc.) were considered too. A sum of the maximum current of every component was made. Then the power losses can be estimated based on the power and efficiency of each \acs{dc}-\acs{dc} converter, Equation~\ref{eq:aux_losses}.
+
+        \begin{equation}
+            P_{aux} = (I_{3v3} * 3.3) * eff_{dcdc} + (I_{5} * 5) * eff_{dcdc} + I_{in}*R_{shunt} + I_{out}*R_{shunt} + P_{gate}
+            \label{eq:aux_losses}
+        \end{equation}
+
+        Figure~\ref{fig:loss_breakdown} presents the resulting power loss distribution. The calculated total power loss is approximately 1.98~W, corresponding to an efficiency of 98.50\%. The efficiency dropped around 1\%, compared to LTspice simulations and it is expected to drop even further in real laboratory results since the \ac{pcb} will generate losses too.
 
         \begin{figure}[!ht]
             \centering
-            \includegraphics[width=0.9\textwidth]{Images/Implementation/fig_loss_breakdown.pdf}
-            \caption{Analytical power loss distribution of the synchronous boost converter for Case~1. \textcolor{red}{change for the case 2}}
+            \includegraphics[width=0.6\textwidth]{Images/Implementation/fig_loss_breakdown.pdf}
+            \caption{Prototype analytical power loss distribution at Case~2.}
             \label{fig:loss_breakdown}
         \end{figure}
 
-        The largest contributors to the total losses are the inductor copper losses and the capacitor ESR losses, each accounting for approximately 31.5\% of the total power dissipation. This highlights the importance of selecting an inductor with low winding resistance and capacitors with low ESR, as these passive components dominate the converter losses.
+        The largest contributors to the total losses are the \acs{dc} losses of the inductor and the ESR losses of the capacitors. This highlights the importance of selecting an inductor with low winding resistance and capacitors with low \ac{esr}, as these passive components represent a significant portion of the converter losses.
 
-        The conduction losses of the GaN transistors account for approximately 16\% of the total losses, showing the importance of choosing transistors with low conduction resistance. The high-side device dissipating more power than the low-side transistor due to its longer conduction interval. Switching losses represent approximately 12\% of the total losses, including both transition losses and the energy required to charge and discharge the output capacitances. Dead-time losses contribute approximately 7\%, while the gate driver losses are almost negligible (only 2.7\%).
+        The auxiliary electronics also have a considerable impact on the overall losses, primarily due to the losses associated with the \acs{dc}-\acs{dc} converter.
 
-        Additionally, all \ac{pcb} connections have an inductance that will represent losses too. 
+        The conduction losses of the GaN transistors account for approximately 24.4\% of the total losses, further highlighting the importance of selecting transistors with low on-state resistance.
 
-        Overall, the analysis indicates that nearly two-thirds of the converter losses originate from the passive components, whereas the semiconductor devices account for approximately one-third. It should be noted that the presented values are based on analytical equations and datasheet parameters. Since magnetic core losses were not considered, the calculated efficiency represents a slight overestimation of the actual converter performance.
+        Additionally, the interconnections and traces on the \ac{pcb} exhibit parasitic inductance, which contributes to the overall losses of the device, which were not taken into account in this analysis.
 
-        However, both simulation and theoretical analysis indicate that the choice of each components lead to a highly efficient converter.
+        Overall, the analysis indicates that nearly half of the converter losses originate from the passive components, while the semiconductor devices account for approximately one quarter of the total losses.
+        Nevertheless, both the simulation results and theoretical analysis indicate that the selected components and design approach result in a highly efficient converter.
+
 
     \section{MPPT algorithm}
         The algorithm has a few parameters like the working frequency, sampling frequency, step size, power dead band, etc. All of this parameters need to be tuned to work on his full potential while keeping it safe. Therefore, a simulation in MATLAB Simulink was implemented which simulates the behavior of the switching converter with the values defined earlier. The boost converter is connected to a solar panel and a battery, as it is spouse to be use (Figure~\ref{fig:Simulink mode}). To simplify, the simulation uses a diode instead of a transistor making it a basic boost converter. This simplification will not have influence on the results since the idea is to analyze the performance of the algorithm instead of the converter efficiency.

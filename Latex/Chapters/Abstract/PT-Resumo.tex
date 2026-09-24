@@ -2,8 +2,15 @@
 % RESUMO em Português
 % !TEX root = ../main.tex
 % #############################################################################
-% use \noindent in firts paragraph
-\noindent
+% use \noindent in first paragraph
 
 
+\noindent Veículos alimentados a energia solar, em particular embarcações, necessitam de uma conversão de energia eficaz em condições climatericas de rápida variação. O carregador \ac{mppt} desempenha um papel importante nesta conversão, garantindo que os painéis operam no seu \ac{mpp}. Este trabalho centra-se no projeto, simulação e ensaio de um carregador \ac{mppt} de resposta rápida para o \ac{tsb}.
 
+O protótipo foi projetado para carregar uma bateria de iões de lítio com tensão nominal de 43,2~V. O carregador proposto baseia-se num conversor boost síncrono a operar a 100~kHz, controlado por um \ac{mcu}.
+
+Foram analisadas diferentes técnicas de \ac{mppt} de modo a identificar uma solução adequada às condições de operação dinâmicas da embarcação. O compromisso entre velocidade de seguimento e precisão conduziu à implementação de um algoritmo \ac{peo}. O conversor e o sistema fotovoltaico foram simulados em LTspice e em Matlab para validar a seleção de componentes e os parâmetros do algoritmo. Foi projetada, fabricada e soldada manualmente uma \ac{pcb} dedicada.
+
+Os resultados experimentais mostram que o algoritmo de \ac{mppt} implementado responde rapidamente a variações de irradiância ou de temperatura, com um tempo de seguimento adequado às variações ambientais identificadas. O protótipo atingiu uma eficiência medida até 96\%. Para além do desempenho, foi também desenvolvida uma aplicação para configuração e análise de dados. O sistema resultante constitui um carregador \ac{mppt} dedicado, configurável e de baixo custo para o \ac{tsb}, bem como uma plataforma para desenvolvimentos futuros.
+
+\vspace{0.5cm}
