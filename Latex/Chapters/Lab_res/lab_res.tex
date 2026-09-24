@@ -298,38 +298,10 @@ Following the design and simulation stages, a prototype was manufactured and ass
             \end{minipage}
         \end{figure}
 
-        \textcolor{red}{Increase CAN send rate, crop the data, add reference lines.}
+        For both tests, the measured tracking time was typically below 100~ms, based on the measurements obtained during the first phase. When the irradiance was increased from 200 to 1000~$\mathrm{W/m^2}$, the tracking time was slightly higher but remained below 100~ms. The highest measured tracking time occurred when the solar panels were cooled from 85~$^\circ$C to 25~$^\circ$C, for which a tracking time of approximately 200~ms was measured. Individual tracking times for each test condition are not presented, as the response was nearly instantaneous in most cases, making accurate measurement difficult with the available instrumentation.
 
-        For both tests, the tracking speed was measured and it is represented in table.
+        In addition to the tracking speed, the \ac{mppt} algorithm demonstrated a high tracking accuracy, with an average value of approximately 99\%. Nevertheless, some deviations from the \ac{mpp} were observed under specific operating conditions, particularly at 85~$^\circ$C. These deviations are likely related to measurement noise, although this could not be conclusively verified.
 
-        \begin{table}[!ht]
-            \centering
-            \caption{Tracking speed (ms) for irradiance stairway test.}
-            \label{tab:irr_stairway}
-            \begin{tabular}{|c|c|c|c|c|}
-                \hline
-                 1000 to 800~$\mathrm{W/m}^2$ & 800 to 600~$\mathrm{W/m}^2$ & 600 to 400~$\mathrm{W/m}^2$ & 400 to 200~$\mathrm{W/m}^2$ & 200 to 1000~$\mathrm{W/m}^2$\\
-                \hline
-                 ? & ? & ? & ? & ?\\
-                \hline 
-            \end{tabular}
-        \end{table}
-
-        \begin{table}[!ht]
-            \centering
-            \caption{Tracking speed (ms) for temperature stairway test.}
-            \label{tab:temp_stairway}
-            \begin{tabular}{|c|c|c|c|c|c|c|}
-                \hline
-                 25 to 35ºC & 35 to 45ºC & 45 to 55ºC & 55 to 65ºC & 65 to 75ºC & 75 to 85ºC & 75 to 35ºC\\
-                \hline
-                 ? & ? & ? & ? & ? & ? & ?\\
-                \hline 
-            \end{tabular}
-        \end{table}
-
-        \textcolor{red}{analise}
-        
         
     
 \section{Field test}
