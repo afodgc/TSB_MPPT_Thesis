@@ -400,7 +400,7 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
     \subsection{Firmware Overview}
         The firmware is a flag based scheduler with two main task, the \ac{mppt} and ADC task. 
 
-        The ADC task is responsible to convert the analog readings into another units such as current, voltage and temperature. If any of the values exceed the limits configured by the user, a fault is detected and blocks the \ac{mppt} to run during 5 second. After this time the ADC task runs again and checks if the faults was removed. 
+        The ADC task is responsible to convert the analog readings into another units such as current, voltage and temperature. If any of the values exceed the limits configured by the user, a fault is detected and blocks the charging state machine to run during 5 seconds. After this time the ADC task runs again and checks if the faults was removed. 
 
         \begin{figure}[!ht]
             \centering
@@ -409,8 +409,7 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
             \label{fig:Firmware flowchart}
         \end{figure}
         
-        The \ac{mppt} task is responsible to run the state machine which changes the operation mode depending  on the measurements and outputs a PWM duty cycle value. In Figure~\ref{fig: charging state machine}, is represented how does the code transit between states. The idea is, if the board is not connected to a battery, the output voltage is set to the \ac{cv} target (No load state), then if enough current is detected in the battery side it switches to Sweep mode (if enabled) which sweeps the \ac{pv} operating point to find the \ac{mpp}. Once the sweep is finished it changes to the CC-CV charging phase, where depending on the battery current and voltage, the mode will be \ac{mppt} algorithm, \ac{cc} or \ac{cv}. Once the battery finish the charging cycle or disconnects from the board, it changes to No load mode again. 
-        When designing these state machine, one of the most important aspects was the ability of moving forward in terms of charge (first \ac{cc} then \ac{cv}) or backwards in cases where the battery discharge current is higher in comparison with the energy provided by the solar panels.
+        The \ac{mppt} task is responsible to compute an average of the last measurements and refresh the state machine which changes the operation mode depending on the measurements and outputs a PWM duty cycle value. In Figure~\ref{fig: charging state machine}, is state machine logic. 
 
         \begin{figure}[!ht]
             \centering
@@ -419,9 +418,31 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
             \label{fig: charging state machine}
         \end{figure}
 
-        Besides the main tasks, the board is able to send CAN and Serial messages and therefore the respective tasks. 
+        The sates are divided into charging and not charging. There is 5 "not charging" states:
+        \begin{itemize}[leftmargin=4em, itemsep=1pt, topsep=2pt]
+            \item \textbf{Delay}: waits 100 cycles to skip the transients and then decides the next state;
+            \item \textbf{Disable}: disables the \acs{dc}-\acs{dc};
+            \item \textbf{No Source}: the solar panel is disconnected and therefore the \acs{dc}-\acs{dc} should be disconnected;
+            \item \textbf{No load}: the battery is disconnected, and therefore the output voltage is set to the maximum battery voltage to prevent the need of a precharge circuit;
+            \item \textbf{Charge finished}: similar to "No load", runs a PID to control the \acs{pv} side by fixing the battery voltage.
+        \end{itemize} 
 
-        \textcolor{red}{Atualizar flowcharts. Explicar que o no load previne o uso de um precharge.}
+        As for the charging states, there is also five:
+        \begin{itemize}[leftmargin=4em, itemsep=1pt, topsep=2pt]
+            \item \textbf{Sweep delay}: wait between sweep steps to ignore transients;
+            \item \textbf{Sweep}: decrease the duty cycle until the end of the sweep;
+            \item \textbf{MPPT algorithm}: runs the \ac{mppt} algorithm chosen;
+            \item \textbf{CC}: if the current exceeds the battery limit, runs a PID to fix the current at the maximum value;
+            \item \textbf{CV}: runs a PID to control the \acs{pv} side by fixing the battery voltage.
+        \end{itemize}
+        
+        
+        % The idea is, if the board is not connected to a battery, the output voltage is set to the \ac{cv} target (No load state), then if enough current is detected in the battery side it switches to Sweep mode (if enabled) which sweeps the \ac{pv} operating point to find the \ac{mpp}. Once the sweep is finished it changes to the CC-CV charging phase, where depending on the battery current and voltage, the mode will be \ac{mppt} algorithm, \ac{cc} or \ac{cv}. Once the battery finish the charging cycle or disconnects from the board, it changes to No load mode again. 
+        % When designing these state machine, one of the most important aspects was the ability of moving forward in terms of charge (first \ac{cc} then \ac{cv}) or backwards in cases where the battery discharge current is higher in comparison with the energy provided by the solar panels.
+
+        
+
+        Besides the main tasks, the board is able to send CAN and Serial messages and therefore the respective tasks. 
 
     \subsection{Serial and CAN communication}
         One of the most important features of this circuit board is the communication with the rest of the boat. This will enable better decision making relating to energy budget. Also, it will be easier to detect broken or malfunction solar panels or human errors such as bad or forgotten connections.
@@ -523,7 +544,7 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
         Since the emulated EEPROM shares the same physical flash as the firmware, care must be taken to ensure that program code is never placed in the reserved EEPROM region. This was achieved by modifying the linker script, which defines the memory map used during the build process. The length of the program flash region was reduced so that firmware is linked only below the first address saved for EEPROM emulation.
 
 
-    \subsection{Graphical User Interface}
+    \section{Graphical User Interface}
         In parallel with the design and test of the \ac{mppt} board, a \ac{gui} was designed to make this project more accessible and easy to use. The application was built from scratch, however it was inspired in the application built during \ac{bms} thesis. It was built using QT framework, which is a powerful, cross platform software toolkit used to build high performance applications and \acp{gui} that run on multiple operating systems like Windows, macOS, Linux. 
 
         This \ac{gui} communicates with the board with Serial or \ac{can} communication. To use \ac{can} communication, the computer should be connected to the bus with a tool called PEAK-CAN.
