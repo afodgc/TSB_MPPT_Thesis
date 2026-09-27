@@ -1,16 +1,16 @@
 \fancychapter{Implementation}
 \label{chap:imp}
 
-This chapter presents the implementation of the proposed \acs{mppt} charger. The charger is based on a synchronous boost converter controlled by an STM32 microcontroller, with dedicated sensing, protection, communication and configuration features.
+This chapter presents the implementation of the proposed \acs{mppt} charger. The charger is based on a synchronous boost converter controlled by an STM32 \acs{mcu}, with dedicated sensing, protection, communication and configuration features.
 
 The chapter first describes the \acs{dc}--\acs{dc} converter, including its operating principles and the dimensioning of the main power components. The processing unit and its configuration are then presented, followed by the voltage, current, temperature and irradiance sensing circuits. Finally, the firmware architecture is described, covering the charging state machine, communication interfaces and the graphical user interface used to configure the device.
 
 \section{DC-DC converter}
 
-Since the solar panels voltage of \ac{sg01} is always lower than the battery voltage, a step-up converter is required. This section presents its operating principles and the dimensioning of the main components.
+Since the solar panels voltage of \ac{sg01} are always lower than the battery voltage, a step-up converter is required. This section presents its operating principles and the dimensioning of the main components.
 
 \subsection{Operation principles}
-The DC-DC converter chosen for this project was a boost converter. This topology uses one switching device, one inductor, one output capacitor and a diode, Figure \ref{fig:boost}. The switching device is used to control the output voltage by switching On and Off at a specified frequency (fsw) and duty cycle (D). The inductor is used to store energy when the switch is on (stage 1) and release it when the switch is off (stage 2), while the output capacitor is used to smooth the output voltage, Figure~\ref{fig:boost}.
+The DC-DC converter chosen for this project was a boost converter. This topology uses one switching device, one inductor, one output capacitor, and a diode Figure \ref{fig:boost}. The switching device is used to control the output voltage by switching on and off at a specified frequency (fsw) and duty cycle (D). The inductor is used to store energy when the switch is on (stage 1) and release it when the switch is off (stage 2), while the output capacitor is used to smooth the output voltage, Figure~\ref{fig:boost}.
 
 \begin{figure}[!ht]
     \centering
@@ -19,7 +19,7 @@ The DC-DC converter chosen for this project was a boost converter. This topology
     \label{fig:boost}
 \end{figure}
 
-Analyzing the boost converter separately on his two stages, it is possible to define the drop  voltage across the inductor (VL), as a function of the input voltage (Vin) and output voltage (Vout) as follows:
+Analyzing the boost converter separately in its two stages, it is possible to define the voltage drop across the inductor (VL), as a function of the input voltage (Vin) and output voltage (Vout) as follows:
 
 \begin{equation}
     V_L = \begin{cases}
@@ -29,19 +29,19 @@ Analyzing the boost converter separately on his two stages, it is possible to de
   \label{eq:vl}
 \end{equation}
 
-With equation \ref{eq:vl} and the fact that at stationary state the average voltage across the inductor is zero, it is possible to define the output voltage in function of the input voltage and duty cycle as follows:
+With equation \ref{eq:vl} and the fact that at the stationary state the average voltage across the inductor is zero, it is possible to define the output voltage as a function of the input voltage and duty cycle as follows:
 
 \begin{equation}
     V_{Lavg} = \frac{1}{T} (\int_{0}^{DT} V_{in} dt + \int_{DT}^{T} (V_{in} - V_{out}) dt) = 0 \Rightarrow V_{out} = \frac{V_{in}}{1-D}
     \label{eq:duty}
 \end{equation}
 
-Equation \ref{eq:duty} is one of the most important equations in boost converter design, as it defines the relationship between the input voltage, output voltage and duty cycle. As the duty cycle increases, the output voltage also increases, which is the main principle behind boost converters. For our use case, it is import to analyze the relation between the input and output current as well. Considering no power losses, it is possible to define the input current as follows:
+Equation \ref{eq:duty} is one of the most important equations in boost converter design, as it defines the relationship between the input voltage, output voltage and duty cycle. As the duty cycle increases, the output voltage also increases, which is the main principle behind boost converters. For our use case, it is also important to analyze the relationship between the input and output current. Considering no power losses, it is possible to define the input current as follows:
 \begin{equation}
     P_{in} = P_{out} \Leftrightarrow V_{in} \cdot I_{in} = V_{out} \cdot I_{out} \Leftrightarrow I_{in} = \frac{V_{out}}{V_{in}} \cdot I_{out} \Leftrightarrow I_{in} = \frac{I_{out}}{1-D}
 \end{equation}
 
-However, these equations are only valid for ideal components since it does not take into account the parasitic elements of the components, such as the resistance of the inductor, the drain source resistance of the transistor, and the voltage drop across the diode (there are more parasitic components that affect the performance). In a real boost converter, these parasitic elements will cause a voltage drop and therefore reduce the output voltage. 
+However, these equations are only valid for ideal components since they do not take into account the parasitic elements of the components, such as the inductor resistance, the drain-source resistance, and the voltage drop across the diode (there are other parasitic components that also affect performance). In a real boost converter, these parasitic elements will cause a voltage drop and therefore reduce the output voltage. 
 
 Let's quickly analyze the influence of the inductor resistance ($R_L$) and the voltage drop across the diode ($V_d$) by changing the equation \ref{eq:vl} to:
 
@@ -53,7 +53,7 @@ Let's quickly analyze the influence of the inductor resistance ($R_L$) and the v
   \label{eq:vl2}
 \end{equation}
 
-In this case the at stationary state the average voltage across the inductor is $R_L \cdot I_L$ and therefore the output voltage can be defined as:
+In this case, at the stationary state, the average voltage across the inductor is $R_L \cdot I_L$ and therefore the output voltage can be defined as:
 
 \begin{equation}
     V_{Lavg} = \frac{1}{T} (\int_{0}^{DT} (V_{in} - R_{DS_{(on)}} \cdot I_{DS}) dt + \int_{DT}^{T} (V_{in} - V_{out} - V_d) dt) \Leftrightarrow 
@@ -69,9 +69,9 @@ In this case the at stationary state the average voltage across the inductor is 
     \label{eq:vout2}
 \end{equation}
 
-Equation \ref{eq:vout2} shows the 3 causes of losses in a boost converter. The main cause is the voltage drop across the diode, which causes a significant reduction in the output voltage (usually 0.3~V to 0.7~V). This will be solved by using a synchronous boost converter (Figure~\ref{fig:sync_boost}), which replaces the diode with a transistor. In synchronous boost converters the voltage drop across the transistor is much smaller due to the low $R_{DS,on}$, usually lower than 0.1~V.
+Equation \ref{eq:vout2} shows the 3 causes of losses in a boost converter. The main cause is the voltage drop across the diode, which significantly reduces the output voltage (usually 0.3~V to 0.7~V). This will be solved by using a synchronous boost converter (Figure~\ref{fig:sync_boost}), which replaces the diode with a transistor. In synchronous boost converters, the voltage drop across the transistor is much smaller due to the low $R_{DS,on}$, usually below 0.1~V.
 
-As for the inductor internal resistance, it is not possible to remove it entirely, so it must be taken into account when designing the boost converter. The same is true for the drain source resistance of the transistor, which is also removable. Therefore, it is important to select components with low internal resistance to minimize the losses and increase the efficiency of the converter.
+As for the inductor internal resistance, it cannot be removed entirely, so it must be taken into account when designing the boost converter. The same is true for the drain source resistance of the transistor, which is also removable. Therefore, it is important to select components with low internal resistance to minimize losses and increase converter efficiency.
 
 \begin{figure}[!ht]
     \centering
@@ -81,7 +81,7 @@ As for the inductor internal resistance, it is not possible to remove it entirel
 \end{figure}
 
 \subsection{Dimensioning}
-Let us first define the design goals of the synchronous boost converter. The converter must be able to step up the voltage from the solar panels, which may consist of a maximum of 40 cells (Maxeon Gen 3 from SunPower) connected in series, a minimum of 20 cells in series, and is optimized for 35 cells (Figure~\ref{tab:pv_conditions}). 
+Let us first define the design goals of the synchronous boost converter. The converter must step up the voltage from the solar panels, which may consist of up to 40 cells (Maxeon Gen 3 from SunPower) connected in series, a minimum of 20 cells in series, and is optimized for 35 cells (Figure~\ref{tab:pv_conditions}). 
 The converter must charge a lithium-ion battery with a nominal voltage of 43.2~V. 
 The switching frequency was defined as 100~kHz. This relatively high frequency allows the use of smaller inductors and capacitors, while still avoiding excessive switching losses.
 
@@ -125,12 +125,12 @@ Table~\ref{tab:converter_constraints} and \ref{tab:pv_conditions} summarizes the
     \end{tabular}
 \end{table}
 
-Since the load is a battery, the output ripple voltage must be limited to avoid aging and heating. Also, the voltage output voltage ripple must be low to avoid unexpected behavior of the electronic components that are also connected to the battery. As for the input (the solar panel) the voltage ripple must be low for easier measurement and precise control. Therefore, the values presented in Table~\ref{tab:converter_constraints} were selected. 
+Since the load is a battery, the output ripple voltage must be limited to avoid aging and heating. Also, the output voltage ripple must be low to avoid unexpected behavior in the electronic components connected to the battery. As for the input (the solar panel), the voltage ripple must be low for easier measurement and precise control. Therefore, the values presented in Table~\ref{tab:converter_constraints} were selected. 
 
 \subsubsection{Inductor}
 The inductor is one of the most important components in the boost converter since it is responsible for storing energy and releasing it to the load. 
 
-The choice of an inductor will highly influence the performance of the converter. High inductance will generate low current ripple, however it generates losses due to its internal resistance. On the other hand a smaller inductance will generate high current ripples, high stress in components and high magnetic interference. These current ripples can cause the system to operate in \ac{dcm}. In \ac{dcm} the inductor current reaches zero during the switching period, which means that the energy stored in the inductor is not enough to supply the load during the off time. This can cause high current and voltage ripples, which can damage the components and reduce the efficiency of the converter. Therefore, it is important to ensure that the inductance value is high enough to operate in \ac{ccm}.
+The choice of inductor strongly influences converter performance. High inductance will generate low current ripple, however it generates losses due to its internal resistance. On the other hand, a smaller inductance will generate high current ripples, high stress in components, and high magnetic interference. These current ripples can cause the system to operate in \ac{dcm}. In \ac{dcm}, the inductor current reaches zero during the switching period, which means that the energy stored in the inductor is not enough to supply the load during the off time. This can cause high current and voltage ripples, which can damage the components and reduce the efficiency of the converter. Therefore, it is important to ensure that the inductance value is high enough to operate in \ac{ccm}.
 
 
 The equation that describes the inductor is defined as:
@@ -145,7 +145,7 @@ In the first stage (transistor in conduction mode), the voltage in the inductor 
     \Delta I_L = \frac{V_{in} \cdot D \cdot T}{L}
 \end{equation}
 
-As for the current ripple, it can be described using the riple factor and the average current in the inductor as follows.
+The current ripple can be described using the ripple factor and the average inductor current as follows.
 \begin{equation}
     r = \frac{\Delta I_L}{I_{L,avg}}
     \label{eq:riple factor}
@@ -172,7 +172,7 @@ The value of D that maximizes Equation~\ref{eq:L} is 1/3, which results in the c
     L_{critical} = \frac{4}{27} \cdot \frac{V_o}{I_o \cdot r \cdot f}
 \end{equation}
 
-Using the maximum battery voltage (50.4~V) and the maximum current ($I_{bat}+Margin=10~A$), and a ripple factor of 2 which is equivalent  to the \ac{ccm} limit, the following result is achieved:
+Using the maximum battery voltage (50.4~V) and the maximum current ($I_{bat}+Margin=10~A$), and a ripple factor of 2, which is equivalent  to the \ac{ccm} limit, the following result is achieved:
 
 \begin{equation}
     L_{critical} = \frac{4}{27} \cdot \frac{50.4}{10 \cdot 2 \cdot 100000} = 3.73 \mu H
@@ -184,9 +184,9 @@ This is a reference value, if used, it would highly stress the components, gener
     L_{critical} = \frac{4}{27} \cdot \frac{50.4}{10 \cdot 0.4 \cdot 100000} = 18.66 \mu H
 \end{equation}
 
-As it is explained in the simulation section (Section~\ref{chap:sims}), an higher value will be beneficial to reduce current ripple and noise. For that reason the final inductor value was defines as 68~$\mu H$, which results in a ripple factor of 0.11.
+As explained in the simulation section (Section~\ref{chap:sims}), a higher value will be beneficial to reduce current ripple and noise. For that reason, the final inductor value was defined as 68~$\mu H$, which results in a ripple factor of 0.11.
 
-To select the appropriate inductor, the rated current and the saturation current must be taken into account. The rated current is the maximum current that the inductor can handle without overheating. In this case the rated current must be higher that the maximum short circuit current of the biggest solar panel configuration (40 cells in series), which is 6.374~A. Some margin must be added to this value, so the rated current must be higher than 10~A.
+To select the appropriate inductor, the rated current and the saturation current must be taken into account. The rated current is the maximum current that the inductor can handle without overheating. In this case, the rated current must be higher than the maximum short-circuit current of the biggest solar panel configuration (40 cells in series), which is 6.374~A. Some margin must be added to this value, so the rated current must be higher than 10~A.
 
 The saturation current is the maximum current that the inductor can handle without saturating. When the inductor saturates, the inductance drops significantly, which can cause high current ripples and damage the components. Considering the Open circuit voltage of a 40 cells solar panel (worst case), the inductor ripple current is 4.26~A at 100\% duty cycle. Therefore, the saturation current must be:
 
@@ -194,13 +194,13 @@ The saturation current is the maximum current that the inductor can handle witho
     I_{sat} > I_{in} + \frac{\Delta I_L}{2} = 6.374 + \frac{4.26}{2} = 8.50~A
 \end{equation}
 
-It is physical impossible to have a solar panel on short circuit current and open circuit voltage. And for this reason the calculation is overdimensioned it is used as a reference instead of a strict limit.
-The inductor chosen was the 74437529203680 from Würth Elektronik, which has an inductance of 68~$\mu H$, a rated current of 16~A and a saturation current of 7.2~A ($|\Delta L/L|<10\%$) and 10.6~A ($|\Delta L/L|<30\%$). The saturation current is too close with the objective, however since the inductance is higher than what is needed, the inductance would still be acceptable even at -30\% inductance. 
+It is physically impossible to have a solar panel on both short-circuit current and open-circuit voltage at the same time. And for this reason, the calculation is overdimensioned it is used as a reference instead of a strict limit.
+The inductor chosen was the 74437529203680 from Würth Elektronik, which has an inductance of 68~$\mu H$, a rated current of 16~A and a saturation current of 7.2~A ($|\Delta L/L|<10\%$) and 10.6~A ($|\Delta L/L|<30\%$). The saturation current is too close to the objective, however, since the inductance is higher than what is needed, the inductance would still be acceptable even at -30\% inductance. 
 
-Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant frequency of 5.7~MHz and high maximum voltage of 250~V.
+Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, a high self-resonant frequency of 5.7~MHz, and a high maximum voltage of 250~V.
 
 \subsubsection{Capacitor}
-    The output capacitor is responsible for smoothing the output voltage and reducing the voltage ripple. The capacitor electric characteristic can be described by the following equation:
+    The output capacitor is responsible for smoothing the output voltage and reducing the voltage ripple. The capacitor's electrical characteristic can be described by the following equation:
     \begin{equation}
         i_c = C \frac{dv_o}{d_t}
     \end{equation}
@@ -210,12 +210,12 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
         i_c = C_o  \frac{\Delta V_o}{\Delta t} = C_o \frac{\Delta V_o}{D \cdot T } \Leftrightarrow C_o = \frac{I_o D}{\Delta V_o \cdot f} = \frac{I_{in} (1-D)D}{\Delta V_o \cdot f}
     \end{equation}
 
-    Using the maximum input current of 10~A, a duty cycle of 0.5 (value that maximizes the formula), a voltage ripple of 0.1~V and a switching frequency of 100~kHz, the following value is achieved:
+    Using the maximum input current of 10~A, a duty cycle of 0.5 (the value that maximizes the formula), a voltage ripple of 0.1~V and a switching frequency of 100~kHz, the following value is achieved:
     \begin{equation}
         C_o = \frac{10 \cdot (1-0.5) \cdot 0.5}{0.1 \cdot 100000} = 250 \mu F
     \end{equation}
 
-    The same calculation is applied for the input capacitor, but in this case the voltage ripple is not as critical as in the output capacitor, since the input voltage is not directly connected to the load. Therefore, a voltage ripple of 0.5~V was used:
+    The same calculation applies to the input capacitor, but the voltage ripple is less critical than for the output capacitor because the input voltage is not directly connected to the load. Therefore, a voltage ripple of 0.5~V was used:
     \begin{equation}
         C_{in} = i_{in} \cdot \frac{\Delta t}{\Delta V_i} = \frac{i_{in} \cdot D}{\Delta V_{in} \cdot f}  =  \frac{10 \cdot 0.5}{0.5 \cdot 100000} = 100 \mu F
     \end{equation}
@@ -227,16 +227,16 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
 
     Where 29 is the maximum voltage of a solar panel (40 cells in series) and 0.5 is the voltage ripple defined in Table~\ref{tab:converter_constraints}.
 
-    The current ripple must higher than the RMS input current, which can be calculated based on the RMS formula for triangle wave as follows:
+    The current ripple must be higher than the RMS input current, which can be calculated based on the RMS formula for a triangle wave as follows:
     \begin{equation}
         I_{ripple} > \frac{\Delta I / 2}{\sqrt{3}} = \frac{4.26 / 2}{\sqrt{3}} = 1.23~A
     \end{equation}
 
-    As for the \ac{esr} the value must be as low as possible to reduce the power losses. 
+    As for the \ac{esr}, the value must be as low as possible to reduce power losses. 
 
-    After analyzing the market, the input capacitor selected was the 870575875006 which is a 56~$\mu F$ (2 in parallel) with a voltage rating of 63~V and a ripple current of 2.4~A each (total of 4.8~A). The main reason for this choice was his low \ac{esr} (22~$m\Omega$) compared to other capacitors with similar values. Additionally, by using two capacitors in parallel, the \ac{esr} is reduced even further and the current ripple that they with stand is higher and the reliability of the system is increased.
+    After analyzing the market, the input capacitor selected was the 870575875006, which is a 56~$\mu F$ (2 in parallel) with a voltage rating of 63~V and a ripple current of 2.4~A each (total of 4.8~A). The main reason for this choice was its low \ac{esr} (22~$m\Omega$) compared to other capacitors with similar values. Additionally, using two capacitors in parallel further reduces the \ac{esr}, increases the current ripple they can withstand, and improves system reliability.
 
-    The same process was repeated for the output capacitor, but in this case the voltage rating must be higher than the maximum battery voltage, which is 50.4~V. The current ripple must be higher than the RMS output current, which can be calculated as follows:
+    The same process was repeated for the output capacitor, but in this case the voltage rating must exceed the maximum battery voltage, which is 50.4~V. The current ripple must be higher than the RMS output current, which can be calculated as follows:
     \begin{equation}
         V_{rating} > MAX(V_{out}) + \Delta V_{out} = 50.4 + 0.1 = 50.5~V
     \end{equation}
@@ -244,24 +244,24 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
         I_{ripple} > \sqrt{\frac{I_{in}^2}{4} + \frac{\Delta I ^2}{12} \cdot (1-D)^2} = \sqrt{\frac{6.374^2}{4} + \frac{4.26 ^2}{12} \cdot (1-0)^2} = 3.42~A
     \end{equation}
 
-    The ripple current in the output capacitor is much higher than in the input capacitor, and it is not a common value for electrolytic capacitor, therefore instead of using a single capacitor, multiple capacitors in parallel will be used to achieve the desired current ripple rating.
+    The ripple current in the output capacitor is much higher than in the input capacitor, and it is not a common value for electrolytic capacitor, therefore, instead of using a single capacitor, multiple capacitors in parallel will be used to achieve the desired current ripple rating.
 
-    After simulations and market analysis, the output capacitor value were increased due to the output current ripple dependency on the output voltage ripple. The final capacitor chosen was the 860040875005 with 100~$\mu F$  (5 in parallel, so 5x100~$\mu F$) with a voltage rating of 100V and a ripple current of 0.8~A each (total of 4~A). Some other options were considered, and compared for optimization in section~\ref{subsubsect:Sim_Boost}. 
+    After simulations and market analysis, the output capacitor value was increased due to the output current ripple dependency on the output voltage ripple. The final capacitor chosen was the 860040875005 with 100~$\mu F$  (5 in parallel, so 5x100~$\mu F$) with a voltage rating of 100V and a ripple current of 0.8~A each (total of 4~A). Some other options were considered, and compared for optimization in section~\ref{subsubsect:Sim_Boost}. 
 
-    Additionally, the output and input needs to filtered to reduce the high frequency noise generated by the switching. This is achieved by adding a small capacitor in parallel with the main capacitors. The values use are 1~$\mu F$ and 0.1~$\mu F$. For this use case ceramic capacitors are better since their stacked multilayer construction provides extremely low \ac{esr} and \ac{esl} which over all let them maintain low impedance up into the MHz range.
+    Additionally, the input and output need to be filtered to reduce the high-frequency noise generated by switching. This is achieved by adding a small capacitor in parallel with the main capacitors. The values use are 1~$\mu F$ and 0.1~$\mu F$. For this use case, ceramic capacitors are better since their stacked multilayer construction provides extremely low \ac{esr} and \ac{esl}, which overall lets them maintain low impedance up into the MHz range.
 
 \subsubsection{Transistor and gate driver}
-    The transistor is the switching device on a synchronous boost converter. The choice of the transistor will highly influence the behavior and performance of the converter.
+    The transistor is the switching device in a synchronous boost converter. The choice of transistor strongly influences the converter's behavior and performance.
 
-    When selecting a transistor for a switching converter, not only the maximum rating mater but the switching speed and internal resistance are also quite important. 
+    When selecting a transistor for a switching converter, not only the maximum rating matters, but the switching speed and internal resistance are also quite important. 
     
-    There are many types of transistors (IGBT, MOSFET,  GaN, etc.), however, at this frequency (100~kHz) and power level the choice is between MOSFETs and GaN transistors (Figure~\ref{fig:tech_transistor}). The GaN (Gallium Nitride) transistor technologies has appeared in 1993 in lab experiments, however it has only reached the market more recently, first for radio frequency products in 2004 and only in 2009 for power electronics. The advantage of GaN transistors is their low internal resistance and very fast switching speed, which can significantly reduce the switching losses and therefore increasing the efficiency of the converter. Additionally, they have a high energy density and lower Vgs(on). However, they are more expensive and require a precise gate driver to operate correctly because there max(Vgs) is usually low. 
+    There are many types of transistors (IGBT, MOSFET,  GaN, etc.), however, at this frequency (100~kHz) and power level the choice is between MOSFETs and GaN transistors (Figure~\ref{fig:tech_transistor}). The GaN (Gallium Nitride) transistor technology appeared in 1993 in lab experiments, however, it reached the market only more recently, first for radio frequency products in 2004 and only in 2009 for power electronics. GaN transistors have low internal resistance and very fast switching speeds, which can significantly reduce switching losses and therefore increase converter efficiency. Additionally, they have a high energy density and lower Vgs(on). However, they are more expensive and require a precise gate driver to operate correctly because there max(Vgs) is usually low. 
 
-    In applications where the efficiency is a key factor in the design like solar inverters or \ac{mppt} charger, it is better to use the component that has lower Internal (On) Resistance (RdsOn) and supports higher switching frequency. In this case, GaN would be a better fit. MOSFET would take the second place since MOSFETs can handle higher switching frequencies as compared to IGBTs \cite{talat2024igbt}.
+    In applications where the efficiency is a key factor in the design like solar inverters or \ac{mppt} charger, it is better to use the component that has lower Internal (On) Resistance (RdsOn) and supports higher switching frequency. In this case, GaN would be a better fit. MOSFETs would take second place since they can handle higher switching frequencies than IGBTs \cite{talat2024igbt}.
 
-    There are a lot of options in the market, however there was one in specifically that standout due to their compact size, while having integrated gate driver and two transistors in the same package. The \ac{ic} is the EPC23102, which was designed for power applications, with an incredibly low RdsOn (only 5.2~$m\Omega$), 35~A of maximum power and a maximum operating voltage of 100~V.
+    There are a lot of options in the market, however, there was one in particular that stood out due to its compact size, while having an integrated gate driver and two transistors in the same package. The \ac{ic} is the EPC23102, which was designed for power applications, with an incredibly low RdsOn (only 5.2~$m\Omega$), 35~A of maximum current, and a maximum operating voltage of 100~V.
     
-    Additionally, it has incorporates shoot-through protection that protects the transistor from a control error, however a dead time needs to be introduced in software. It uses a DFN package which is good for heat dissipation and can always be attached to a heat sink for better performance. 
+    Additionally, it incorporates shoot-through protection that protects the transistor from a control error, however, a dead time needs to be introduced in software. It uses a DFN package, which is good for heat dissipation and can always be attached to a heat sink for better performance. 
 
 
     \begin{figure}[!ht]
@@ -275,25 +275,12 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
 \section{Processing unit}
     \subsection{MCU selection}
 
-    % \textcolor{green}{I removed th FPGA and ASIC text. Is it ok?}
+        A \acf{mcu} typically consists of three fundamental components: a central processing unit (CPU), memory, and peripheral modules. The CPU executes program instructions and performs arithmetic and logical operations. Memory is generally divided into non-volatile memory (Flash) for program storage and volatile memory (SRAM) for data and runtime variables. Peripheral modules provide interfaces to the external environment and may include analog-to-digital converters (ADCs), timers, pulse-width modulation (PWM) units, communication interfaces (such as UART, SPI, I²C and \acs{can}), and general-purpose input/output (GPIO) ports. Integrating these components enables standalone operation without extensive external circuitry~\cite{ibm_microcontroller_2025}.
 
-    % Several types of processing units can be considered for this project, including \acp{mcu}, \acp{fpga}, and \acp{asic}.  
+        When selecting a \acs{mcu} for a specific application, the first factor to consider is to use an 8, 16, or 32 bit \acs{mcu}. For this application, a 16-bit \acs{mcu} would probably be sufficient, however to ensure future-proof and compatibility with other \ac{tsb} systems, the choice is for a 32-bit \ac{mcu}. Besides, nowadays, 32-bit \acp{mcu} are considered the industry standard since most embedded system \ac{red} effort is focused on 32-bit cores, and thus both architectures can achieve similar power consumption~\cite{embedded_upgrading_mcu_designs_2025}.
+          There are two main architectures for 32-bit \acp{mcu}: AVR and ARM. Being the most widely used and most advanced architecture in the industry, ARM was chosen for this project~\cite{ampheo_fpga_vs_microcontroller_2025}. 
 
-    % \acp{asic} are custom-designed integrated circuits optimized for specific applications, offering high efficiency and performance. However, they are typically expensive and time-consuming to design and manufacture. Although commercially available \acp{asic}, commonly referred to as \acp{ic}, mitigate these drawbacks, they are usually made for a specific application and therefore not suitable for the high performance and flexibility required in this project, as discussed in Section~\ref{sec:ICs}.  
-
-    %     \acp{fpga} are reconfigurable devices capable of implementing custom digital circuits through programmable logic blocks based on look-up tables (LUTs) and interconnections~\cite{231340}. Their main advantage lies in their inherent parallel processing capability, which enables high-performance operation. Nevertheless, \acp{fpga} generally present high costs, high design complexity, and volatile configuration memory, requiring reprogramming after power loss~\cite{ampheo_fpga_vs_microcontroller_2025,FPGA_Implementation_MPPT}.  
-
-    %     In contrast, \acp{mcu} are widely adopted in embedded systems due to their low cost, ease of use, and versatility. They integrate processing, memory, and peripherals in a single non-volatile device, simplifying hardware design and development. Although their sequential execution limits parallel processing performance compared to \acp{fpga}, modern \acp{mcu} provide sufficient computational capability for many control and signal-processing tasks~\cite{ampheo_fpga_vs_microcontroller_2025}.  
-
-    %     Considering the emphasis on low cost, reduced development time, and implementation simplicity, a \ac{mcu} is selected for this application. Furthermore, the performance of current \acp{mcu} is adequate to meet the requirements of the \ac{mppt} algorithm and the battery charging strategy.
-
-
-        A \acf{mcu} typically consists of three fundamental components: a central processing unit (CPU), memory, and peripheral modules. The CPU executes program instructions and performs arithmetic and logical operations. Memory is generally divided into non-volatile memory (Flash) for program storage and volatile memory (SRAM) for data and runtime variables. Peripheral modules provide interfaces to the external environment and may include analog-to-digital converters (ADCs), timers, pulse-width modulation (PWM) units, communication interfaces (such as UART, SPI, I²C and \acs{can}), and general-purpose input/output (GPIO) ports. The integration of these components enables standalone operation without the need for extensive external circuitry~\cite{ibm_microcontroller_2025}.
-
-         When selecting a \acs{mcu} for a specific application, the first factor to consider is to use an 8, 16, or 32 bit \acs{mcu}. For this application, a 16-bit \acs{mcu} would probably be sufficient, however to ensure future-proof and compatibility with other \ac{tsb} systems, the choice is for a 32-bit \ac{mcu}. Besides, nowadays, 32-bit \acp{mcu} are considered the industry standard since most embedded system \ac{red} effort is focused on 32-bit cores, and thus both architectures can achieve similar power consumption~\cite{embedded_upgrading_mcu_designs_2025}.
-          There are two main architectures for 32-bit \acp{mcu}: AVR and ARM. Being ARM, the most widely used architecture in the industry and the most advanced, it was chosen for this project~\cite{ampheo_fpga_vs_microcontroller_2025}. 
-
-        STM32 is a family of \acp{mcu} that offers a wide range of solutions with different characteristics, making it suitable for various applications, including this project. This family of microcontrolers is used by \ac{tsb}, so it will be used for this project to maintain the standard. 
+        STM32 is a family of \acp{mcu} that offers a wide range of solutions with different characteristics, making it suitable for various applications, including this project. \ac{tsb} uses this family of microcontrollers, so we will use it for this project to maintain the standard. 
 
         The \ac{mcu} requirements for this project are:
         \begin{itemize}[leftmargin=4em, itemsep=1pt, topsep=2pt]
@@ -305,27 +292,27 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
 
         The final decision was the STM32L476. Although it is not the most suitable STM32 microcontroller for this application, it was selected due to its low cost and because it was already widely used within \ac{tsb}, reducing development time and associated risks.
 
-        The STM32L476 is based on an ARM Cortex-M4 core with floating-point support and operates at frequencies up to 80~MHz. The device provides 1~MB of Flash memory and 128~kB of SRAM, which is more than sufficient for the implementation of the \ac{mppt} algorithm, data acquisition, communication protocols, and debugging features. Regarding peripherals, it includes three 12-bit ADCs with up to 16 external channels each, multiple general-purpose and advanced timers capable of high-resolution PWM generation, several communication interfaces (CAN, SPI, I\textsuperscript{2}C, UART, USB), and DMA controllers that allow peripheral operation with minimal CPU intervention.
+        The STM32L476 is based on an ARM Cortex-M4 core with floating-point support and operates at frequencies up to 80~MHz. The device provides 1~MB of Flash memory and 128~kB of SRAM, which is more than sufficient for implementing the \ac{mppt} algorithm, data acquisition, communication protocols, and debugging features. Regarding peripherals, it includes three 12-bit ADCs with up to 16 external channels each, multiple general-purpose and advanced timers capable of high-resolution PWM generation, several communication interfaces (CAN, SPI, I\textsuperscript{2}C, UART, USB), and DMA controllers that allow peripheral operation with minimal CPU intervention.
 
-        These features make the STM32L476 particularly attractive for power electronics applications, where simultaneous voltage and current measurements, fast PWM generation, and real-time control execution are required. Furthermore, the presence of a hardware floating-point unit simplifies the implementation of control algorithms and numerical calculations.
+        These features make the STM32L476 particularly attractive for power electronics applications that require simultaneous voltage and current measurements, fast PWM generation, and real-time control execution. Furthermore, the hardware floating-point unit simplifies the implementation of control algorithms and numerical calculations.
 
-        If there were no limitations, a microcontroller with a higher clock frequency would have been selected, increasing both the PWM duty-cycle resolution and the available computational power. Additionally, a device with native 16-bit ADCs would improve measurement accuracy and reduce quantization effects. Nevertheless, the STM32L476 provides sufficient performance and peripheral resources to meet the requirements of this application.
+        If there were no limitations, I would have selected a microcontroller with a higher clock frequency, increasing both PWM duty-cycle resolution and available computational power. Additionally, a device with native 16-bit ADCs would improve measurement accuracy and reduce quantization effects. Nevertheless, the STM32L476 provides sufficient performance and peripheral resources to meet this application's requirements.
 
     \subsection{Configuration}
-        Since the designed board is custom made, there is any pre-configuration of the \ac{mcu} in use. In this particular case, the STM32 project needs to be configured in a STM32CubeMX, which is a tool that simplifies the configuration process. In this tool it is defined the Clock frequency, Peripherals working frequency, pin maping (GPIOs, ADCs, UART, CAN, etc.) and respective configuration, Interrups, Timers, PWMs, etc. This tool generates a project base on C programming language with all drivers and configurations needed. These files serve as based for firmware development, and can be modified during the project.
+        Since the designed board is custom made, there is no pre-configuration of the \ac{mcu} in use. In this particular case, the STM32 project needs to be configured in a STM32CubeMX, which is a tool that simplifies the configuration process. In this tool it is defined the Clock frequency, Peripherals working frequency, pin maping (GPIOs, ADCs, UART, CAN, etc.) and respective configuration, Interrups, Timers, PWMs, etc. This tool generates a project base on C programming language with all drivers and configurations needed. These files serve as a base for firmware development and can be modified during the project.
 
-        Since it is not possible to describe all the configurations used lets highlight the most important ones for this project.
+        Since it is not possible to describe all the configurations used, let's highlight the most important ones for this project.
 
-        The \ac{mcu} works at 80~MHz, with an external ceramic resonator of 16~MHz. This frequency is enough for the computational time, and a minimal PWM resolution. It can be flashed using JTAG and it uses an Independent Watchdog (IWDG) time interrupt. The IWDG is a safety feature that resets the \ac{mcu} in case of a crash or infinite loops. It works by resetting the timer periodically in a specific part of the code, if the timer is not reseted during a specified time period, the interrupt is triaged and the \ac{mcu} resets automatically.
+        The \ac{mcu} runs at 80~MHz with an external 16~MHz ceramic resonator. This frequency is enough for the computational time and a minimal PWM resolution. It can be flashed using JTAG and it uses an Independent Watchdog (IWDG) time interrupt. The IWDG is a safety feature that resets the \ac{mcu} in case of a crash or infinite loops. It works by resetting the timer periodically in a specific part of the code, if the timer is not reseted during a specified time period, the interrupt is triaged and the \ac{mcu} resets automatically.
 
-        As for timers, one timer was configured with 100~KHz for PWM and two pins were configured as complementary PWMs with a specific dead time. The dead time was inserted as a safety feature too. The dead time is calculated using Formula~\ref{eq: dead time}, where the "value" needs to be in the range from 0 to 255. 
+        As for timers, one timer was configured with 100~KHz for PWM and two pins were configured as complementary PWMs with a specific dead time. The dead time was inserted as a safety feature too. The dead time is calculated using Formula~\ref{eq: dead time}, where the "value" must be in the range 0 to 255. 
 
         \begin{equation}
             Dead Time = Value / F_{CLK}
             \label{eq: dead time}
         \end{equation}
         
-        For this project it was tested several values using an oscilloscope. The smallest the value that ensures that both signals are never high at the same time is 2, however 3 was used to add margin. The measured dead time was 32ns, and the rising and falling time were 19ns and 22ns respectively (Figure~\ref{eq: dead time}). 
+        For this project, several values were tested using an oscilloscope. The smallest value that ensures that both signals are never high at the same time is 2, however, 3 was used to add margin. The measured dead time was 32ns, and the rise and fall times were 19ns and 22ns, respectively (Figure~\ref{eq: dead time}). 
 
         \begin{figure}[!ht]
             \centering
@@ -334,20 +321,20 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
             \label{fig:dead time}
         \end{figure}
 
-        In simulations the dead time values of 2 and 3 were compared and the difference in efficiency is only 0.01\% and therefore the margin is justified. 
+        In simulations, the dead time values of 2 and 3 were compared, and the difference in efficiency is only 0.01\%, and therefore the margin is justified. 
 
-        With 100~KHz PWM and 80~MHz internal clock, the dutty cycle resolution is 0.125~\%.
+        With 100~KHz PWM and an 80~MHz internal clock, the duty cycle resolution is 0.125~\%.
         
-        Another timer was configured to trigger every millisecond, and it is used to serve as task interrupts however each task is called at difrent periods (always around milliseconds) which is implemented with a counter and comparators.
+        Another timer was configured to trigger every millisecond, and it is used to serve as task interrupts however, each task is called at different periods (always around milliseconds), which is implemented with a counter and comparators.
 
-        The ADC can be configured in a variety of different ways, i chose to use the scan mode which reads multiple inputs in sequence. To read the measured values i am using the poling method however in theory if the DMA is used instead, the results could be better since it takes less time to read the ADC values and therefore a better average could be made. In practice i could not get reliable results and therefore the pooling method was adopted. The average is made with all data acquired between each \ac{mppt} algorithm call. In average, it uses 10 samples.
+        The ADC can be configured in a variety of different ways, i chose to use the scan mode which reads multiple inputs in sequence. To read the measured values i am using the poling method however in theory if the DMA is used instead, the results could be better since it takes less time to read the ADC values and therefore a better average could be made. In practice i could not get reliable results and therefore the pooling method was adopted. The average is made with all data acquired between each \ac{mppt} algorithm call. On average, it uses 10 samples.
 
 \section{Sensors} 
 
 \subsection{Voltage and current sensing}
     Accurate voltage and current measurements are essential for MPPT operation, since tracking algorithms directly rely on these quantities to estimate power and adjust the operating point of the \ac{pv} array. Measurement noise or inaccuracies directly impact tracking efficiency, especially in high frequency switching DC-DC converters.
 
-    Voltage sensing is generally straightforward and can be implemented using resistive voltage dividers followed by ADC. Additionally, it is suggested to use an op-amp as a buffer to reduce the impact of the ADC input capacitor, while charging. This buffer reduces noise and improves the accuracy of the measurement while also allowing the use of higher sampling rates.
+    Voltage sensing is generally straightforward and can be implemented using resistive voltage dividers followed by an ADC. Additionally, it is suggested to use an op-amp as a buffer to reduce the impact of the ADC input capacitor, while charging. This buffer reduces noise and improves the accuracy of the measurement while also allowing the use of higher sampling rates.
     
     Current sensing, however, is more critical and requires careful consideration of the available measurement techniques.
 
@@ -359,48 +346,44 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
 
     The hall effect current sensor is a non-invasive method that uses the Hall effect to measure current. It provides galvanic isolation and can do bidirectional measurements. However, it is typically more expensive, has lower bandwidth, and may introduce additional noise due to its magnetic sensing nature.
 
-    As for the shunt resistor sensing, it is a simple and cost-effective method that uses a low value resistor to convert the current into a voltage drop. This voltage is then amplified using operational amplifiers to match the ADC input range. This method provides high accuracy, low cost, and fast response time, but it requires careful design to minimize power loss since it will dissipate power proportional to the current.
+    As for shunt resistor sensing, it is a simple and cost-effective method that uses a low value resistor to convert the current into a voltage drop. This voltage is then amplified using operational amplifiers to match the ADC input range. This method provides high accuracy, low cost, and fast response time, but it requires careful design to minimize power loss, since it dissipates power proportional to the current.
 
-    In the prototype a \ac{ic} based on a shunt resistor sensing method was used, which as a built-in amplifier. The sensor chosen was the INA253A2IPWR, which has a PWM rejection block and small form factor that will be extremely useful for this application. However, this \ac{ic} is more expensive than a simple shunt resistor and op-amp solution, but it is more accurate and has a better noise rejection. In the future it can be swapped for a lower cost solution, if the performance is acceptable.
+    In the prototype a \ac{ic} based on a shunt resistor sensing method was used, which as a built-in amplifier. The chosen sensor was the INA253A2IPWR, which has a PWM rejection block and a small form factor that will be extremely useful for this application. However, this \ac{ic} is more expensive than a simple shunt resistor and op-amp solution, but it is more accurate and has better noise rejection. In the future, it can be swapped for a lower cost solution if the performance is acceptable.
 
-    Both sensors use the internal ADC from the STM32L476, which has a 12 bit ADC (with 3.0V as the reference). The current sensor output an analog voltage that is equal to the current multiplied by 0.2~V/A. Which means that the resolution of the current measured is 3.0/(4096 * 0.2) = 3.66~mA. As for the voltage sensor, it outputs an analog voltage that is equal to the voltage multiplied by 10/210. The resolution is 21 * 3.0/(4096) = 15.38~mV, which is more than enough for this application.
+    Both sensors use the internal ADC from the STM32L476, which has a 12 bit ADC (with 3.0V as the reference). The current sensor outputs an analog voltage that is equal to the current multiplied by 0.2~V/A. This means that the resolution of the measured current is 3.0/(4096 * 0.2) = 3.66~mA. As for the voltage sensor, it outputs an analog voltage that is equal to the voltage multiplied by 10/210. The resolution is 21 * 3.0/(4096) = 15.38~mV, which is more than enough for this application.
 
     Both circuits are represented in Appendix~\ref{}. \textcolor{red}{place the apendix reference }
 
 \subsection{Temperature and Irradiance sensors}
-    For security reasons it is important to monitor the temperature of the \ac{pcb}. Also, the temperature and irradiance of the \ac{pv} panel are important to monitor for performance analysis and defect detection. These measurements can also be used to improve the \ac{mppt} algorithm, since the \ac{mpp} is dependent on temperature and irradiance.
+    For security reasons, it is important to monitor the temperature of the \ac{pcb}. Also, monitoring the temperature and irradiance of the \ac{pv} panel is important for performance analysis and defect detection. These measurements can also be used to improve the \ac{mppt} algorithm, since the \ac{mpp} is dependent on temperature and irradiance.
 
-    For temperature sensing there is a wide range of options, from simple thermistors to more complex digital temperature sensors. For this application a simple thermistor was used, since it is cheap and easy to implement. The thermistor is connected to a voltage divider and the voltage is read by the ADC. The thermistor used to measure ambient temperature and transistor temperature was the ERT-J1VS104FA, which has a resistance of 100k$\Omega$ at 25~°C and a B value of 4330K. As for the thermistor used to measure the \ac{pv} panel temperature, it was the 104JT-025, which has a resistance of 100k$\Omega$ at 25~°C and a B value of 4390K. 
+    For temperature sensing, there is a wide range of options, from simple thermistors to more complex digital temperature sensors. For this application, we used a simple thermistor because it is cheap and easy to implement. The thermistor is connected to a voltage divider and the voltage is read by the ADC. The thermistor used to measure ambient temperature and transistor temperature was the ERT-J1VS104FA, which has a resistance of 100k$\Omega$ at 25~°C and a B value of 4330K. The thermistor used to measure the \ac{pv} panel temperature is the 104JT-025, with a resistance of 100k$\Omega$ at 25~°C and a B value of 4390K. 
     The temperature can be calculated using the Steinhart-Hart equation \cite{arduinodiy2015ntc}.
 
     \begin{equation}
         \frac{1}{T} = A + B \cdot ln(R) + C \cdot ln(R)^3
     \end{equation}
 
-    This equation uses 3 parameters (A, B and C) that are usually not provided in data sheet but can be calculated using 3 measurements of temperature and resistance. However, the most common approach is to use a simplified version of the equation, which uses only 2 parameters (B and R0). The temperature can be calculated using the following equation:
+    This equation uses 3 parameters (A, B and C) that are usually not provided in the datasheet but can be calculated using 3 measurements of temperature and resistance. However, the most common approach is to use a simplified version of the equation, which uses only 2 parameters (B and R0). The temperature can be calculated using the following equation:
 
     \begin{equation}
         \frac{1}{T} = \frac{1}{T_0} + \frac{1}{B} \cdot ln(\frac{R}{R_0})
     \end{equation}
 
-    The thermistor that measures the transistor temperature is also used in an analog protection. This protection uses a comparator to disable the transistors after a temperature threshold that can be modified by changing on resistor in the comparator circuit. 
+    The thermistor that measures the transistor temperature is also used in analog protection. This protection uses a comparator to disable the transistors after a temperature threshold that can be modified by changing on resistor in the comparator circuit. 
 
-    As for the irradiance sensor, the board was designed to use a TSL2591 , which is a digital light sensor with a wide dynamic range and high sensitivity. It can measure light intensity from 0.000118 lux to 88,000 lux, making it suitable for various lighting conditions. The sensor communicates with the \ac{mcu} via the I2C protocol, allowing for easy integration and data acquisition. However, this sensor is not ideal for outdoor use, since it can easily saturate and his spectrum is not ideal for solar irradiation measurement. The best application for this sensor is in laboratory, however it was not need and therefore it was not used
+    As for the irradiance sensor, the board was designed to use a TSL2591, which is a digital light sensor with a wide dynamic range and high sensitivity. It can measure light intensity from 0.000118 lux to 88,000 lux, making it suitable for a wide range of lighting conditions. The sensor communicates with the \ac{mcu} via the I2C protocol, allowing for easy integration and data acquisition. However, this sensor is not ideal for outdoor use, since it can easily saturate and its spectrum is not ideal for solar irradiation measurement. The best application for this sensor is in laboratory, however, it was not needed, and therefore it was not used
 
-    % Since it measures the light intensity in lux, it is not a direct measurement of irradiance and it needs to be calibrated to convert the lux value to irradiance in W/m\^2. This calibration was done using a irradiance sensor from \textcolor{red}{???} which measures the irradiance in W/m\^2. The calibration was done by measuring the lux and irradiance at the same time and calculating the conversion factor. The conversion factor was found to be \textcolor{red}{????} W/m\^2 per lux at laboratory conditions. This factor changes with the spectral distribution of the light source, so it would need be calibrated for different light sources. 
-
-    % There are bether options for irradiance sensors, but this sensor was chosen due to its low cost and easy integration with the \ac{mcu}. The main disadvantage of this sensor is that it is not a direct measurement of irradiance and it needs to be calibrated. However, for laboratory testes it is sufficient since the objective is to record when does the irradiance change to analyze the performance of the \ac{mppt} algorithm. For precise measurements of irradiance, the sensor used to calibrate the TSL2591 can be used, which is a more expensive sensor that provides direct measurements of irradiance but does not provide communication protocol to record the data.
-
-    In the future, if the irradiance value is needed to be used in the \ac{mppt} algorithm, a more precise irradiance sensor is needed. The most precise sensors use a \ac{pv} cell, which based on his temperature, short circuit current and open circuit voltage can provide a good estimation of the irradiance. My suggestion is to design this circuit and use the same cell model that is used in the \ac{pv} panel to measure the irradiance. This way, the irradiance measurement will be accurate and with exactly the same spectral distribution as the \ac{pv} panel which will increase the performance of the \ac{mppt} algorithm. This was not implemented in this project due to time constraints, but it is a good option for future work.
+    In the future, if the irradiance value needs to be used in the \ac{mppt} algorithm, a more precise irradiance sensor is needed. The most precise sensors use a \ac{pv} cell, which based on its temperature, short circuit current and open circuit voltage can provide a good estimation of the irradiance. I suggest designing this circuit and using the same cell model used in the \ac{pv} panel to measure irradiance. This way, the irradiance measurement will be accurate and have exactly the same spectral distribution as the \ac{pv} panel, which will increase the performance of the \ac{mppt} algorithm. This was not implemented in this project due to time constraints, but it is a good option for future work.
 
 
 \section{Software}
-    In this section it is explained how does the firmware inside the \ac{mcu} is structured and how it works. Also, the basic idea behind the communication protocols used and how they are applied to this project as well as the \ac{gui} developed for configuration and data analysis. 
+    This section explains how the firmware inside the \ac{mcu} is structured and how it works. Also, the basic idea behind the communication protocols used and how they are applied to this project as well as the \ac{gui} developed for configuration and data analysis. 
     
     \subsection{Firmware Overview}
-        The firmware is a flag based scheduler with two main task, the \ac{mppt} and ADC task. 
+        The firmware is a flag based scheduler with two main tasks, the \ac{mppt} and ADC task. 
 
-        The ADC task is responsible to convert the analog readings into another units such as current, voltage and temperature. If any of the values exceed the limits configured by the user, a fault is detected and blocks the charging state machine to run during 5 seconds. After this time the ADC task runs again and checks if the faults was removed. 
+        The ADC task is responsible for converting the analog readings into other units such as current, voltage, and temperature. If any of the values exceed the limits configured by the user, a fault is detected and blocks the charging state machine from running for 5 seconds. After this time, the ADC task runs again and checks if the faults were removed. 
 
         \begin{figure}[!ht]
             \centering
@@ -409,7 +392,7 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
             \label{fig:Firmware flowchart}
         \end{figure}
         
-        The \ac{mppt} task is responsible to compute an average of the last measurements and refresh the state machine which changes the operation mode depending on the measurements and outputs a PWM duty cycle value. In Figure~\ref{fig: charging state machine}, is state machine logic. 
+        The \ac{mppt} task is responsible for computing an average of the last measurements and refreshing the state machine, which changes the operation mode depending on the measurements and outputs a PWM duty cycle value. In Figure~\ref{fig: charging state machine}, is state machine logic. 
 
         \begin{figure}[!ht]
             \centering
@@ -418,16 +401,16 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
             \label{fig: charging state machine}
         \end{figure}
 
-        The sates are divided into charging and not charging. There is 5 "not charging" states:
+        The states are divided into charging and not charging. There are 5 "not charging" states:
         \begin{itemize}[leftmargin=4em, itemsep=1pt, topsep=2pt]
             \item \textbf{Delay}: waits 100 cycles to skip the transients and then decides the next state;
             \item \textbf{Disable}: disables the \acs{dc}-\acs{dc};
             \item \textbf{No Source}: the solar panel is disconnected and therefore the \acs{dc}-\acs{dc} should be disconnected;
-            \item \textbf{No load}: the battery is disconnected, and therefore the output voltage is set to the maximum battery voltage to prevent the need of a precharge circuit;
+            \item \textbf{No load}: the battery is disconnected, and therefore the output voltage is set to the maximum battery voltage to prevent the need for a precharge circuit;
             \item \textbf{Charge finished}: similar to "No load", runs a PID to control the \acs{pv} side by fixing the battery voltage.
         \end{itemize} 
 
-        As for the charging states, there is also five:
+        As for the charging states, there are also five:
         \begin{itemize}[leftmargin=4em, itemsep=1pt, topsep=2pt]
             \item \textbf{Sweep delay}: wait between sweep steps to ignore transients;
             \item \textbf{Sweep}: decrease the duty cycle until the end of the sweep;
@@ -436,6 +419,7 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
             \item \textbf{CV}: runs a PID to control the \acs{pv} side by fixing the battery voltage.
         \end{itemize}
         
+        \textcolor{red}{review this part}
         
         % The idea is, if the board is not connected to a battery, the output voltage is set to the \ac{cv} target (No load state), then if enough current is detected in the battery side it switches to Sweep mode (if enabled) which sweeps the \ac{pv} operating point to find the \ac{mpp}. Once the sweep is finished it changes to the CC-CV charging phase, where depending on the battery current and voltage, the mode will be \ac{mppt} algorithm, \ac{cc} or \ac{cv}. Once the battery finish the charging cycle or disconnects from the board, it changes to No load mode again. 
         % When designing these state machine, one of the most important aspects was the ability of moving forward in terms of charge (first \ac{cc} then \ac{cv}) or backwards in cases where the battery discharge current is higher in comparison with the energy provided by the solar panels.
@@ -445,11 +429,11 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
         Besides the main tasks, the board is able to send CAN and Serial messages and therefore the respective tasks. 
 
     \subsection{Serial and CAN communication}
-        One of the most important features of this circuit board is the communication with the rest of the boat. This will enable better decision making relating to energy budget. Also, it will be easier to detect broken or malfunction solar panels or human errors such as bad or forgotten connections.
+        One of the most important features of this circuit board is the communication with the rest of the boat. This will enable better decision making relating to the energy budget. Also, it will be easier to detect broken or malfunctioning solar panels or human errors such as bad or forgotten connections.
 
-        The main communication protocol is \ac{can}. This is the \ac{tsb} standard protocol and widely use in automotive industry due to its high robustness. The protocol was developed by Bosh in 1986 to let microcontrollers and devices talk to each other without a central host computer. 
+        The main communication protocol is \ac{can}. This is the \ac{tsb} standard protocol and is widely used in the automotive industry due to its high robustness. The protocol was developed by Bosh in 1986 to let microcontrollers and devices talk to each other without a central host computer. 
         
-        In the hardware point of view, \ac{can} uses a bus instead of wire to wire communication. Also, it uses twisted wires (\ac{can} High and \ac{can} Low) to block electrical noise. In a software point of view, it uses an error checking system (CRC) ensuring reliability.
+        From a hardware point of view, \ac{can} uses a bus instead of wire to wire communication. It also uses twisted wires (\ac{can} High and \ac{can} Low) to reduce electrical noise. From a software point of view, it uses an error checking system (CRC) ensuring reliability.
 
         For \ac{tsb} electrical system we developed our \ac{can} protocol on top of the standard \ac{can} communication. Each message is structured as shown in Figure~\ref{} following the \ac{can} 2.0A standard.
         
@@ -460,7 +444,7 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
             \label{fig:}
         \end{figure}
         
-        The 11 bits marked in green (Arbitration Field) can be used by each protocol differently. Usually, it is used to send priority bits, device ID and message ID. In the current vessel (\ac{sg01}), the priority bits were removed and used to increase the number of devices on bus. With the current structure (Tab~\ref{tab:Arbitration Field}), the protocol supports up to 32 devices with 63 messages each. 
+        The 11 bits marked in green (Arbitration Field) can be used by each protocol differently. Usually, it is used to send priority bits, device ID and message ID. In the current vessel (\ac{sg01}), the priority bits were removed and used to increase the number of devices on the bus. With the current structure (Tab~\ref{tab:Arbitration Field}), the protocol supports up to 32 devices, each with 63 messages. 
 
         \begin{table}[!ht]
             \caption{\ac{tsb} CAN messages Arbitration Field.}
@@ -475,11 +459,11 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
             \label{tab:Arbitration Field}
         \end{table}
 
-        In Control field, the first bit is to use Extended IDs and next one is reserved. The yellow field is called Data Length Code (DLC) and is where the length of the data is defined. The maximum lenght is 8 bytes. Then there is the Data field (represented in red). 
+        In the Control field, the first bit indicates whether to use Extended IDs, and the next bit is reserved. The yellow field is called Data Length Code (DLC) and is where the length of the data is defined. The maximum length is 8 bytes. Then there is the Data field (represented in red). 
 
         The rest of the fields are treated by the \ac{can} library which is an adaptation of the open source library called \texttt{STM32\_CAN} by pazi88.
 
-        For the \ac{mppt} it was defined an ID structure, where the device ID is maintained intact, and Message ID is divided in two. The 3 most significant bits represent the \ac{mppt} number from 0 to 7 and the rest of the bits identifies the messages. This structure gets enough message IDs for each \ac{mppt} as well as not occupying a lot of Device IDs. In Table~\ref{tab:mppt_message_ids} is showed an example of the corresponding IDs when the Device ID is 0x0D (default ID).
+        For the \ac{mppt} it was defined an ID structure, where the device ID is maintained intact, and Message ID is divided in two. The 3 most significant bits represent the \ac{mppt} number from 0 to 7, and the remaining bits identify the messages. This structure provides enough message IDs for each \ac{mppt} as well as not occupying a lot of Device IDs. Table~\ref{tab:mppt_message_ids} shows an example of the corresponding IDs when the Device ID is 0x0D (default ID).
 
         \begin{table}[!ht]
             \caption{CAN IDs for each MPPT number and message.}
@@ -508,15 +492,15 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
             \label{tab:mppt_message_ids}
         \end{table}
 
-        The Device ID can be configured/changed via \ac{gui} however the logic is maintained.
+        The Device ID can be configured/changed via \ac{gui} however, the logic is maintained.
 
-        The CAN protocol is excellent for communication between boards however it is not the most practical protocol for configuration because the \ac{can} IDs can change between vessels and implies the use of an external hardware to communicate between the board and a computer.
+        The CAN protocol is excellent for communication between boards, however, it is not the most practical protocol for configuration because the \ac{can} IDs can change between vessels and imply the use of an external hardware to communicate between the board and a computer.
 
-        In contrast, serial communication is done by just connecting a wire to the board and since the protocol is only used for configuration and data analysis it can be the same forever and if it needs to be changed, it does not depend on any vessel. 
+        In contrast, serial communication is done by just connecting a wire to the board, and since the protocol is only used for configuration and data analysis, it can be the same forever, and if it needs to be changed, it does not depend on any vessel. 
 
-        There is no default protocol to send data over serial, however during the \ac{bms} thesis a serial protocol was created by the team and will serve has based for this project. Unfortunately the firmware library is not compatible with STMs, so it was created from scratch.
+        There is no default protocol to send data over serial, however, during the \ac{bms} thesis a serial protocol was created by the team and will serve has based for this project. Unfortunately, the firmware library is not compatible with STMs, so it was created from scratch.
 
-        The protocol uses the strocture defined in Table~\ref{tab:serial_message_format}. It begins with the Start Byte which is defined as 0xAC, followed by the device ID which defines the source of the message and the message ID defining what message is the device sending, the data length, the data, checksum byte and the end byte (0xAD) marking the end of the message.
+        The protocol uses the structure defined in Table~\ref{tab:serial_message_format}. It begins with the Start Byte, which is defined as 0xAC, followed by the device ID, which defines the source of the message, and the message ID, defining what message the device is sending, the data length, the data, the checksum byte, and the end byte (0xAD) marking the end of the message.
 
         \begin{table}[!h]
             \centering
@@ -529,15 +513,15 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
             \end{tabular}
         \end{table}
         
-        Similar to CAN protocol, for each message it was defined a Message ID respecting the same logic. This ID alongside with the Device ID and length is initialized in the beginning of the code, the rest of the variable are treated by the library except the data field that is changed before sending any message.
+        Similar to the CAN protocol, for each message, a Message ID was defined respecting the same logic. This ID, alongside with the Device ID and length, is initialized at the beginning of the code, the rest of the variables are handled by the library, except the data field which is changed before sending any message.
         
         The Data of each message is structured in the same way as in \ac{can} protocol however it was added 4 messages for configuration. These messages enable the change of current limits, voltage limits, \ac{mppt} parameters, \ac{can} settings and CC-CV targets.
         
 
     \subsection{EEPROM Emolation}
-        To save the configuration received from the serial protocol, a library was used that emulates an EEPROM which ia a type of non-volatile memory that retains its contents after power down. EEPROMs have been used for many years in a wide range of devices to store settings, calibration data, and backups. In this project, no external EEPROM was added to the board, and the \ac{mcu} does not include one internally. However, the library can use internal flash memory, which is normally reserved for program code, to store data, thereby emulating EEPROM behavior.
+        To save the configuration received from the serial protocol, a library was used that emulates an EEPROM, which is a type of non-volatile memory that retains its contents after power down. EEPROMs have been used for many years in a wide range of devices to store settings, calibration data, and backups. In this project, no external EEPROM was added to the board, and the \ac{mcu} does not include one internally. However, the library can use internal flash memory, which is normally reserved for program code, to store data, thereby emulating EEPROM behavior.
 
-        The main disadvantages of this approach are limited storage capacity and reduced write endurance compared with a dedicated EEPROM. The STM32 internal flash can typically withstand on the order of 10,000 erase cycles per page, whereas external EEPROM devices often support roughly one order of magnitude more. Even so, this is not a practical limitation in this application. Configuration data is stored as a small set of 16-bit variables, and each save operation appends new records to flash rather than overwriting the previous value in place. Each page can hold 252 variables. For this project, a full board configuration requires 13 write operations, therefore, one flash page can hold many configuration updates before it becomes full and must be erased. Furthermore, the emulation is configured to use ten flash pages, with wear levelling implemented through page transfer and cleanup. When a page is full, the latest values are copied to another page and the old page is eventually erased. This distributes erase cycles across multiple pages and extends the effective lifetime of the memory.
+        The main disadvantages of this approach are limited storage capacity and reduced write endurance compared with a dedicated EEPROM. The STM32 internal flash can typically withstand on the order of 10,000 erase cycles per page, whereas external EEPROM devices often support roughly one order of magnitude more. Even so, this is not a practical limitation in this application. Configuration data is stored as a small set of 16-bit variables, and each save operation appends new records to flash rather than overwriting the previous value in place. Each page can hold 252 variables. For this project, a full board configuration requires 13 write operations, therefore, one flash page can hold many configuration updates before it becomes full and must be erased. Furthermore, the emulation is configured to use ten flash pages, with wear leveling implemented through page transfer and cleanup. When a page is full, the latest values are copied to another page and the old page is eventually erased. This distributes erase cycles across multiple pages and extends the effective lifetime of the memory.
 
         In conclusion, neither storage capacity nor endurance is expected to be a problem for this project. Under the current configuration, a complete configuration upload would need to be performed hundreds of thousands of times before the theoretical endurance limit of a flash page is reached, which is far beyond the expected use case of occasional configuration updates over serial.
 
@@ -545,15 +529,15 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
 
 
     \section{Graphical User Interface}
-        In parallel with the design and test of the \ac{mppt} board, a \ac{gui} was designed to make this project more accessible and easy to use. The application was built from scratch, however it was inspired in the application built during \ac{bms} thesis. It was built using QT framework, which is a powerful, cross platform software toolkit used to build high performance applications and \acp{gui} that run on multiple operating systems like Windows, macOS, Linux. 
+        In parallel with the design and test of the \ac{mppt} board, a \ac{gui} was designed to make the project more accessible and easy to use. The application was built from scratch, however it was inspired in the application built during \ac{bms} thesis. It was built using QT framework, which is a powerful, cross platform software toolkit used to build high performance applications and \acp{gui} that run on multiple operating systems like Windows, macOS and Linux. 
 
         This \ac{gui} communicates with the board with Serial or \ac{can} communication. To use \ac{can} communication, the computer should be connected to the bus with a tool called PEAK-CAN.
         
-        After connecting the computer to the board, the application is able to identified which board is connected and show it to the user in the Dashboard page, Figure~\ref{fig:Dashboard}. In the main page the user selects which board he is working on. The application is prepared for several \acp{pcb}, however only the \ac{bms} and \ac{mppt} are correctly working. The rest are placeholders for future improvements.
+        After connecting the computer to the board, the application identifies the connected board and shows it to the user on the Dashboard page (Figure~\ref{fig:Dashboard}).On the main page, the user selects which board he is working on. The application is prepared for several \acp{pcb}, however, only the \ac{bms} and \ac{mppt} are correctly working. The rest are placeholders for future improvements.
 
-        When the \ac{mppt} page is selected (Figure~\ref{fig:MPPT monitor GUI}), a new tab opens showing the most important variables, such as voltage, current, power temperature, efficiency, irradiance and duty cycle. Additionally, there are two visual representations. On the left there is a P-V graph with theoretical curves for different irradiance values and a blue dot placed on the current point of operation and updated with the received data.
+        When the \ac{mppt} page is selected (Figure~\ref{fig:MPPT monitor GUI}), a new tab opens showing the most important variables, such as voltage, current, power, temperature, efficiency, irradiance, and duty cycle. Additionally, two visual representations are shown. On the left, a P-V graph shows theoretical curves for different irradiance values, with a blue dot at the current operating point that updates with the received data.
 
-        On the right, it is represented the CC-CV curve, where the received battery side data is represented over time.
+        On the right, the CC-CV curve is represented, where the received battery side data is shown over time.
 
         \begin{figure}[!ht]
             \centering
@@ -562,7 +546,7 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
             \label{fig:MPPT monitor GUI}
         \end{figure}
 
-        On top of the page, the user can switch to the configuration tab (Figure~\ref{fig:MPPT config tab}). In this tab the user can read the configuration currently installed on the board, reset this configuration or upload a new one.
+        On top of the page, the user can switch to the configuration tab (Figure~\ref{fig:MPPT config tab}). In this tab, the user can read the configuration currently installed on the board, reset this configuration, or upload a new one.
 
         The last page is the debug page (Figure~\ref{fig:Debug page}), where the user can visualize both Serial protocol messages and serial prints at the same time.
 
