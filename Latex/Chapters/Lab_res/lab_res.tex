@@ -1,4 +1,4 @@
-\fancychapter{Laboratory results}
+\fancychapter{Results}
 \label{chap:lab_res}
 
 Following the design and simulation stages, a prototype was manufactured and assembled. However, practical implementations may differ from simulation results, as simulations generally rely on idealized component models and do not fully account for parasitic effects associated with the components and the \ac{pcb}. Therefore, laboratory testing was conducted to experimentally validate the design and verify that the prototype operates as expected.
@@ -11,7 +11,7 @@ Following the design and simulation stages, a prototype was manufactured and ass
 
     \begin{figure}[!ht]
         \centering
-        \includegraphics[width=0.6\textwidth]{Images/LAB_res/PCBsV1.1_1.2.jpeg}
+        \includegraphics[width=0.4\textwidth]{Images/LAB_res/PCBsV1.1_1.2.jpeg}
         \caption{First and second iteration side by side. \textcolor{red}{place a better image}}
         \label{fig:prototypes}
     \end{figure}
@@ -39,23 +39,26 @@ Following the design and simulation stages, a prototype was manufactured and ass
 
     In Figure~\ref{fig:voltage_sense_error} the error of the voltage readings is represented. Since the error is linear, the trend line is also represented, which was used to correct the results and improve the accuracy of the measurements. The results after subtracting the linear error are also represented in the figure, and it can be seen that the error is significantly reduced. The average error reduced to 28.325~mV and 29.825~mV for battery and solar panel respectively. 
 
-    \begin{figure}[!ht]
-        \centering
-        \includegraphics[width=0.6\textwidth]{Images/LAB_res/Voltage_sensor_test.png}
-        \caption{Voltage sensor error over voltage.}
-        \label{fig:voltage_sense_error}
+    \begin{figure}[!ht] 
+        \centering 
+        \begin{minipage}{0.49\textwidth}
+             \centering
+            \includegraphics[width=\textwidth]{Images/LAB_res/Voltage_sensor_test.png}
+            \caption{Voltage sensor error over voltage.}
+            \label{fig:voltage_sense_error}
+        \end{minipage} 
+        \hfill 
+        \begin{minipage}{0.49\textwidth} 
+            \centering
+            \includegraphics[width=\textwidth]{Images/LAB_res/Current_sensor_test.png}
+            \caption{Current sensor error over current.}
+            \label{fig:current_sense_error}
+        \end{minipage} 
     \end{figure}
 
     The same test was performed for the current sensors, the average error was 99.93~mA and 8.5~mA for battery and solar panel respectively, which is acceptable for this application. The error of the current sensors is shown in Figure~\ref{fig:current_sense_error}, and it can be seen that the error is linear for the battery side and non-linear for the solar panel side. This can be explained by the fact that at low currents, the error is smaller and probably the shunt resistor value in the solar panel side is more accurate than the shunt resistor in the battery side. However, it is still small and does not affect the \ac{mppt} operation.
 
     As in the case of the voltage sensor, the subtraction of the linear error would highly increase the accuracy of the measurements. However, it takes a lot of time to do the measurements and calculate the linearization for each \ac{pcb} which is not realistic for a student prototype project like \ac{tsb}. However, to increase the accuracy of the laboratory results, the error correction was implemented to the battery side current sensor. The results after subtracting the linear error are also represented in the figure, and it can be seen that the error is significantly reduced. The average error reduced to 5.28~mA.
-
-    \begin{figure}[!ht]
-        \centering
-        \includegraphics[width=0.6\textwidth]{Images/LAB_res/Current_sensor_test.png}
-        \caption{Current sensor error over current.}
-        \label{fig:current_sense_error}
-    \end{figure}
 
 
 \section{Boost}
@@ -177,14 +180,14 @@ Following the design and simulation stages, a prototype was manufactured and ass
             \centering 
             \begin{minipage}{0.49\textwidth}
                 \centering 
-                \includegraphics[width=0.9\linewidth]{Images/LAB_res/IMG00029.pdf} 
+                \includegraphics[width=0.7\linewidth]{Images/LAB_res/IMG00029.pdf} 
                 \caption{Front side thermal image.} 
                 \label{fig:thermal_front} 
             \end{minipage} 
             \hfill 
             \begin{minipage}{0.49\textwidth} 
                 \centering 
-                \includegraphics[width=0.9\linewidth]{Images/LAB_res/IMG00030.pdf} 
+                \includegraphics[width=0.7\linewidth]{Images/LAB_res/IMG00030.pdf} 
                 \caption{Back side Thermal image.} 
                 \label{fig:thermal_back} 
             \end{minipage} 
@@ -196,21 +199,25 @@ Following the design and simulation stages, a prototype was manufactured and ass
         
         \begin{figure}[!ht] 
             \centering 
-            \includegraphics[width=0.6\linewidth]{Images/LAB_res/Temperatures vs time.pdf} 
-            \caption{Temperature evolution during 3 hours.} 
-            \label{fig:3h_temp_test}
-        \end{figure} 
+            \begin{minipage}{0.49\textwidth}
+                 \centering 
+                \includegraphics[width=\linewidth]{Images/LAB_res/Temperatures vs time.pdf} 
+                \caption{Temperature evolution during 3 hours.} 
+                \label{fig:3h_temp_test} 
+            \end{minipage} 
+            \hfill 
+            \begin{minipage}{0.49\textwidth} 
+                \centering 
+            \includegraphics[width=0.95\linewidth]{Images/LAB_res/Temperatures_vs_time_close box.pdf} 
+            \caption{Temperature evolution during 3 hours in a close box.} 
+            \label{fig:3h_temp_test} 
+            \end{minipage} 
+        \end{figure}
+
         
         From Figure~\ref{fig:3h_temp_test}, it can be concluded that after 40~min at maximum power, all the temperatures stop rising. Some oscillations were measured during the experiment due to the fact that ambient temperature also oscillated. As seen earlier the inductor is the element which heats the most, followed by the transistor and capacitors. After 3 hours, none of the elements reached a concerning temperature.
 
         With this test it is concluded that there is no need for cooling. At least in the same conditions of the test. To confirm this statement, the board was placed inside a cardboard box since \ac{tsb} usually places boards inside close boxes. If the components inside the box need cooling, a fan or a water cooling needs to be added.
-
-        \begin{figure}[!ht] 
-            \centering 
-            \includegraphics[width=0.6\linewidth]{Images/LAB_res/Temperatures_vs_time_close box.pdf} 
-            \caption{Temperature evolution during 3 hours in a close box.} 
-            \label{fig:3h_temp_test}
-        \end{figure} 
 
         In Figure~\ref{fig:3h_temp_test} is represented the described test. Since there is no air flow, the ambient temperature reading is more stable and therefore the others too. As in the previous test, after 60 minutes the temperatures remained approximately constant and the maximum temperature was 51.6ºC. Since none of the temperatures show concerning values, it is safe to conclude that no additional cooling is needed
 
@@ -231,23 +238,27 @@ Following the design and simulation stages, a prototype was manufactured and ass
 
         \begin{figure}[!ht] 
             \centering 
-            \includegraphics[width=0.6\linewidth]{Images/LAB_res/eff_ipv.pdf} 
-            \caption{Converter efficiency over different input currents and voltages.} 
-            \label{fig:eff over current}
+            \begin{minipage}{0.49\textwidth}
+                \centering 
+                \includegraphics[width=\linewidth]{Images/LAB_res/eff_ipv.pdf} 
+                \caption{Converter efficiency over different input currents and voltages.} 
+                \label{fig:eff over current}
+            \end{minipage} 
+            \hfill 
+            \begin{minipage}{0.49\textwidth} 
+                \centering 
+                \includegraphics[width=\linewidth]{Images/LAB_res/eff_vout.pdf} 
+                \caption{Converter efficiency over output voltage.} 
+                \label{fig:eff over output voltage}
+            \end{minipage} 
         \end{figure}
+
 
         Both trends are expected. At low currents the efficiency is lower because the constant losses required to power the electronics (\ac{mcu}, sensors, etc.) have a larger relative impact. As the current increases, those losses become less significant and the efficiency stabilizes. After around 3 A, the converter switching losses become dominant. Since they increase with the input current, a slight downward slope of the curve is expected.
 
         The higher efficiency at higher input voltage is explained by the fact that a boost converter is more efficient at lower duty cycles. From equation \ref{eq:duty}, for a given output voltage the duty cycle decreases as the input voltage increases. Therefore, increasing the number of cells in series reduces the duty cycle and improves the efficiency.
 
         On the other hand, if the input voltage is constant and the output voltage increases (Figure~\ref{fig:eff over output voltage}), the efficiency will reduce due to the same reason. Equation \ref{eq:duty} tells us that for a fix input voltage the duty cycle will increase and therefore the efficiency will decrease.   
-
-        \begin{figure}[!ht] 
-            \centering 
-            \includegraphics[width=0.6\linewidth]{Images/LAB_res/eff_vout.pdf} 
-            \caption{Converter efficiency over output voltage.} 
-            \label{fig:eff over output voltage}
-        \end{figure}
 
 
     \subsection{Tracking speed}
@@ -298,7 +309,7 @@ Following the design and simulation stages, a prototype was manufactured and ass
             \end{minipage}
         \end{figure}
 
-        For both tests, the measured tracking time was typically below 100~ms, based on the measurements obtained during the first phase. When the irradiance was increased from 200 to 1000~$\mathrm{W/m^2}$, the tracking time was slightly higher but remained below 100~ms. The highest measured tracking time occurred when the solar panels were cooled from 85~$^\circ$C to 25~$^\circ$C, for which a tracking time of approximately 200~ms was measured. Individual tracking times for each test condition are not presented, as the response was nearly instantaneous in most cases, making accurate measurement difficult with the available instrumentation.
+        For both tests, the measured tracking time, defined as the time required to reach within $\pm 5\%$ of the \ac{mpp}, was typically below 100~ms, based on the measurements obtained during the first phase. When the irradiance was increased from 200 to 1000~$\mathrm{W/m^2}$, the tracking time was slightly higher but remained below 100~ms. The highest measured tracking time occurred when the solar panels were cooled from 85~$^\circ$C to 25~$^\circ$C, for which a tracking time of approximately 200~ms was measured. Individual tracking times for each test condition are not presented, as the response was nearly instantaneous in most cases, making accurate measurement difficult with the available instrumentation.
 
         In addition to the tracking speed, the \ac{mppt} algorithm demonstrated a high tracking accuracy, with an average value of approximately 99\%. Nevertheless, some deviations from the \ac{mpp} were observed under specific operating conditions, particularly at 85~$^\circ$C. These deviations are likely related to measurement noise, although this could not be conclusively verified.
 
@@ -309,7 +320,7 @@ Following the design and simulation stages, a prototype was manufactured and ass
 
     By using the SM 1500-CP-30 power supply in photovoltaic function connected to the \ac{mppt} charger, the battery was fully charged. Figure~\ref{fig:full charge in lab} shows the result where the CC-CV charging curve was accomplish. In \ac{cc} mode, the algorithm tracked the \ac{mpp} successfully. At \ac{cv}, the output voltage is constant, and the output current dropped slowly. 
 
-    \textcolor{red}{O fim do teste está miseravel, era bom tentar corrigir isto e mostrar que o conversor entra em charge end}
+    % \textcolor{red}{O fim do teste está miseravel, era bom tentar corrigir isto e mostrar que o conversor entra em charge end}
 
     \begin{figure}[!ht] 
         \centering 
@@ -317,9 +328,6 @@ Following the design and simulation stages, a prototype was manufactured and ass
         \caption{Full battery charge in laboratory.} 
         \label{fig:full charge in lab}
     \end{figure} 
-
-
-    Parei o teste duas vezes e é facilmente notavel no grafico. Em cerca de 3h 30min tive de mudar de sitio pq fiquei sem sol. Perto das 6h percebi que os paineis não estavam a operar em MPP devido a uma limitação do duty cycle maximo que aconteceu pela primeira vez devido ao painel ser muito pequeno.
 
     The last test is a field test with a solar panel of 20 cells submitted to the environment conditions. The test was stopped two times. The first one around 3.5h to change the test spot and the second around 5.45h to correct a mistake. At first the algorithm was never reaching \ac{mpp}, i though that was due to the solar panel temperature and therefore the solar panel was cooled with water several times during the test. Almost at the end, i realized that the duty cycle was reaching the limit imposed in firmware and therefore it was never reaching \ac{mpp}. This was never a problem since i had not tested the algorithm with such small solar panel. The rest of the test went as expected.
     
@@ -333,8 +341,6 @@ Following the design and simulation stages, a prototype was manufactured and ass
 
         
 
-        \textcolor{red}{Show the MPPT in difrent states. No load-Sweep-CC-CV-no load-CV-CC}
-
-        \textcolor{red}{Repetir teste.}
-
-        \textcolor{red}{Se possivel adicionar testes em água.}
+        \textcolor{red}{State machine working}
+        \textcolor{red}{Repetir teste de carregamento.}
+        \textcolor{red}{Add testes em água.}

@@ -551,13 +551,6 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
         
         After connecting the computer to the board, the application is able to identified which board is connected and show it to the user in the Dashboard page, Figure~\ref{fig:Dashboard}. In the main page the user selects which board he is working on. The application is prepared for several \acp{pcb}, however only the \ac{bms} and \ac{mppt} are correctly working. The rest are placeholders for future improvements.
 
-        \begin{figure}[!ht]
-            \centering
-            \includegraphics[width=0.95\textwidth]{Images/Implementation/GUI_main_windowh.png}
-            \caption{Dashboard page.}
-            \label{fig:Dashboard}
-        \end{figure}
-
         When the \ac{mppt} page is selected (Figure~\ref{fig:MPPT monitor GUI}), a new tab opens showing the most important variables, such as voltage, current, power temperature, efficiency, irradiance and duty cycle. Additionally, there are two visual representations. On the left there is a P-V graph with theoretical curves for different irradiance values and a blue dot placed on the current point of operation and updated with the received data.
 
         On the right, it is represented the CC-CV curve, where the received battery side data is represented over time.
@@ -571,23 +564,9 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, high self resonant f
 
         On top of the page, the user can switch to the configuration tab (Figure~\ref{fig:MPPT config tab}). In this tab the user can read the configuration currently installed on the board, reset this configuration or upload a new one.
 
-        \begin{figure}[!ht]
-            \centering
-            \includegraphics[width=0.95\textwidth]{Images/Implementation/GUI_MPPT_config.png}
-            \caption{MPPT configuration tab.}
-            \label{fig:MPPT config tab}
-        \end{figure}
-
         The last page is the debug page (Figure~\ref{fig:Debug page}), where the user can visualize both Serial protocol messages and serial prints at the same time.
 
-        \begin{figure}[!ht]
-            \centering
-            \includegraphics[width=0.95\textwidth]{Images/Implementation/GUI_Terminal.png}
-            \caption{Debug page.}
-            \label{fig:Debug page}
-        \end{figure}
-
-        \clearpage
+        % \clearpage
 
 % \section{Precharge Circuit}
 %     \textcolor{red}{This section will be removed or rewritten to explain why this is not needed anymore, and what is the solution.}
