@@ -1,7 +1,7 @@
 \fancychapter{Simulations}
 \label{chap:sims}
 
-    Simulations were used to validate the converter design and the \ac{mppt} algorithm before hardware implementation. This chapter presents the LTspice simulations of the photovoltaic model and the boost converter, an analytical power loss estimation in MATLAB, as well as the evaluation of the tracking algorithm in Simulink.
+    Simulations were used to validate the converter design and the \ac{mppt} algorithm before hardware implementation. This chapter presents LTspice simulations of the photovoltaic model and the boost converter, an analytical power-loss estimate in MATLAB, and the evaluation of the tracking algorithm in Simulink.
 
     \section{DC-DC Converter}
 
@@ -9,20 +9,20 @@
 
     \subsection{Solar Panel model}
 
-        The simulations started at LTspice with the aim to test the converter at different conditions. To achieve that, a \ac{pv} electrical model of the cells were designed using a five parameter model (1M5P) configuration. There are more electrical models that can simulate a solar panel, some with more accuracy but more complex. This model was perfect for the aim of the simulation since it is both reliable and simple.
+        The simulations started in LTspice to test the converter under different conditions. To achieve that, a \ac{pv} electrical model of the cells was designed using a five parameter model (1M5P) configuration. More electrical models can simulate a solar panel, some with higher accuracy but greater complexity. This model was ideal for the simulation because it is both reliable and simple.
 
-        The 1M5P model represents the solar cell through a single diode equivalent circuit composed of a current source in parallel with one diode, a series resistance $R_s$, and a shunt (parallel) resistance $R_{sh}$, as shown in Figure~\ref{fig:pv_model}. The current source represents the photo generated current $I_{ph}$, which is proportional to the incident irradiance, while the diode accounts for the non linear $I$-$V$ characteristic of the p-n junction. The series resistance models the losses associated with the material bulk resistance, metal contacts and interconnections, whereas the shunt resistance represents the leakage currents through the cell, typically caused by manufacturing defects.
+        The 1M5P model represents the solar cell as a single diode equivalent circuit composed of a current source in parallel with one diode, a series resistance $R_s$, and a shunt (parallel) resistance $R_{sh}$, as shown in Figure~\ref{fig:pv_model}. The current source represents the photo generated current $I_{ph}$, which is proportional to the incident irradiance, while the diode accounts for the nonlinear $I$-$V$ characteristic of the p-n junction. The series resistance models the losses associated with the material bulk resistance, metal contacts and interconnections, whereas the shunt resistance represents the leakage currents through the cell, typically caused by manufacturing defects.
 
-        The output current of the model is given by the characteristic equation~\ref{eq:1m5p}, where $I_0$ is the diode saturation current, $n$ is the diode identity factor, and $V_t$ is the thermal voltage \cite{LOBRANO2013894}. Together with $I_{ph}$, $R_s$ and $R_{sh}$, these constitute the five parameters that give the model its name.
+        The model output current is given by the characteristic equation~\ref{eq:1m5p}, where $I_0$ is the diode saturation current, $n$ is the diode ideality factor, and $V_t$ is the thermal voltage \cite{LOBRANO2013894}. Together with $I_{ph}$, $R_s$ and $R_{sh}$, these constitute the five parameters that give the model its name.
 
         \begin{equation}
             I = I_{ph} - I_0 \left[ \exp\left(\frac{V + I R_s}{n V_t}\right) - 1 \right] - \frac{V + I R_s}{R_{sh}}
             \label{eq:1m5p}
         \end{equation}
 
-        These parameters are not directly provided by manufacturers, but can be extracted from the standard datasheet values, namely the open-circuit voltage ($V_{oc}$), short-circuit current ($I_{sc}$), voltage and current at the \ac{mpp} ($V_{mp}$, $I_{mp}$), and the respective temperature coefficients, through a set of equations that ensure the model matches these reference points under Standard Test Conditions (STC). There are several ways to do it, however it is outside the range of this work. To simplify, calculations were carried using online tools and will not be explained in detailed here. 
+        These parameters are not directly provided by manufacturers, but can be extracted from the standard datasheet values, namely the open-circuit voltage ($V_{oc}$), short-circuit current ($I_{sc}$), voltage and current at the \ac{mpp} ($V_{mp}$, $I_{mp}$), and the respective temperature coefficients, through a set of equations that ensure the model matches these reference points under Standard Test Conditions (STC). There are several ways to do it, however, it is outside the range of this work. To simplify, we used online tools for the calculations, which we will not explain in detail here. 
 
-        This approach allows the panel behavior to be accurately reproduced under different irradiance and temperature conditions, while keeping the circuit implementation simple enough to be integrated directly into LTspice.
+        This approach accurately reproduces panel behavior under different irradiance and temperature conditions while keeping the circuit implementation simple enough to integrate directly into LTspice.
 
         \begin{figure}[!ht]
             \centering
@@ -33,9 +33,9 @@
         
     \subsection{Boost Converter}
     \label{subsubsect:Sim_Boost}
-        To validate the theoretical  calculations, simulations in LTspice were carried using the boost converter in steady state mode and a fix duty cycle. 
+        To validate the theoretical calculations, simulations in LTspice were carried out using the boost converter in steady state mode and a fixed duty cycle. 
 
-        Considering a solar panel operating at his \ac{mpp} with 35 cells, five points of CC-CV charging curve were chosen to test the performance of the converter. These five points are represented in Figure~\ref{fig:cc-cv points}.
+        Considering a solar panel operating at its \ac{mpp} with 35 cells, five points of the CC-CV charging curve were chosen to test the performance of the converter. Figure~\ref{fig:cc-cv points} shows these five points.
         
         \begin{figure}[!ht]
             \centering
@@ -44,15 +44,15 @@
             \label{fig:cc-cv points}
         \end{figure}
 
-        It is important to note that in this CC-CV curve the constant current is given by the solar panel and not by the battery as it is usually expected. This is only truth due to the maximum charge current of the battery being lower than the current that can be provided by the solar panel. So at CC, the converter is working at \ac{mpp}. Also, the timescale will depend on the battery capacity.
+        It is important to note that in this CC-CV curve, the constant current is given by the solar panel and not by the battery, as is usually expected. This is true only because the battery's maximum charge current is lower than the current the solar panel can provide. So at CC, the converter is working at \ac{mpp}. The timescale also depends on the battery capacity.
 
-        With the chosen five points, some simulations were carried using capacitors and inductors that would fit the requirements calculated earlier. The objective of these simulations is to optimize the performance of the converter, leading to better choices.
+        With the chosen five points, some simulations were carried out using capacitors and inductors that would fit the requirements calculated earlier. The objective of these simulations is to optimize the performance of the converter, leading to better choices.
 
-        The model was built in LTspice with approximated models given by the manufactures for higher precision. Only the solar panel model was designed by hand, as previously mentioned.
+        The model was built in LTspice with approximated models given by the manufacturers for higher precision. As mentioned, only the solar panel model was designed by hand.
 
-        The battery was simulated using a voltage source and a resistor representing the internal resistance of the battery.
+        The battery was simulated using a voltage source and a resistor representing the battery's internal resistance.
 
-        The dead time of the transistors was implemented too. Using laboratory measurements, the rising and falling timing was measured and used in simulation. Has for the dead time, it is used the same as in the final prototype.
+        The dead time of the transistors was implemented too. Using laboratory measurements, the rising and falling timing was measured and used in simulation. For the dead time, the same value as in the final prototype was used.
 
         \begin{figure}[!ht]
             \centering
@@ -62,11 +62,11 @@
         \end{figure}
 
 
-        The first simulations were carried to choose the input and output capacitors. The idea is to simulate the circuit using a known inductor (68~uH) and change the capacitors for different configurations. All configurations are overdimensioned to give low ripples (current and voltage). So the main factor is the efficiency of the converter.
+        The first simulations were carried out to choose the input and output capacitors. The idea is to simulate the circuit using a known inductor (68~uH) and change the capacitors for different configurations. All configurations are overdimensioned to give low ripples (current and voltage). So the main factor is the efficiency of the converter.
 
-        In Table~\ref{tab:loss_capacitors_2} is shown the results. The efficiency of all combinations are very high however the highest is the one with two 56~uF as input capacitors and tree 220~uF capacitors as output capacitors. Unfortunately the 220~uF were not available at the moment, so the second best option was chosen, the five 100~uF capacitors.
+        Table~\ref{tab:loss_capacitors_2} shows the results. The efficiency of all combinations is very high, however, the highest is the one with two 56~uF as input capacitors and three 220~uF capacitors as output capacitors. Unfortunately, the 220~uF capacitors were not available at the time, so the second best option was chosen: five 100~uF capacitors.
 
-        It is worth noting that this is a simulation and therefore the efficiency is higher than what will be measured in laboratory results. Additionally, the difference between each combination it is very small. To make the product cheaper the third option would be as great as the one chosen.
+        It is worth noting that this is a simulation and therefore the efficiency is higher than what will be measured in laboratory results. Additionally, the difference between each combination is very small. To make the product cheaper, the third option would be as good as the one chosen.
 
         
         \begin{table}[!ht]
@@ -87,11 +87,11 @@
             \label{tab:loss_capacitors_2}
         \end{table}
 
-        Similar to the previous simulation, the inductor was chosen by keeping all components with the same values (the capacitors used were Cin = 2x56uF and Cout = 5x100uF) and changing the inductor. Similar to before, all inductors simulated are within the minimum required.
+        As in the previous simulation, the inductor was chosen by keeping all components with the same values (the capacitors used were Cin = 2x56uF and Cout = 5x100uF) and changing the inductor. Similar to before, all inductors simulated are within the minimum required.
 
-        The losses for each case are represented in Table~\ref{tab:loss_inductance_2}. Similar to before, the efficiency difference is very low but not as linear as in the previous simulation, likely due to the inductor models chosen.
+        Table~\ref{tab:loss_inductance_2} shows the losses for each case. As before, the efficiency difference is very low but less linear than in the previous simulation, likely due to the inductor models chosen.
 
-        The inductor chosen will highly influence the input ripple which can generate heat, and electrical interference. Table~\ref{tab:delta_iin_inductance} shows the different ripple currents for each inductor in each case of the CC-CV curve. The 22~uF inductor showed higher ripple current reaching values close to the input current. The inductor chosen was the 68~uF since it has overall good efficiency and reasonable input current ripple.
+        The chosen inductor strongly influences the input ripple, which can generate heat and electrical interference. Table~\ref{tab:delta_iin_inductance} shows the different ripple currents for each inductor in each case of the CC-CV curve. The 22~uF inductor showed higher ripple current, reaching values close to the input current. The inductor chosen was the 68~uF since it has overall good efficiency and reasonable input current ripple.
 
 
         \begin{table}[!ht]
@@ -149,9 +149,9 @@
         \end{table}
 
 
-        Both voltage ripples are lower than what was defined as the goal in Table~\ref{tab:converter_constraints}. As for the current ripple it is still reasonable. The losses/efficiency are also higher than what was aimed, reaching efficiency values up to 99.4\%. 
+        Both voltage ripples are lower than the goal defined in Table~\ref{tab:converter_constraints}. As for the current ripple, it is still reasonable. The losses/efficiency are also higher than what was aimed for, reaching efficiency values up to 99.4\%. 
 
-        A voltage sweep were performed, and as expected the efficiency drop with the increase of output voltage (Figure~\ref{fig:voltage_sweep}). Also, as mentioned earlier, the output current drop because in \ac{cc} mode the solar panel current is constant, so the output current drops with the increase of battery voltage due to the power conservation principle.
+        A voltage sweep was performed, and as expected, the efficiency drops with the increase of output voltage (Figure~\ref{fig:voltage_sweep}). Also, as mentioned earlier, the output current drops because, in \ac{cc} mode, the solar panel current is constant, so the output current decreases as battery voltage increases due to power conservation.
 
         \begin{figure}[!ht]
             \centering
@@ -160,12 +160,12 @@
             \label{fig:voltage_sweep}
         \end{figure}
 
-        Note: in version 1.1 of the prototype it was added two shotcky diodes that were not considered in these simulations. The diodes slightly increase the efficiency of the converter (+0.03\%) due to their lower forward voltage. The increase could be higher if the dead time was longer. Since the dead time is only 0.375~\% of the PWM period, the difference is negligible and therefore its use is irrelevant.
+        Note: In version 1.1 of the prototype, two Schottky diodes were added that were not considered in these simulations. The diodes slightly increase the converter efficiency (+0.03\%) because of their lower forward voltage. The increase could be higher if the dead time was longer. Since the dead time is only 0.375~\% of the PWM period, the difference is negligible and therefore its use is irrelevant.
 
     \section{Power Loss Estimation}
         \label{subsubsec:loss_estimation}
 
-        Although LTspice provides an accurate estimation of the converter efficiency, it does not directly identify the contribution of each component to the total power dissipation. Therefore, an analytical power loss estimation was developed in MATLAB to estimate the individual losses of each component of the proposed synchronous boost converter. This estimation uses the electrical parameters of the selected components obtained from their datasheets together with the converter operating conditions.
+        Although LTspice provides an accurate estimate of converter efficiency, it does not directly identify each component's contribution to total power dissipation. Therefore, an analytical power loss estimation was developed in MATLAB to estimate the individual losses of each component of the proposed synchronous boost converter. This estimation uses the electrical parameters of the selected components from their datasheets, along with the converter operating conditions.
 
         The total prototype losses are obtained by summing the losses associated with the GaN transistors, inductor, capacitors and auxiliary electronics:
 
@@ -193,23 +193,21 @@
         These losses are primarily caused by the on state resistance of the transistors, resulting in power dissipation whenever current flows through the channel. 
 
         The switching losses are estimated using Equation~\ref{eq:psw}, 
-        which takes into account the loses during the period when the transistor is not fully on nor fully off. Also, the losses associated with charging and discharging the output capacitance of each transistor.
+        which takes into account the losses during the period when the transistor is neither fully on nor fully off. They also include the losses associated with charging and discharging the output capacitance of each transistor.
 
         \begin{equation}
         P_{sw}=\frac{1}{2}V_{out}I_{L_{AVG}}(t_r+t_f)f_{sw} + \frac{1}{2}C_{oss}V_{out}^{2}f_{sw}
         \label{eq:psw}
         \end{equation}
 
-        The deadtime losses are calculated using Equation~\ref{eq:pdead}. These losses originate from the conduction of the reverse conduction path during the dead time interval required to prevent shoot through. This reverse condition path is either from the third quadrant conduction from the GaN device or from the parallel schottky diode added later in version 1.1 of the prototype.
+        The deadtime losses are calculated using Equation~\ref{eq:pdead}. These losses originate from the conduction of the reverse conduction path during the dead time interval required to prevent shoot through. This reverse conduction path is either from the third-quadrant conduction of the GaN device or from the parallel Schottky diode added later in version 1.1 of the prototype.
 
         \begin{equation}
         P_{dead}=2\cdot  V_f \cdot I_{L_{AVG}} \cdot t_{dead} \cdot f_{sw}.
         \label{eq:pdead}
         \end{equation}
 
-
-
-        The inductor and \acs{dc} capacitor losses are estimated using the RMS current passing through them and their \ac{esr}. The inductor manufacture does not provide the required magnetic material parameters to estimate the \acs{ac} losses. However, an employee suggested using their own tool called REDEXPERT which can simulate both \acs{dc} and \acs{ac} losses. Therefore, the value \acs{ac} losses were copied from their tool.
+        The inductor and \acs{dc} capacitor losses are estimated using the RMS current passing through them and their \ac{esr}. The inductor manufacturer does not provide the required magnetic material parameters to estimate the \acs{ac} losses. However, an employee suggested using their own tool called REDEXPERT, which can simulate both \acs{dc} and \acs{ac} losses. Therefore, the value \acs{ac} losses were copied from their tool
 
         \begin{equation}
         P_L=I_{L_{RMS}}^{2}ESR + P_{L_{AC}}.
@@ -228,14 +226,14 @@
         \label{eq:gate_drive}
         \end{equation}
 
-        Last but not least, the rest of the electronics (\acs{mcu}, \acs{dc}-\acs{dc}, sensors, etc.) were considered too. A sum of the maximum current of every component was made. Then the power losses can be estimated based on the power and efficiency of each \acs{dc}-\acs{dc} converter, Equation~\ref{eq:aux_losses}.
+        Last but not least, the rest of the electronics (\acs{mcu}, \acs{dc}-\acs{dc}, sensors, etc.) were considered too. The sum of the maximum currents of all components was calculated. Then the power losses was estimated based on the power and efficiency of each \acs{dc}-\acs{dc} converter, Equation~\ref{eq:aux_losses}.
 
         \begin{equation}
             P_{aux} = (I_{3v3} * 3.3) * eff_{dcdc} + (I_{5} * 5) * eff_{dcdc} + I_{in}*R_{shunt} + I_{out}*R_{shunt} + P_{gate}
             \label{eq:aux_losses}
         \end{equation}
 
-        Figure~\ref{fig:loss_breakdown} presents the resulting power loss distribution. The calculated total power loss is approximately 1.98~W, corresponding to an efficiency of 98.50\%. The efficiency dropped around 1\%, compared to LTspice simulations and it is expected to drop even further in real laboratory results since the \ac{pcb} will generate losses too.
+        Figure~\ref{fig:loss_breakdown} shows the resulting power-loss distribution. The calculated total power loss is approximately 1.98~W, corresponding to 98.50\% efficiency. The efficiency dropped by around 1\% compared to LTspice simulations, and it is expected to drop even further in real laboratory results since the \ac{pcb} will generate losses too.
 
         \begin{figure}[!ht]
             \centering
@@ -244,20 +242,20 @@
             \label{fig:loss_breakdown}
         \end{figure}
 
-        The largest contributors to the total losses are the \acs{dc} losses of the inductor and the ESR losses of the capacitors. This highlights the importance of selecting an inductor with low winding resistance and capacitors with low \ac{esr}, as these passive components represent a significant portion of the converter losses.
+        The largest contributors to total losses are the \acs{dc} losses in the inductor and the ESR losses in the capacitors. This highlights the importance of selecting an inductor with low winding resistance and capacitors with low \ac{esr}, since these passive components account for a significant portion of converter losses.
 
-        The auxiliary electronics also have a considerable impact on the overall losses, primarily due to the losses associated with the \acs{dc}-\acs{dc} converter.
+        The auxiliary electronics also contribute considerably to overall losses, primarily through the \acs{dc}-\acs{dc} converter.
 
         The conduction losses of the GaN transistors account for approximately 24.4\% of the total losses, further highlighting the importance of selecting transistors with low on-state resistance.
 
-        Additionally, the interconnections and traces on the \ac{pcb} exhibit parasitic inductance, which contributes to the overall losses of the device, which were not taken into account in this analysis.
+        Additionally, the interconnections and traces on the \ac{pcb} exhibit parasitic inductance, which contributes to the device's overall losses and was not taken into account in this analysis.
 
         Overall, the analysis indicates that nearly half of the converter losses originate from the passive components, while the semiconductor devices account for approximately one quarter of the total losses.
         Nevertheless, both the simulation results and theoretical analysis indicate that the selected components and design approach result in a highly efficient converter.
 
 
     \section{MPPT algorithm}
-        The algorithm has a few parameters like the working frequency, sampling frequency, step size, power dead band, etc. All of this parameters need to be tuned to work on his full potential while keeping it safe. Therefore, a simulation in MATLAB Simulink was implemented which simulates the behavior of the switching converter with the values defined earlier. The boost converter is connected to a solar panel and a battery, as it is spouse to be use (Figure~\ref{fig:Simulink mode}). To simplify, the simulation uses a diode instead of a transistor making it a basic boost converter. This simplification will not have influence on the results since the idea is to analyze the performance of the algorithm instead of the converter efficiency.
+        The algorithm has a few parameters, such as the switching frequency, sampling frequency, step size, power dead band, etc. These parameters must be tuned to operate at their full potential while remaining safe. Therefore, a simulation in MATLAB Simulink was implemented, which simulates the behavior of the switching converter with the values defined earlier. The boost converter is connected to a solar panel and a battery, as intended (Figure~\ref{fig:Simulink mode}). To simplify, the simulation uses a diode instead of a transistor, making it a basic boost converter. This simplification will not affect the results, since the goal is to analyze the algorithm's performance rather than converter efficiency.
 
         \begin{figure}[!ht]
             \centering
@@ -266,9 +264,9 @@
             \label{fig:Simulink mode}
         \end{figure}
 
-        The solar panel and battery are both configured with the parameters of the real system. It was used the specifications of solar panel with 35 cells and the \ac{sg01} battery. The \ac{pv} side sensors are inside the solar panel and show some noise as in the real system, to mitigate it, an average of 10 samples was implemented with each sample collected at 1~KHz. The value of the average is sent to the algorithm which runs at 100~Hz. Inside the \ac{mppt} block are the sweep algorithm and \ac{peo}.
+        The solar panel and battery are both configured with the parameters of the real system. It was used the specifications of solar panel with 35 cells and the \ac{sg01} battery. The \ac{pv} side sensors are inside the solar panel and show some noise, as in the real system, to mitigate it, an average of 10 samples was implemented, with each sample collected at 1~KHz. The value of the average is sent to the algorithm, which runs at 100~Hz. Inside the \ac{mppt} block are the sweep algorithm and \ac{peo}.
 
-        To understand the impact of each environment variation on the \ac{mpp} point, a sweep  was performed for different irradiance values and temperatures, Figure~\ref{fig:irr_sweep} and \ref{fig:temp_sweep}. For irradiance variations, the maximum duty cycle difference is 3\%. On the other hand, the maximum duty cycle difference for temperature variations is 9\%. This means that the algorithm will always be slower to temperature variations when compared to irradiance variations. However, it is more common to have a fast changing irradiance than temperature. The solar panels will heat slowly and when covered in water they cool around 10 to 20ºC (values measured during tests).  
+        To understand the impact of each environment variation on the \ac{mpp} point, a sweep  was performed for different irradiance values and temperatures (Figures~\ref {fig:irr_sweep} and \ref{fig:temp_sweep}). For irradiance variations, the maximum duty cycle difference is 3\%. In contrast, the maximum duty cycle difference for temperature variations is 9\%. This means the algorithm will always be slower to temperature variations than to irradiance variations. However, it is more common to have a fast changing irradiance than temperature. The solar panels will heat slowly, and when covered in water, they cool by around 10 to 20ºC (values measured during tests).  
 
         \begin{figure}[!ht]
             \centering
@@ -287,9 +285,9 @@
             \end{minipage}
         \end{figure}
 
-        Let's consider the worst case which is 9\%. To achieve the desired speed of 0.5~seconds, a combination of the step size and working frequency needs to be tuned. For example, considering a working frequency of 100~Hz, the algorithm have 50 steps to achieve \ac{mpp} under 0.5 seconds. So if the algorithm uses a step size of 9\% divided by 50 (0.18\%), in an ideal situation it would reach the speed goal every time. However, since this is a small step it can be confused with noise. Therefore, always needs to be tuned to the systems where is being applied.
+        Let's consider the worst case, which is 9\%. To achieve the desired speed of 0.5~seconds, a combination of the step size and working frequency needs to be tuned. For example, considering a working frequency of 100~Hz, the algorithm has 50 steps to achieve \ac{mpp} in under 0.5 seconds. So if the algorithm uses a step size of 9\% divided by 50 (0.18\%), in an ideal situation it would reach the speed goal every time. However, since this is a small step, it can be confused with noise. Therefore, always needs to be tuned to the systems where is being applied.
 
-        In simulations, the system can be tested with different parameters to give an idea of how it should behave outside simulation. Fixing the frequency to 100~Hz, a simulation was performed with 3 different step sizes under a few steps of temperature, Figure~\ref{fig:peo_step_comparison}. The smaller step is too small, and therefore it never reaches the \ac{mpp}. Most likely due to the noise. The other two show a similar performed, but the higher step show more oscillations around the \ac{mpp}.
+        In simulations, the system can be tested with different parameters to indicate how it should behave outside the simulation. Fixing the frequency to 100~Hz, a simulation was performed with 3 different step sizes under a few steps of temperature, Figure~\ref{fig:peo_step_comparison}. The smaller step is too small, and therefore it never reaches the \ac{mpp}. Most likely due to the noise. The other two show similar performance, but the higher step shows more oscillations around the \ac{mpp}.
 
 
         \begin{figure}[!ht]
@@ -315,7 +313,7 @@
 
         The analysis was then extended to more severe operating point variations. For a temperature step from $25~^\circ\mathrm{C}$ to $85~^\circ\mathrm{C}$ (Figure~\ref{fig:big_temp_step}), the $0.5\%$ duty-cycle step, which had performed well in the previous test, required the longest tracking time, approximately $1~\mathrm{s}$ to reach within $5\%$ of the \ac{mpp}. Given that the tracking time requirement is at most $1~\mathrm{s}$, and typically below $0.5~\mathrm{s}$, this step size lies at the limit of the specification. The $1\%$ and $2\%$ steps reached the \ac{mpp} faster, but with larger oscillations around the operating point. A step size between $0.5\%$ and $1\%$ is therefore considered the most suitable compromise.
 
-        It should also be noted that the algorithm stalled on a few occasions. This behavior is attributed to measurement noise and to the \ac{peo} deadband. Although not desirable, it is consistent with the expected operation of the method and can be reduced by further tuning.
+        The algorithm also stalled on a few occasions. This behavior is attributed to measurement noise and to the \ac{peo} deadband. Although not desirable, it is consistent with the expected operation of the method and can be reduced by further tuning.
 
         A rapid irradiance variation was also simulated. As shown in Figure~\ref{fig:big_irr_step}, the \ac{mpp} is reached almost instantaneously for all step sizes under consideration. This result is expected, as discussed earlier, since the corresponding duty cycle variation is approximately three times smaller than in the temperature case.
 
