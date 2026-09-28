@@ -231,6 +231,29 @@ Following the design and simulation stages, a prototype was manufactured and ass
 
     This setup ensures a controlled environment where the solar panel operates at specified temperature and irradiance, increasing the number of controlled variables. Because the user sets the environmental conditions, this setup can be easily replicated for future comparisons, increasing the scientific value of the tests.
 
+    \subsection{State Machine}
+        First, the state machine was tested. Figure~\ref{fig:state machine} illustrates the evolution of the different states over time. The algorithm responded as expected when both the source and load were disconnected. When both the source and load were connected, the \ac{peo}/\ac{mppt} state was activated. After a few seconds, the irradiance level of the power supply, which was used to emulate a solar panel, was increased, resulting in an increase in the output current. For this test, the \ac{cc} current was set to $2~\mathrm{A}$. Consequently, once the output current reached this limit, the state machine transitioned to the \ac{cc} state.
+
+        \begin{figure}[!ht] 
+            \centering 
+            \includegraphics[width=\linewidth]{Images/LAB_res/MPPT states1.pdf} 
+            \caption{} 
+            \label{fig:state machine}
+        \end{figure} 
+
+    The sweep mode was disabled for this test because its operation with a power supply resulted in occasional overcurrent events. However, when using a real solar panel, the sweep mode operated as expected, as shown in Figure~\ref{fig:state machine2}. At approximately $27~\mathrm{s}$, the sweep was initiated, causing the \ac{pv} voltage to gradually increase while the current decreased. After a few seconds, the sweep was completed, and the operating point transitioned to the \ac{mpp}, while the \ac{peo} was simultaneously initiated. During the sweep, two states were observed: the sweep delay state, which occupied most of the sweep duration, and the sweep state, during which the duty cycle was progressively decreased.
+
+
+        \begin{figure}[!ht] 
+            \centering 
+            \includegraphics[width=\linewidth]{Images/LAB_res/MPPT states2.pdf} 
+            \caption{} 
+            \label{fig:state machine2}
+        \end{figure} 
+
+
+        The \ac{cv} and charge finished states are demonstrated later during a complete charging cycle. 
+
     \subsection{Efficiency}
         To validate the converter's efficiency under different current and voltage inputs, we performed an irradiance sweep in $ 10~W/m^2$ steps from $ 100~W/m^2$ to $ 1000~W/m^2$. Each irradiance level is maintained for 2 seconds to ensure that the algorithm is stable. All the values measured during this time are used to compute an average. Additionally, outliers were removed for better results. 
 
@@ -335,6 +358,8 @@ Following the design and simulation stages, a prototype was manufactured and ass
         \caption{Battery charging test. Voltage and current curve.} 
         \label{fig:}
     \end{figure} 
+
+
 
 
         
