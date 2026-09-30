@@ -92,7 +92,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
     With this in mind, we briefly review the most relevant algorithms to identify the most suitable option for this project.
 
     \subsection{Constant Voltage (CV)}
-        This is the simplest and most inefficient method. It works by operating the solar panel at a fixed voltage. This reference voltage is used to calculate the duty cycle of the \acs{dc}-\acs{dc} converter to maintain the solar panel's operating point.
+        The \ac{cv} algorithm is the simplest and most inefficient method. It works by operating the solar panel at a fixed voltage. This reference voltage is used to calculate the duty cycle of the \acs{dc}-\acs{dc} converter to maintain the solar panel's operating point.
         
 
          Well known variants improve performance by setting the reference voltage to a fraction of the open-circuit voltage (typically 71-78\%)~\cite{Comparison_PV_Array_MPPT_Techniques_2007}. This voltage is obtained by briefly disconnecting the panel from the load, increasing reference accuracy and efficiency. Another variant uses a fraction of the short-circuit current as the reference~\cite{MPPT_Comparison_techniques}.
@@ -138,7 +138,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
         
         This algorithm is based on the fact that at the \ac{mpp}, the derivative of power with respect to voltage is zero. Given the solar panel output voltage and current, the algorithm can calculate the conductance (I/V) and the incremental conductance (dI/dV)~\cite{Intelligent_PV_Module_2006}. 
         
-        The following formulas in Equation~\ref{eq:inc_cond_mpp} show the equation on which this algorithm is based. 
+        The following formulas in Equation~\ref{eq:inc_cond_mpp} show the equation on which this algorithm is based on. 
 
         \begin{equation}
             \frac{dP}{dV} = \frac{d(V \cdot I)}{dV} = I + V \frac{dI}{dV} \rightarrow \frac{1}{V} \times \frac{dP}{dV} = \frac{I}{V} + \frac{dI}{dV}
@@ -173,7 +173,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
             \begin{minipage}[b]{0.41\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{Images/Background/IncCond_flow.pdf}
-                \caption{Flowchart of the \ac{incond} method with direct control~\cite{IncCond_MPPT_Cuk_2011}.}
+                \caption{Flowchart of the \ac{incond} method with direct control (for a buck converter)~\cite{IncCond_MPPT_Cuk_2011}.}
                 \label{fig:IncCond_flowchart}
             \end{minipage}
             \hfill
@@ -185,13 +185,11 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
             \end{minipage}
         \end{figure}
 
-        Note: Figure~\ref{fig:IncCond_flowchart} was made for a buck converter, so the duty cycle actions are inverted for a boost converter. For example, if the operating point is to the left of the \ac{mpp}, the duty cycle should be decreased to increase the voltage of the solar panel and move towards the \ac{mpp}.
-
     
         \subsection{Look Up Table (LUT)}
             The \ac{lut} method is a simple and fast \ac{mppt} algorithm that relies on pre-calculated/measured data to determine the optimal operating point of a solar panel~\cite{MPPT_Comparison_techniques}.
             
-            The \acs{lut} table contains several entries organized by voltage and current. Each of these entries contains the optimal duty cycle of the DC-DC converter, which is pre-calculated or measured for a specific voltage and current. This approach allows the algorithm to reach the \acs{mpp} in one clock cycle by measuring the solar panel voltage and current, finding the closest entry in the LUT table, and applying the corresponding duty cycle to the converter. The entries of the table can be calculated through a mathematical model of the solar panel with different conditions (temperature and irradiance) or measured in a laboratory.
+            The \acs{lut} table contains several entries organized by voltage and current. Each of these entries contains the optimal duty cycle of the DC-DC converter, which is pre-calculated or measured for a specific voltage and current. This approach allows the algorithm to reach the \acs{mpp} in one clock cycle by measuring the solar panel voltage and current, finding the closest entry in the \ac{lut} table, and applying the corresponding duty cycle to the converter. The entries of the table can be calculated through a mathematical model of the solar panel with different conditions (temperature and irradiance) or measured in a laboratory.
 
             Table~\ref{tab:LUT_matrix} visually represents a 2D \acs{lut} based only on current and voltage. Each entry represents the duty cycle used in each case.
 
@@ -292,7 +290,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
                 \label{fig:DC-DC_classic_topologys}
             \end{figure}
  
-            The conventional buck-boost converter produces an output voltage inverted relative to the input, which creates challenges for sensor measurements, driving circuits, and isolation; consequently, this option was excluded for the current project \cite{Non_Isolated_DC_DC_Converters_MPPT_Controller_2021}.
+            The conventional buck-boost converter produces an output voltage inverted relative to the input, which creates challenges for sensor measurements, driving circuits, and isolation, consequently, this option was excluded for the current project \cite{Non_Isolated_DC_DC_Converters_MPPT_Controller_2021}.
 
 
             An enhanced variant of the buck-boost converter is the CUK converter, illustrated in Figure~\ref{fig:DC-DC_buck_bost}a. The main characteristic of the CUK converter is that the currents through inductors $L_1$ and $L_2$ are equal, allowing the use of a common magnetic core, which helps reduce current ripple. However, a major drawback of this topology is that the entire load current must pass through the coupling capacitor $C$. In addition, the converter produces an inverted output voltage~\cite{Non_Isolated_DC_DC_Converters_MPPT_Controller_2021}.
@@ -376,10 +374,10 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
 
     To charge these batteries properly, the \ac{mppt} algorithm can operate alone if an additional converter is used in series. But in most of \ac{mppt} chargers, the \ac{mppt} and the battery charging unit are integrated in the same converter. This way, the \ac{mppt} algorithm can adjust the solar panel operating point to extract maximum power, while the battery charging technique ensures the battery charges properly. A proper combination of both algorithms/techniques is essential to ensure both maximum energy extraction and safe battery charge.
 
-    Several techniques exist for charging lithium-ion batteries, the most relevant for this use case is the constant current-constant voltage (\acs{cc}-\acs{cv}) method~\cite{Charging_Algorithms_Nickel_Lithium_Battery_2011}. It is also widely used in commercial chargers because of its simplicity and effectiveness~\cite{Review_Different_Charging_Techniques_Lithium_Polymer_Battery_2015}. 
-     This method consists of two main phases (Figure~\ref{fig:CC-CV profile}). In the first phase, the battery is charged at a constant current until it reaches its maximum voltage. In the second phase, the voltage is held constant at this limit while the current gradually decreases as the battery approaches full charge. Once the current drops below a certain threshold, the charging process is terminated to prevent overcharging~\cite{Review_Different_Charging_Techniques_Lithium_Polymer_Battery_2015}.
+    Several charging techniques are available for lithium-ion batteries. For the application considered in this work, the most relevant approach is the constant-current constant-voltage (\acs{cc}-\acs{cv}) charging method~\cite{Charging_Algorithms_Nickel_Lithium_Battery_2011}.It is also widely used in commercial chargers because of its simplicity and effectiveness~\cite{Review_Different_Charging_Techniques_Lithium_Polymer_Battery_2015}. 
+    This method consists of two main phases (Figure~\ref{fig:CC-CV profile}). In the first phase, the battery is charged at a constant current until it reaches its maximum voltage. In the second phase, the voltage is held constant at this limit while the current gradually decreases as the battery approaches full charge. Once the current drops below a certain threshold, the charging process is terminated to prevent overcharging~\cite{Review_Different_Charging_Techniques_Lithium_Polymer_Battery_2015}.
 
-     When employing the \acs{cc}-\acs{cv} charging technique with a \ac{mppt} controller, the initial \ac{cc} phase is regulated by the \ac{mppt} algorithm, which extracts the maximum available power from the solar panel, limited by the maximum charging current. Once the maximum charge current is reached, it operates at \ac{cc}. Once the \ac{cv} phase is reached, the \ac{mppt} function is disabled, and the power converter increases the solar panel voltage to progressively reduce the charging current while keeping the output voltage constant.
+    When employing the \acs{cc}-\acs{cv} charging technique with a \ac{mppt} controller, the initial \ac{cc} phase is regulated by the \ac{mppt} algorithm, which extracts the maximum available power from the solar panel, limited by the maximum charging current. Once the maximum charge current is reached, it operates at \ac{cc}. Once the \ac{cv} phase is reached, the \ac{mppt} function is disabled, and the power converter increases the solar panel voltage to progressively reduce the charging current while keeping the output voltage constant.
 
 
     \begin{figure} [!ht]

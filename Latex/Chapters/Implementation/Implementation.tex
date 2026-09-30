@@ -71,7 +71,7 @@ In this case, at the stationary state, the average voltage across the inductor i
 
 Equation \ref{eq:vout2} shows the 3 causes of losses in a boost converter. The main cause is the voltage drop across the diode, which significantly reduces the output voltage (usually 0.3~V to 0.7~V). This will be solved by using a synchronous boost converter (Figure~\ref{fig:sync_boost}), which replaces the diode with a transistor. In synchronous boost converters, the voltage drop across the transistor is much smaller due to the low $R_{DS,on}$, usually below 0.1~V.
 
-As for the inductor internal resistance, it cannot be removed entirely, so it must be taken into account when designing the boost converter. The same is true for the drain source resistance of the transistor, which is also removable. Therefore, it is important to select components with low internal resistance to minimize losses and increase converter efficiency.
+As for the inductor internal resistance, it cannot be removed entirely, so it must be taken into account when designing the boost converter. The same is true for the drain source resistance of the transistor, which is also not removable. Therefore, it is important to select components with low internal resistance to minimize losses and increase converter efficiency.
 
 \begin{figure}[!ht]
     \centering
@@ -194,7 +194,7 @@ The saturation current is the maximum current that the inductor can handle witho
     I_{sat} > I_{in} + \frac{\Delta I_L}{2} = 6.374 + \frac{4.26}{2} = 8.50~A
 \end{equation}
 
-It is physically impossible to have a solar panel on both short-circuit current and open-circuit voltage at the same time. And for this reason, the calculation is overdimensioned it is used as a reference instead of a strict limit.
+It is physically impossible to have a solar panel on both short-circuit current and open-circuit voltage at the same time. And for this reason, the calculation is overdimensioned and it is only used as a reference instead of a strict limit.
 The inductor chosen was the 74437529203680 from Würth Elektronik, which has an inductance of 68~$\mu H$, a rated current of 16~A and a saturation current of 7.2~A ($|\Delta L/L|<10\%$) and 10.6~A ($|\Delta L/L|<30\%$). The saturation current is too close to the objective, however, since the inductance is higher than what is needed, the inductance would still be acceptable even at -30\% inductance. 
 
 Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, a high self-resonant frequency of 5.7~MHz, and a high maximum voltage of 250~V.
@@ -305,7 +305,7 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, a high self-resonant
 
         The \ac{mcu} runs at 80~MHz with an external 16~MHz ceramic resonator. This frequency is enough for the computational time and a minimal PWM resolution. It can be flashed using JTAG and it uses an Independent Watchdog (IWDG) time interrupt. The IWDG is a safety feature that resets the \ac{mcu} in case of a crash or infinite loops. It works by resetting the timer periodically in a specific part of the code, if the timer is not reseted during a specified time period, the interrupt is triaged and the \ac{mcu} resets automatically.
 
-        As for timers, one timer was configured with 100~KHz for PWM and two pins were configured as complementary PWMs with a specific dead time. The dead time was inserted as a safety feature too. The dead time is calculated using Formula~\ref{eq: dead time}, where the "value" must be in the range 0 to 255. 
+        As for timers, one timer was configured with 100~KHz for PWM and two pins were configured as complementary PWMs with a specific dead time. To prevent cross conduction (both transistors in conduction at the same time), the dead time was used as a safety feature too. The dead time is calculated using Formula~\ref{eq: dead time}, where the "value" must be in the range 0 to 255. 
 
         \begin{equation}
             Dead Time = Value / F_{CLK}
@@ -325,14 +325,14 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, a high self-resonant
 
         With 100~KHz PWM and an 80~MHz internal clock, the duty cycle resolution is 0.125~\%.
         
-        Another timer was configured to trigger every millisecond, and it is used to serve as task interrupts however, each task is called at different periods (always around milliseconds), which is implemented with a counter and comparators.
+        Another timer was configured to trigger every millisecond, and it is used to serve as task interrupts however, each task is called at different periods (always around milliseconds), which is implemented with a counters and comparators.
 
         The ADC can be configured in a variety of different ways, i chose to use the scan mode which reads multiple inputs in sequence. To read the measured values i am using the poling method however in theory if the DMA is used instead, the results could be better since it takes less time to read the ADC values and therefore a better average could be made. In practice i could not get reliable results and therefore the pooling method was adopted. The average is made with all data acquired between each \ac{mppt} algorithm call. On average, it uses 10 samples.
 
 \section{Sensors} 
 
 \subsection{Voltage and current sensing}
-    Accurate voltage and current measurements are essential for MPPT operation, since tracking algorithms directly rely on these quantities to estimate power and adjust the operating point of the \ac{pv} array. Measurement noise or inaccuracies directly impact tracking efficiency, especially in high frequency switching DC-DC converters.
+    Accurate voltage and current measurements are essential for MPPT operation, since tracking algorithms directly rely on these quantities to estimate power and adjust the operating point of the \ac{pv} array. Measurement noise or inaccuracies directly impact tracking speed and accuracy.
 
     Voltage sensing is generally straightforward and can be implemented using resistive voltage dividers followed by an ADC. Additionally, it is suggested to use an op-amp as a buffer to reduce the impact of the ADC input capacitor, while charging. This buffer reduces noise and improves the accuracy of the measurement while also allowing the use of higher sampling rates.
     
@@ -352,7 +352,7 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, a high self-resonant
 
     Both sensors use the internal ADC from the STM32L476, which has a 12 bit ADC (with 3.0V as the reference). The current sensor outputs an analog voltage that is equal to the current multiplied by 0.2~V/A. This means that the resolution of the measured current is 3.0/(4096 * 0.2) = 3.66~mA. As for the voltage sensor, it outputs an analog voltage that is equal to the voltage multiplied by 10/210. The resolution is 21 * 3.0/(4096) = 15.38~mV, which is more than enough for this application.
 
-    Both circuits are represented in Appendix~\ref{}. \textcolor{red}{place the apendix reference }
+    Both circuits are represented in Appendix~\ref{chapter:Schematics}.
 
 \subsection{Temperature and Irradiance sensors}
     For security reasons, it is important to monitor the temperature of the \ac{pcb}. Also, monitoring the temperature and irradiance of the \ac{pv} panel is important for performance analysis and defect detection. These measurements can also be used to improve the \ac{mppt} algorithm, since the \ac{mpp} is dependent on temperature and irradiance.
@@ -370,7 +370,7 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, a high self-resonant
         \frac{1}{T} = \frac{1}{T_0} + \frac{1}{B} \cdot ln(\frac{R}{R_0})
     \end{equation}
 
-    The thermistor that measures the transistor temperature is also used in analog protection. This protection uses a comparator to disable the transistors after a temperature threshold that can be modified by changing on resistor in the comparator circuit. 
+    The thermistor that measures the transistor temperature is also used in analog protection. This protection uses a comparator to disable the transistors after a temperature threshold that can be modified by changing one resistor in the comparator circuit (Appendix~\ref{chapter:Schematics}). 
 
     As for the irradiance sensor, the board was designed to use a TSL2591, which is a digital light sensor with a wide dynamic range and high sensitivity. It can measure light intensity from 0.000118 lux to 88,000 lux, making it suitable for a wide range of lighting conditions. The sensor communicates with the \ac{mcu} via the I2C protocol, allowing for easy integration and data acquisition. However, this sensor is not ideal for outdoor use, since it can easily saturate and its spectrum is not ideal for solar irradiation measurement. The best application for this sensor is in laboratory, however, it was not needed, and therefore it was not used
 
@@ -403,28 +403,21 @@ Additionally, it has a low \ac{esr} of only 10.3~$m\Omega$, a high self-resonant
 
         The states are divided into charging and not charging. There are 5 "not charging" states:
         \begin{itemize}[leftmargin=4em, itemsep=1pt, topsep=2pt]
-            \item \textbf{Delay}: waits 100 cycles to skip the transients and then decides the next state;
+            \item \textbf{Delay}: waits 200 cycles (4 seconds) to skip the transients and then decides the next state. This state is important to let the output capacitors discharge when load is disconnected;
             \item \textbf{Disable}: disables the \acs{dc}-\acs{dc};
-            \item \textbf{No Source}: the solar panel is disconnected and therefore the \acs{dc}-\acs{dc} should be disconnected;
+            \item \textbf{No Source}: the solar panel is disconnected and therefore the \acs{dc}-\acs{dc} is disabled;
             \item \textbf{No load}: the battery is disconnected, and therefore the output voltage is set to the maximum battery voltage to prevent the need for a precharge circuit;
-            \item \textbf{Charge finished}: similar to "No load", runs a PID to control the \acs{pv} side by fixing the battery voltage.
+            \item \textbf{Charge finished}: similar to "No load", runs a proportional controller to follow the maximum battery voltage to prevent the need for a precharge.
         \end{itemize} 
 
         As for the charging states, there are also five:
         \begin{itemize}[leftmargin=4em, itemsep=1pt, topsep=2pt]
             \item \textbf{Sweep delay}: wait between sweep steps to ignore transients;
-            \item \textbf{Sweep}: decrease the duty cycle until the end of the sweep;
+            \item \textbf{Sweep}: decrease the duty cycle until the end of the sweep. The sweep is used to find a true \ac{mpp} and ignore local maximums generated by shading;
             \item \textbf{MPPT algorithm}: runs the \ac{mppt} algorithm chosen;
-            \item \textbf{CC}: if the current exceeds the battery limit, runs a PID to fix the current at the maximum value;
-            \item \textbf{CV}: runs a PID to control the \acs{pv} side by fixing the battery voltage.
+            \item \textbf{CC}: if the current exceeds the battery limit, runs a proportional controller to follow the maximum current allowed;
+            \item \textbf{CV}: runs a proportional controller to control the \acs{pv} side by fixing the battery voltage.
         \end{itemize}
-        
-        \textcolor{red}{review this part}
-        
-        % The idea is, if the board is not connected to a battery, the output voltage is set to the \ac{cv} target (No load state), then if enough current is detected in the battery side it switches to Sweep mode (if enabled) which sweeps the \ac{pv} operating point to find the \ac{mpp}. Once the sweep is finished it changes to the CC-CV charging phase, where depending on the battery current and voltage, the mode will be \ac{mppt} algorithm, \ac{cc} or \ac{cv}. Once the battery finish the charging cycle or disconnects from the board, it changes to No load mode again. 
-        % When designing these state machine, one of the most important aspects was the ability of moving forward in terms of charge (first \ac{cc} then \ac{cv}) or backwards in cases where the battery discharge current is higher in comparison with the energy provided by the solar panels.
-
-        
 
         Besides the main tasks, the board is able to send CAN and Serial messages and therefore the respective tasks. 
 

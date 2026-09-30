@@ -20,7 +20,7 @@
             \label{eq:1m5p}
         \end{equation}
 
-        These parameters are not directly provided by manufacturers, but can be extracted from the standard datasheet values, namely the open-circuit voltage ($V_{oc}$), short-circuit current ($I_{sc}$), voltage and current at the \ac{mpp} ($V_{mp}$, $I_{mp}$), and the respective temperature coefficients, through a set of equations that ensure the model matches these reference points under Standard Test Conditions (STC). There are several ways to do it, however, it is outside the range of this work. To simplify, we used online tools for the calculations, which we will not explain in detail here. 
+        These parameters are not directly provided by manufacturers, but can be extracted from the standard datasheet values, namely the open-circuit voltage ($V_{oc}$), short-circuit current ($I_{sc}$), voltage and current at the \ac{mpp} ($V_{mp}$, $I_{mp}$), and the respective temperature coefficients, through a set of equations that ensure the model matches these reference points under \ac{stc}. There are several ways to do it, however, it is outside the range of this work. To simplify, we used online tools for the calculations, which we will not explain in detail here. 
 
         This approach accurately reproduces panel behavior under different irradiance and temperature conditions while keeping the circuit implementation simple enough to integrate directly into LTspice.
 
@@ -44,7 +44,10 @@
             \label{fig:cc-cv points}
         \end{figure}
 
-        It is important to note that in this CC-CV curve, the constant current is given by the solar panel and not by the battery, as is usually expected. This is true only because the battery's maximum charge current is lower than the current the solar panel can provide. So at CC, the converter is working at \ac{mpp}. The timescale also depends on the battery capacity.
+        It is important to note that, in this \ac{cc}-\ac{cv} charging profile, the constant current is determined by the solar panel rather than the battery, as is typically assumed. This is only possible because the maximum charging current of the battery is lower than the maximum current that can be supplied by the solar panel. Therefore, during the \ac{cc} phase, the converter operates at the \ac{mpp} of the solar panel.
+
+        The timescale of the charging process also depends on the battery capacity, with larger capacities requiring longer charging times under otherwise equivalent conditions.
+
 
         With the chosen five points, some simulations were carried out using capacitors and inductors that would fit the requirements calculated earlier. The objective of these simulations is to optimize the performance of the converter, leading to better choices.
 
@@ -129,7 +132,7 @@
             \label{tab:delta_iin_inductance}
         \end{table}
 
-        Now that the converter components are all chosen, the following measurements were taken in LTspice:
+        Now that the converter components are all chosen, the following measurements were taken in LTspice (Table~\ref{tab:ripple_loss}).
 
         \begin{table}[!ht]
         \centering
@@ -190,7 +193,7 @@
         P_{cond}=I_{RMS}^{2}R_{DS(on)}.
         \end{equation}
 
-        These losses are primarily caused by the on state resistance of the transistors, resulting in power dissipation whenever current flows through the channel. 
+        These losses are primarily caused by the on state resistance of the transistors, resulting in power dissipation whenever current flows through the transistors. 
 
         The switching losses are estimated using Equation~\ref{eq:psw}, 
         which takes into account the losses during the period when the transistor is neither fully on nor fully off. They also include the losses associated with charging and discharging the output capacitance of each transistor.
@@ -242,16 +245,16 @@
             \label{fig:loss_breakdown}
         \end{figure}
 
-        The largest contributors to total losses are the \acs{dc} losses in the inductor and the ESR losses in the capacitors. This highlights the importance of selecting an inductor with low winding resistance and capacitors with low \ac{esr}, since these passive components account for a significant portion of converter losses.
+        The largest contribution to the total losses originates from the inductor's \acs{dc} losses, highlighting the importance of selecting an inductor with low winding resistance. The auxiliary electronics also contribute significantly to the overall losses, primarily due to the losses associated with the \acs{dc}-\acs{dc} conversion.
 
-        The auxiliary electronics also contribute considerably to overall losses, primarily through the \acs{dc}-\acs{dc} converter.
+        The conduction losses of the GaN transistors account for approximately $24.4\%$ of the total losses, further emphasizing the importance of selecting transistors with low on-state resistance.
 
-        The conduction losses of the GaN transistors account for approximately 24.4\% of the total losses, further highlighting the importance of selecting transistors with low on-state resistance.
+        The capacitors account for approximately $23.5\%$ of the total losses, representing nearly one quarter of the overall losses.
 
-        Additionally, the interconnections and traces on the \ac{pcb} exhibit parasitic inductance, which contributes to the device's overall losses and was not taken into account in this analysis.
+        Additionally, the interconnections and traces on the \ac{pcb} exhibit parasitic impedance, which contributes to the overall losses of the converter but was not considered in this analysis.
 
-        Overall, the analysis indicates that nearly half of the converter losses originate from the passive components, while the semiconductor devices account for approximately one quarter of the total losses.
-        Nevertheless, both the simulation results and theoretical analysis indicate that the selected components and design approach result in a highly efficient converter.
+        Overall, the analysis indicates that nearly half of the converter losses originate from passive components, while the semiconductor devices account for approximately one quarter of the total losses. Nevertheless, both the simulation results and theoretical analysis indicate that the selected components and design approach result in a highly efficient converter.
+
 
 
     \section{MPPT algorithm}

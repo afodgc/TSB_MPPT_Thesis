@@ -15,7 +15,7 @@ This chapter presents the electrical architecture of \ac{sg01}, providing the co
     \label{fig:SG01_sch}
 \end{figure}
 
-The low voltage system is designed to power all auxiliary system (dashboard, telemetry, flight control, electrical string, throttle, etc.). Some of these auxiliary systems are critical for the normal use of the vessel; for example, if the dashboard turns off, the pilot will not know the state of the high voltage system (temperature, voltage, state of charge, etc.). Or, even more critically, if the throttle does not work, the boat cannot move electrically.
+The low voltage system is designed to power all auxiliary system (dashboard, telemetry, flight control, electrical string, throttle, etc.). Some of these auxiliary systems are critical for the normal use of the vessel, for example, if the dashboard turns off, the pilot will not know the state of the high voltage system (temperature, voltage, state of charge, etc.). Or, even more critically, if the throttle does not work, the boat cannot electrically move.
 
 Auxiliary systems are always changing and growing, so it is difficult to estimate their power consumption. For this work it is considered 1000~W of continuous consumption. It is not a perfect estimation because the power consumption will depend on the driving mode (autonomous driving, hydroplaning, or normal drive), which can create different power profiles due to the actuators. Additionally, the cooling system (which is planned to be moved to the High Voltage system) has high power consumption that is not considered in this estimation. 
 
@@ -131,7 +131,9 @@ The charging times are good for evaluating the \ac{pv} system, but the main goal
 
 To better understand the impact of the \ac{pv} system, let's consider the battery of \acs{sr03}. This battery takes 1~h and 30~min to fully discharge without solar panels, 3~h 12~min with solar panels, and approximately 2 days 18~h with the additional solar panels. 
 
-By reducing the battery capacity and increasing the solar panel area, the battery would never need external charging. From another point of view, the low voltage system can drain more power from the battery.
+In theory, reducing the battery capacity while increasing the solar panel area could allow the battery to be maintained without the need for external charging. Conversely, a larger battery capacity would allow the low-voltage system to draw more energy from the battery.
+
+In practice, however, the solar panels will not continuously operate under \ac{stc} conditions. Consequently, the power generated will generally be lower than the nominal value, and an appropriate margin must therefore be considered when sizing the battery and solar generation system.
 
 
 
