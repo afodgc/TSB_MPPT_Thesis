@@ -289,7 +289,8 @@
         \textblockorigin{-18pt}{-2pt}
         \begin{textblock*}{17cm}(\th@thesislogopsx,\th@thesislogopsy)
             \centering
-            \includegraphics{\th@thesislogo}
+            % \includegraphics{\th@thesislogo}
+            \includegraphics[width=14.3cm]{\th@thesislogo}
         \end{textblock*}
     }
     % insert vertical spacing for the TITLES
