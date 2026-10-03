@@ -1,0 +1,85 @@
+\fancychapter{Proposed Solution}
+\label{chap:Solucion_Proposal}
+
+This chapter presents the proposed solution developed to meet the technical, functional, and economic requirements identified in the previous chapters. It introduces the overall system architecture, detailing the interaction between the photovoltaic source, power conversion stage, control unit, and communication infrastructure. Additionally, the design methodology adopted for converter selection, control strategy, simulation, and experimental validation is described, providing a structured approach to the development and assessment of the proposed \ac{mppt} charger.
+
+\section{System architecture}
+    The boat solar system is mainly composed of a battery, solar panels, and several \acp{mppt}. Additionally, the \ac{bms} and sensors are used to maintain safety, Figure~\ref{fig:sys_architecture}.
+
+    \begin{figure} [!h]
+        \centering
+        \includegraphics[width=0.70 \textwidth]{Images/Solucional Proposal/System architecture.drawio.pdf}
+        \qquad
+        \caption{MPPT charger architecture.}
+        \label{fig:sys_architecture}
+    \end{figure}
+
+    This project aims to build an \ac{mppt} charger for \ac{sg01}, which is one of the vessels built by \ac{tsb}, but \ac{tsb} is continuously developing new boats with different batteries and different configurations of solar panels. With that in mind, the final solution needs to be versatile in terms of battery voltage and maximum ratings, which will provide savings over the years.
+
+    In terms of batteries, 3 different voltages were used in the past: 14.4~V, 21.6~V, and 50.4~V (nominal voltage). As for solar panels, the biggest solar panel array that \ac{tsb} have ever built had 56 solar cells in series, which in total give a 40.94~V in open circuit and 6.382~A in short circuit (with Maxeon Gen 5 solar cells from SunPower). This will be considered as the limit size of the solar panel, and some margin will be added.
+
+    As for the \acs{mppt} charger, it is composed of a power supply cable to ensure steady \acs{dc} voltage output in the whole range of input voltages, a \acs{dc}-\acs{dc} converter alongside with a \acs{mcu} which runs the \acs{mppt} algorithm to control the \acs{dc}-\acs{dc} converter taking into account the input measures of voltage and current, Figure~\ref{fig:sys_architecture}.
+
+    The proposed system will use a step-down/up \acs{dc}-\acs{dc} converter to ensure output and input voltage flexibility, more specifically, a ZETA converter. As for the \ac{mppt} algorithm, a \acs{peo} will be initially used to simplify the work and further improved to a \acs{incond}, however, the prototype needs to support other algorithms for further improvements. Thinking on the \acs{lut} algorithm, the proposed solution will be able to read both temperature and solar irradiance.
+
+    The communication with the system will be made by \acs{can} communication with 1~Mbit/s of bus speed to connect every \acs{pcb} to the same bus. \acs{can} is the standard communication protocol used by \acs{tsb}, however, when communicating with sensors there is more freedom and every other protocol can be used. The prototype will send messages to \acs{can} bus with the data measured (voltage, current, temperature and irradiance) as well as calculated data such as power and electrical efficiency. Also, some additional information can be sent, such as status (error codes, charging, not charging, etc.) or warnings about solar panels health.
+
+    Within the \acs{can} bus architecture, the \acs{bms} is also connected. The \acs{bms} is the main safety system of the battery. It measures input and output currents, cells temperatures, and voltages and decides if the battery is safe to use or not. Therefore, the final product does not need to provide these features. However, battery safety remains a priority and will be addressed in the proposed solution through protection mechanisms against overcurrent, overvoltage, and reverse polarity. Additionally, a \acs{cc}-\acs{cv} charging mode will be employed to ensure the safe charging of lithium-ion batteries.
+
+
+    \subsection{Requirements summary}
+        Considering all user requirements and adding some margin, the summary of the requirements is:
+
+        \begin{itemize}[leftmargin=4em, itemsep=1pt, topsep=2pt]
+            \item Work with a wide range of battery voltage: from 14.4~V to 50.4~V; 
+            \item Input maximum rating: 300~W and 50~V;
+            \item Input target: 105,12~W with 35 cells in series;
+            \item Electrical efficiency: at least 85\%;
+            \item Fast tracking speed: less than 200~ms;
+            \item High track accuracy: more than 95\%;   
+            \item \acs{can} communication: 1~Mbit/s and send status, power produced, current, voltage, efficiency and temperature;
+            \item Load limits: overcurrent and overvoltage;
+            \item Charging technique: \acs{cc}-\acs{cv};
+            \item Circuit protection: overcurrent, overvoltage, overtemperature, reverse polarity, ESD, etc.;
+            \item \acs{mppt} algorithm: support different algorithms;
+            \item Cost less than 150~€ per unit.
+            
+        \end{itemize}
+
+        To successfully complete this project, all the above requirements must be achieved in the final prototype. 
+
+\section{Methodology}
+    \subsection{Simulations and Design}
+        To satisfy the system requirements while maintaining operational flexibility, a step-up/down \acs{dc}-\acs{dc} converter topology is selected. This configuration enables operation under both low input and high output, or high input and low output voltage conditions. Furthermore, even when the solar panel and battery voltages are similar, this converter topology allows operation at the \acs{mpp}, ensuring efficient energy harvesting.
+
+        Following the selection of the \acs{dc}-\acs{dc} converter topology, analytical design calculations and simulations will be carried out using MATLAB/Simulink to evaluate performance and optimize efficiency under varying operating conditions. This test should study the efficiency and voltage and current ripples from both input and output. 
+
+        With respect to the \acs{mppt} algorithm, the prototype will be designed to support multiple \acs{mppt} algorithms to allow future extensibility and comparative evaluation. In addition to conventional methods, a hybrid algorithm previously proposed by António Neves in his master's thesis will be investigated. This algorithm combines a \acs{lut} with the \acs{peo} method using voltage and current measurements. In this work, the algorithm will be extended to include additional parameters, such as temperature and irradiance, to improve tracking accuracy and dynamic response.
+
+        All selected \acs{mppt} algorithms will be implemented and initially validated through simulations in MATLAB/Simulink before firmware implementation~\cite{bendib_survey_mppt_methods}\cite{IncCond_MPPT_Cuk_2011}. The performance of each algorithm will be evaluated based on tracking speed and accuracy, which can be visualized by changing the environmental conditions in simulation and analyzing the power output~\cite{bendib_survey_mppt_methods}\cite{Look-Up-Table_VS_PeO}.
+
+        Also, research about how to implement low-power consumption voltage and current sensors will be conducted to find a cheap and accurate solution. A few solutions can be simulated in LTspice for precise tuning.
+
+        Finally, before testing the circuit in a prototype board or designing the \acs{pcb} in Altium designer to later be manufactured, the \acs{mcu}, sensors and additional hardware will be chosen according to the specifications.      
+    
+    \subsection{Experimental results and validation}
+        Firstly, the correct functioning of the \acs{dc}-\acs{dc} converter and its efficiency will be tested with a resistive load and a power supply. By changing the input voltage and load resistance, several operating points can be tested, and the efficiency can be calculated by measuring input and output voltage and current.
+
+        At this stage, the current and voltage sensors will also be calibrated and tested to ensure accurate measurements.
+
+        As for the rest of the circuit, a laboratory control environment needs to be built with a closed box, and a light emitter device (for example a LED light). Inside this box the irradiance emitted by external sources, like lamps or the sun, will be reduced. The light emitter device should achieve irradiance close to the \ac{stc}, which is 1000~$\mathrm{w/m}^2$.
+        
+        The same can be achieved with the temperature using a simple heater and thermostat to maintain the system at a constant temperature or at \ac{stc} conditions, which is 25 °C.  
+
+        This setup provides constant irradiance and temperature but can also provide variations to the environment variables, by changing the irradiance of LEDs with PWM or changing the reference signal of the thermostat. By applying abrupt variations (steps), to one of the variables, the controller speed and accuracy will be analyzed. To eliminate setup errors, an irradiance sensor and a temperature sensor should be installed inside the box for more accurate analysis of the results.
+
+        Finally, after laboratory validation of the prototype, real world testing will be conducted. The system will be connected to a photovoltaic panel and a battery and evaluated under varying environmental conditions. These tests aim to validate the laboratory results and to assess the overall performance of the proposed system under practical operating conditions. Then the robustness of the system can be tested by charging and discharging the battery several times, exposing the system to different temperatures and irradiance levels over a long period of time.
+
+        After all tests, the prototype will be installed in \acs{sg01} alongside with the previous used \ac{mppt} controllers to compare the performance in real world conditions.
+
+
+
+
+
+
+% \cleardoublepage
