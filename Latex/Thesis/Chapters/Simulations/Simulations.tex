@@ -11,9 +11,9 @@
 
         The simulations started in LTspice to test the converter under different conditions. To achieve that, a \ac{pv} electrical model of the cells was designed using a five parameter model (1M5P) configuration. More electrical models can simulate a solar panel, some with higher accuracy but greater complexity. This model was ideal for the simulation because it is both reliable and simple.
 
-        The 1M5P model represents the solar cell as a single diode equivalent circuit composed of a current source in parallel with one diode, a series resistance $R_s$, and a shunt (parallel) resistance $R_{sh}$, as shown in Figure~\ref{fig:pv_model}. The current source represents the photo generated current $I_{ph}$, which is proportional to the incident irradiance, while the diode accounts for the nonlinear $I$-$V$ characteristic of the p-n junction. The series resistance models the losses associated with the material bulk resistance, metal contacts and interconnections, whereas the shunt resistance represents the leakage currents through the cell, typically caused by manufacturing defects.
+        The 1M5P model represents the solar cell as a single-diode equivalent circuit with a current source, a diode, a series resistance $R_s$ and a shunt resistance $R_{sh}$, as shown in Figure~\ref{fig:pv_model}. The current source models the photogenerated current $I_{ph}$, the diode the nonlinear $I$-$V$ characteristic of the p-n junction, $R_s$ the ohmic losses in the material and contacts, and $R_{sh}$ the leakage current.
 
-        The model output current is given by the characteristic equation~\ref{eq:1m5p}, where $I_0$ is the diode saturation current, $n$ is the diode ideality factor, and $V_t$ is the thermal voltage \cite{LOBRANO2013894}. Together with $I_{ph}$, $R_s$ and $R_{sh}$, these constitute the five parameters that give the model its name.
+        The output current is given by Equation~\ref{eq:1m5p}, where $I_0$ is the diode saturation current, $n$ the ideality factor and $V_t$ the thermal voltage \cite{LOBRANO2013894}. Together with $I_{ph}$, $R_s$ and $R_{sh}$, these five parameters give the model its name.
 
         \begin{equation}
             I = I_{ph} - I_0 \left[ \exp\left(\frac{V + I R_s}{n V_t}\right) - 1 \right] - \frac{V + I R_s}{R_{sh}}
@@ -21,8 +21,6 @@
         \end{equation}
 
         These parameters are not directly provided by manufacturers, but can be extracted from the standard datasheet values, namely the open-circuit voltage ($V_{oc}$), short-circuit current ($I_{sc}$), voltage and current at the \ac{mpp} ($V_{mp}$, $I_{mp}$), and the respective temperature coefficients, through a set of equations that ensure the model matches these reference points under \ac{stc}. There are several ways to do it, however, it is outside the range of this work. To simplify, we used online tools for the calculations, which we will not explain in detail here. 
-
-        This approach accurately reproduces panel behavior under different irradiance and temperature conditions while keeping the circuit implementation simple enough to integrate directly into LTspice.
 
         \begin{figure}[!ht]
             \centering
@@ -39,8 +37,9 @@
         
         \begin{figure}[!ht]
             \centering
-            \includegraphics[width=0.7\textwidth]{Images/Implementation/cc_cv_points.pdf}
-            \caption{CC-CV charge characteristics and analysis point selection.}
+            % \includegraphics[width=0.7\textwidth]{Images/Implementation/cc_cv_points.pdf}
+            \includegraphics[width=0.8\textwidth]{Images/Implementation/cc_cv_points_right.pdf}
+            \caption{Draft of CC-CV charge characteristics and analysis point selection.}
             \label{fig:cc-cv points}
         \end{figure}
 
@@ -51,15 +50,11 @@
 
         With the chosen five points, some simulations were carried out using capacitors and inductors that would fit the requirements calculated earlier. The objective of these simulations is to optimize the performance of the converter, leading to better choices.
 
-        The model was built in LTspice with approximated models given by the manufacturers for higher precision. As mentioned, only the solar panel model was designed by hand.
-
-        The battery was simulated using a voltage source and a resistor representing the battery's internal resistance.
-
-        The dead time of the transistors was implemented too. Using laboratory measurements, the rising and falling timing was measured and used in simulation. For the dead time, the same value as in the final prototype was used.
+        The model was built in LTspice using manufacturer component models, except for the solar panel, which was implemented as described above. The battery was represented by a voltage source and a series resistor, and the transistor dead time was set to the prototype value, using the measured rise and fall times.
 
         \begin{figure}[!ht]
             \centering
-            \includegraphics[width=0.8\textwidth]{Images/Implementation/Sim_circuit.png}
+            \includegraphics[width=0.70\textwidth]{Images/Implementation/Sim_circuit.png}
             \caption{Simulation circuit schematic.}
             \label{}
         \end{figure}
@@ -92,43 +87,28 @@
 
         As in the previous simulation, the inductor was chosen by keeping all components with the same values (the capacitors used were Cin = 2x56uF and Cout = 5x100uF) and changing the inductor. Similar to before, all inductors simulated are within the minimum required.
 
-        Table~\ref{tab:loss_inductance_2} shows the losses for each case. As before, the efficiency difference is very low but less linear than in the previous simulation, likely due to the inductor models chosen.
-
-        The chosen inductor strongly influences the input ripple, which can generate heat and electrical interference. Table~\ref{tab:delta_iin_inductance} shows the different ripple currents for each inductor in each case of the CC-CV curve. The 22~uF inductor showed higher ripple current, reaching values close to the input current. The inductor chosen was the 68~uF since it has overall good efficiency and reasonable input current ripple.
-
+        Table~\ref{tab:loss_inductance_2} shows the losses and the inductor current ripple for each case. As before, the efficiency difference is very low but less linear than in the previous simulation, likely due to the inductor models chosen. The chosen inductor strongly influences the input ripple, which can generate heat and electrical interference. The $22~\mu\mathrm{H}$ inductor showed a higher ripple current, reaching values close to the input current. The inductor chosen was $68~\mu\mathrm{H}$, since it has overall good efficiency and a reasonable inductor current ripple.
 
         \begin{table}[!ht]
-            \caption{Loss (\%) for different inductance values.}
+            \caption{Loss (\%) and $\Delta i_{L}$ ($I_{L,\max}-I_{L,\min}$) for different inductance values.}
             \centering
-            \begin{tabular}{|c|ccccc|}
+            \small
+            \setlength{\tabcolsep}{4pt}
+            \begin{tabular}{|c|ccccc|ccccc|}
             \hline
-            \textbf{Case \#} & \textbf{22 $\mu$H} & \textbf{33 $\mu$H} & \textbf{47 $\mu$H} & \textbf{68 $\mu$H} & \textbf{100 $\mu$H} \\
+            \multirow{2}{*}{\textbf{Case \#}} & \multicolumn{5}{c|}{\textbf{Loss (\%)}} & \multicolumn{5}{c|}{\textbf{$\Delta i_{L}$ (A)}} \\
+            \cline{2-11}
+            & \textbf{22 $\mu$H} & \textbf{33 $\mu$H} & \textbf{47 $\mu$H} & \textbf{68 $\mu$H} & \textbf{100 $\mu$H}
+            & \textbf{22 $\mu$H} & \textbf{33 $\mu$H} & \textbf{47 $\mu$H} & \textbf{68 $\mu$H} & \textbf{100 $\mu$H} \\
             \hline
-            1 & 0.4206 & 0.4439 & 0.5453 & 0.5788 & 1.2659 \\
-            2 & 0.6645 & 0.6793 & 0.6627 & 0.6844 & 1.3664 \\
-            3 & 0.7883 & 0.8076 & 0.7290 & 0.7449 & 1.4193 \\
-            4 & 1.0556 & 1.0583 & 0.6867 & 0.6735 & 0.9624 \\
-            5 & 6.7045 & 6.6230 & 3.6556 & 3.4671 & 3.8177 \\
+            1 & 0.4206 & 0.4439 & 0.5453 & 0.5788 & 1.2659 & 2.6939 & 1.8906 & 1.3256 & 0.9781 & 0.6251 \\
+            2 & 0.6645 & 0.6793 & 0.6627 & 0.6844 & 1.3664 & 4.7934 & 3.3416 & 2.3354 & 1.7066 & 1.0707 \\
+            3 & 0.7883 & 0.8076 & 0.7290 & 0.7449 & 1.4193 & 5.4733 & 3.8253 & 2.6813 & 1.9644 & 1.2839 \\
+            4 & 1.0556 & 1.0583 & 0.6867 & 0.6735 & 0.9624 & 5.5596 & 3.8565 & 2.7075 & 2.0139 & 1.2925 \\
+            5 & 6.7045 & 6.6230 & 3.6556 & 3.4671 & 3.8177 & 5.5520 & 3.8510 & 2.6903 & 1.9636 & 1.2344 \\
             \hline
             \end{tabular}
             \label{tab:loss_inductance_2}
-        \end{table}
-
-
-        \begin{table}[!ht]
-            \caption{$\Delta i_{L}$ ($I_{L,\max} - I_{L,\min}$) for different inductance values.}
-            \centering
-            \begin{tabular}{|c|ccccc|}
-            \hline
-            \textbf{Case \#} & \textbf{22 $\mu$H} & \textbf{33 $\mu$H} & \textbf{47 $\mu$H} & \textbf{68 $\mu$H} & \textbf{100 $\mu$H} \\
-            \hline
-            1 & 2.6939 & 1.8906 & 1.3256 & 0.9781 & 0.6251 \\
-            2 & 4.7934 & 3.3416 & 2.3354 & 1.7066 & 1.0707 \\
-            3 & 5.4733 & 3.8253 & 2.6813 & 1.9644 & 1.2839 \\
-            4 & 5.5596 & 3.8565 & 2.7075 & 2.0139 & 1.2925 \\
-            5 & 5.5520 & 3.8510 & 2.6903 & 1.9636 & 1.2344 \\
-            \hline
-            \end{tabular}
             \label{tab:delta_iin_inductance}
         \end{table}
 
@@ -158,12 +138,29 @@
 
         \begin{figure}[!ht]
             \centering
-            \includegraphics[width=0.7\textwidth]{Images/Implementation/vbat__sweep_sim_res.pdf}
-            \caption{Battery voltage sweep simulation results.}
+            \begin{subfigure}{0.49\textwidth}
+                \centering
+                \includegraphics[width=0.99\textwidth]{Images/Implementation/vbat__sweep_sim_res.pdf}
+                \caption{Losses (\%) over battery voltage.}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}{0.49\textwidth}
+                \centering
+                \includegraphics[width=0.99\textwidth]{Images/Implementation/vbat__sweep_sim_res2.pdf}
+                \caption{Output and Input current over battery voltage.}
+            \end{subfigure}
+            \caption{Battery voltage sweep simulation results (Solar panel in \ac{mpp}).}
             \label{fig:voltage_sweep}
         \end{figure}
 
-        Note: In version 1.1 of the prototype, two Schottky diodes were added that were not considered in these simulations. The diodes slightly increase the converter efficiency (+0.03\%) because of their lower forward voltage. The increase could be higher if the dead time was longer. Since the dead time is only 0.375~\% of the PWM period, the difference is negligible and therefore its use is irrelevant.
+        % \begin{figure}[!ht]
+        %     \centering
+        %     \includegraphics[width=0.7\textwidth]{Images/Implementation/vbat__sweep_sim_res.pdf}
+        %     \caption{Battery voltage sweep simulation results.}
+        %     \label{fig:voltage_sweep}
+        % \end{figure}
+
+        Note: two Schottky diodes added in prototype version 1.1 were not included in these simulations. They increase the simulated efficiency by only $+0.03\%$, which is negligible given the short dead time ($0.375\%$ of the PWM period).
 
     \section{Power Loss Estimation}
         \label{subsubsec:loss_estimation}
@@ -236,38 +233,30 @@
             \label{eq:aux_losses}
         \end{equation}
 
-        Figure~\ref{fig:loss_breakdown} shows the resulting power-loss distribution. The calculated total power loss is approximately 1.98~W, corresponding to 98.50\% efficiency. The efficiency dropped by around 1\% compared to LTspice simulations, and it is expected to drop even further in real laboratory results since the \ac{pcb} will generate losses too.
+        Figure~\ref{fig:loss_breakdown} shows the resulting power-loss distribution. The calculated total power loss is approximately 1.98~W, corresponding to 98.50\% efficiency. This is about $1\%$ lower than the LTspice result, and a further reduction is expected in the laboratory because \ac{pcb} parasitics were not included.
 
         \begin{figure}[!ht]
             \centering
-            \includegraphics[width=0.6\textwidth]{Images/Implementation/fig_loss_breakdown.pdf}
+            \includegraphics[width=0.55\textwidth]{Images/Implementation/fig_loss_breakdown.pdf}
             \caption{Prototype analytical power loss distribution at Case~2.}
             \label{fig:loss_breakdown}
         \end{figure}
 
-        The largest contribution to the total losses originates from the inductor's \acs{dc} losses, highlighting the importance of selecting an inductor with low winding resistance. The auxiliary electronics also contribute significantly to the overall losses, primarily due to the losses associated with the \acs{dc}-\acs{dc} conversion.
-
-        The conduction losses of the GaN transistors account for approximately $24.4\%$ of the total losses, further emphasizing the importance of selecting transistors with low on-state resistance.
-
-        The capacitors account for approximately $23.5\%$ of the total losses, representing nearly one quarter of the overall losses.
-
-        Additionally, the interconnections and traces on the \ac{pcb} exhibit parasitic impedance, which contributes to the overall losses of the converter but was not considered in this analysis.
-
-        Overall, the analysis indicates that nearly half of the converter losses originate from passive components, while the semiconductor devices account for approximately one quarter of the total losses. Nevertheless, both the simulation results and theoretical analysis indicate that the selected components and design approach result in a highly efficient converter.
+        The inductor \acs{dc} losses are the largest term, followed by the auxiliary electronics (mainly the auxiliary \acs{dc}--\acs{dc} conversion), the GaN conduction losses ($24.4\%$) and the capacitors ($23.5\%$). Overall, nearly half of the losses come from passive components and about one quarter from the semiconductors. Despite this, both the simulation and the analytical model indicate a highly efficient converter.
 
 
 
     \section{MPPT algorithm}
-        The algorithm has a few parameters, such as the switching frequency, sampling frequency, step size, power dead band, etc. These parameters must be tuned to operate at their full potential while remaining safe. Therefore, a simulation in MATLAB Simulink was implemented, which simulates the behavior of the switching converter with the values defined earlier. The boost converter is connected to a solar panel and a battery, as intended (Figure~\ref{fig:Simulink mode}). To simplify, the simulation uses a diode instead of a transistor, making it a basic boost converter. This simplification will not affect the results, since the goal is to analyze the algorithm's performance rather than converter efficiency.
+        The algorithm parameters (switching and sampling frequencies, step size and power dead band) must be tuned for speed without compromising stability. A MATLAB Simulink model of the boost converter, solar panel and battery was therefore used to evaluate the tracker (Figure~\ref{fig:Simulink mode}). A diode replaces the synchronous high-side switch, which does not affect the algorithm comparison.
 
         \begin{figure}[!ht]
             \centering
-            \includegraphics[width=0.9\textwidth]{Images/Implementation/simulink_sim.png}
+            \includegraphics[width=0.75\textwidth]{Images/Implementation/simulink_sim.png}
             \caption{MATLAB Simulink MPPT simulation model.}
             \label{fig:Simulink mode}
         \end{figure}
 
-        The solar panel and battery are both configured with the parameters of the real system. It was used the specifications of solar panel with 35 cells and the \ac{sg01} battery. The \ac{pv} side sensors are inside the solar panel and show some noise, as in the real system, to mitigate it, an average of 10 samples was implemented, with each sample collected at 1~KHz. The value of the average is sent to the algorithm, which runs at 100~Hz. Inside the \ac{mppt} block are the sweep algorithm and \ac{peo}.
+        The panel (35 cells) and the \ac{sg01} battery match the real system. Measurement noise is included on the \ac{pv} side and averaged over 10 samples at $1~\mathrm{kHz}$ before being sent to the algorithm, which runs at $100~\mathrm{Hz}$ and implements both the sweep and \ac{peo}.
 
         To understand the impact of each environment variation on the \ac{mpp} point, a sweep  was performed for different irradiance values and temperatures (Figures~\ref {fig:irr_sweep} and \ref{fig:temp_sweep}). For irradiance variations, the maximum duty cycle difference is 3\%. In contrast, the maximum duty cycle difference for temperature variations is 9\%. This means the algorithm will always be slower to temperature variations than to irradiance variations. However, it is more common to have a fast changing irradiance than temperature. The solar panels will heat slowly, and when covered in water, they cool by around 10 to 20ºC (values measured during tests).  
 
@@ -288,9 +277,9 @@
             \end{minipage}
         \end{figure}
 
-        Let's consider the worst case, which is 9\%. To achieve the desired speed of 0.5~seconds, a combination of the step size and working frequency needs to be tuned. For example, considering a working frequency of 100~Hz, the algorithm has 50 steps to achieve \ac{mpp} in under 0.5 seconds. So if the algorithm uses a step size of 9\% divided by 50 (0.18\%), in an ideal situation it would reach the speed goal every time. However, since this is a small step, it can be confused with noise. Therefore, always needs to be tuned to the systems where is being applied.
+        In the worst case ($9\%$), a tracking time of $0.5~\mathrm{s}$ at $100~\mathrm{Hz}$ allows 50 steps, i.e.\ an ideal step of $0.18\%$. Such a small step is easily confused with noise, so the parameters must be tuned to the actual system.
 
-        In simulations, the system can be tested with different parameters to indicate how it should behave outside the simulation. Fixing the frequency to 100~Hz, a simulation was performed with 3 different step sizes under a few steps of temperature, Figure~\ref{fig:peo_step_comparison}. The smaller step is too small, and therefore it never reaches the \ac{mpp}. Most likely due to the noise. The other two show similar performance, but the higher step shows more oscillations around the \ac{mpp}.
+        With the frequency fixed at $100~\mathrm{Hz}$, three step sizes were compared under successive temperature steps (Figure~\ref{fig:peo_step_comparison}). The smallest step never reaches the \ac{mpp}, most likely because of noise. The other two perform similarly, but the larger step oscillates more around the \ac{mpp}.
 
 
         \begin{figure}[!ht]
@@ -314,25 +303,23 @@
             \label{fig:peo_step_comparison}
         \end{figure}
 
-        The analysis was then extended to more severe operating point variations. For a temperature step from $25~^\circ\mathrm{C}$ to $85~^\circ\mathrm{C}$ (Figure~\ref{fig:big_temp_step}), the $0.5\%$ duty-cycle step, which had performed well in the previous test, required the longest tracking time, approximately $1~\mathrm{s}$ to reach within $5\%$ of the \ac{mpp}. Given that the tracking time requirement is at most $1~\mathrm{s}$, and typically below $0.5~\mathrm{s}$, this step size lies at the limit of the specification. The $1\%$ and $2\%$ steps reached the \ac{mpp} faster, but with larger oscillations around the operating point. A step size between $0.5\%$ and $1\%$ is therefore considered the most suitable compromise.
+        The analysis was then extended to more severe operating-point variations. For a temperature step from $25~^\circ\mathrm{C}$ to $85~^\circ\mathrm{C}$ (Figure~\ref{fig:big_temp_step}), the $0.5\%$ step, which had performed well previously, required about $1~\mathrm{s}$ to reach within $5\%$ of the \ac{mpp}. This meets the $1~\mathrm{s}$ limit but not the typical $0.5~\mathrm{s}$ target. The $1\%$ and $2\%$ steps were faster but oscillated more; a step between $0.5\%$ and $1\%$ is therefore the best compromise. Occasional stalls are caused by measurement noise and the \ac{peo} deadband and can be reduced by further tuning.
 
-        The algorithm also stalled on a few occasions. This behavior is attributed to measurement noise and to the \ac{peo} deadband. Although not desirable, it is consistent with the expected operation of the method and can be reduced by further tuning.
-
-        A rapid irradiance variation was also simulated. As shown in Figure~\ref{fig:big_irr_step}, the \ac{mpp} is reached almost instantaneously for all step sizes under consideration. This result is expected, as discussed earlier, since the corresponding duty cycle variation is approximately three times smaller than in the temperature case.
+        A rapid irradiance variation was also simulated (Figure~\ref{fig:big_irr_step}). The \ac{mpp} is reached almost instantaneously for all step sizes, as expected, because the duty-cycle change is about three times smaller than in the temperature case.
 
         \begin{figure}[!ht]
             \centering
-            \begin{minipage}[b]{0.49\textwidth}
+            \begin{minipage}[t]{0.48\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{Images/Implementation/temp_step_PEOsteps.pdf}
-                \caption{Power response for different \ac{peo} step sizes during a temperature variation from 25ºC to 85ºC.}
+                \caption{Power response for different \ac{peo} step sizes during a temperature variation from $25~^\circ\mathrm{C}$ to $85~^\circ\mathrm{C}$.}
                 \label{fig:big_temp_step}
             \end{minipage}
             \hfill
-            \begin{minipage}[b]{0.49\textwidth}
+            \begin{minipage}[t]{0.48\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{Images/Implementation/Irr_step_PEOsteps.pdf}
-                \caption{Power response for different \ac{peo} step sizes during a Irradiance variation from 1000~$\mathrm{W/m}^2$ to 200~$\mathrm{W/m}^2$.}
+                \caption{Power response for different \ac{peo} step sizes during an irradiance variation from $1000~\mathrm{W/m}^2$ to $200~\mathrm{W/m}^2$.}
                 \label{fig:big_irr_step}
             \end{minipage}
         \end{figure}
