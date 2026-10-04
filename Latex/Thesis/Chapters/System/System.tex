@@ -1,7 +1,7 @@
 \fancychapter{System}
 \label{chap:System}
 
-This chapter presents the electrical architecture of \ac{sg01}, providing the context needed for developing and integrating the proposed \ac{mppt} charger. It presents the main subsystems relevant to solar energy conversion, such as the installed solar panels and battery. The impact of the \ac{pv} system is analyzed, as well as the environmental changes. 
+This chapter presents the electrical architecture of \ac{sg01}, providing the context needed for developing and integrating the \ac{mppt} charger prototype. It presents the main subsystems relevant to solar energy conversion, such as the installed solar panels and battery. The impact of the \ac{pv} system is analyzed, as well as the environmental changes. 
 
 \section{Overview}
 
@@ -26,7 +26,7 @@ To help keeping the low voltage system always powered, solar panels are used and
 
 The photovoltaic system of \ac{sg01} was designed to maximize the energy harvested from the available deck area while maintaining reliable operation under the varying environmental conditions encountered in marine applications.
 
-The current installation consists of 140 Maxeon Gen 3 (Me3) photovoltaic cells distributed among ten custom manufactured solar panels. These panels connect to four independent \acp{mppt}, as shown in Figure~\ref{fig:PV_SG01}. The distribution of panels among the \acp{mppt} was carefully selected to reduce the effects of partial shading, temperature gradients, and non uniform solar irradiance across the vessel surface. By electrically separating regions with different operating conditions, each \ac{mppt} can independently track the optimal operating point of its associated panels, increasing the overall energy yield.
+The current installation consists of 140 Maxeon Gen 3 (Me3) photovoltaic cells distributed among ten custom manufactured solar panels. These panels connect to four independent \acp{mppt}, as shown in Figure~\ref{fig:PV_SG01}. The distribution of panels among the \acp{mppt} was carefully selected to reduce the effects of partial shading, temperature gradients, and non-uniform solar irradiance across the vessel surface. By electrically separating regions with different operating conditions, each \ac{mppt} can independently track the optimal operating point of its associated panels, increasing the overall energy yield.
 
 \begin{figure}[!ht]
     \centering
@@ -34,7 +34,7 @@ The current installation consists of 140 Maxeon Gen 3 (Me3) photovoltaic cells d
         \centering
         \includegraphics[width=0.79 \textwidth]{Images/System/solar panels.pdf}
         \qquad
-        \caption{Distribution of Solar Panels and \ac{mppt} on SG01.}
+        \caption{Distribution of solar panels and \ac{mppt} on SG01.}
         \label{fig:PV_SG01}
     \end{subfigure}
     \hfill
@@ -50,9 +50,9 @@ The current installation consists of 140 Maxeon Gen 3 (Me3) photovoltaic cells d
 \end{figure}
 
 Each \ac{pv} cell has an active area of approximately $155.06~\mathrm{cm^2}$, resulting in a total photovoltaic area of $2.171~\mathrm{m^2}$.
-Assuming \ac{stc} (irradiance of $1000~\mathrm{W/m^2}$ and $ 25^\circ\mathrm {C} $), the photovoltaic array is capable of delivering approximately $526.4~\mathrm{W}$ of peak power (theoretical value). 
+Assuming \ac{stc} (irradiance of $1000~\mathrm{W/m}^2$ and $25~^\circ\mathrm{C}$), the photovoltaic array is capable of delivering approximately $526.4~\mathrm{W}$ of peak power (theoretical value). 
 
-The \ac{pv} energy is extracted by four commercial Genasun \acp{mppt}, grouped in a dedicated \ac{mppt} box, which convert the variable solar panel voltage into a stable charging voltage. This architecture allows each photovoltaic group to independently track its \ac{mpp}, improving energy extraction under non uniform illumination conditions.
+The \ac{pv} energy is extracted by four commercial Genasun \acp{mppt}, grouped in a dedicated \ac{mppt} box, which convert the variable solar panel voltage into a stable charging voltage. This architecture allows each photovoltaic group to independently track its \ac{mpp}, improving energy extraction under non-uniform illumination conditions.
 
 To ensure high performance and shape configurability, the photovoltaic modules were manufactured in house using materials selected specifically for marine operation. This process begins by soldering all cells in a module together, then laminating them using vacuum and heat blankets.
 
@@ -80,7 +80,7 @@ Although the current photovoltaic installation already contributes significantly
 
 \section{Battery}
 \label{sec:battery}
-In recent years, we have been producing our batteries, achieving a lower cost and a highly customizable solution. In \ac{sg01} we chose lithium-ion cells due to their ease of use and quick assembly. The battery assembly is done by the team members, and it begins by placing the cells on a plastic holder to increase structural strength, then using a spot welder, the series and parallel connections are made with nickel tabs (Figure~\ref{fig:SG01_battery}). In parallel, some thermistors are placed in different locations of the battery to ensure a precise and robust temperature reading. In the end, the battery is placed in a case with a \ac{bms} and all necessary connections.
+In recent years, \ac{tsb} have been producing our batteries, achieving a lower cost and a highly customizable solution. In \ac{sg01} we chose lithium-ion cells due to their ease of use and quick assembly. The battery assembly is done by the team members, and it begins by placing the cells on a plastic holder to increase structural strength, then using a spot welder, the series and parallel connections are made with nickel tabs (Figure~\ref{fig:SG01_battery}). In parallel, some thermistors are placed in different locations of the battery to ensure a precise and robust temperature reading. In the end, the battery is placed in a case with a \ac{bms} and all necessary connections.
 
 \begin{figure} [!ht]
     \centering
@@ -111,7 +111,7 @@ The current low voltage battery uses Samsung INR21700-50G cells in a 12s28p conf
         Cutoff charge current & A & 3.395 & 1.75 & 0.133 \\ \hline
         Max discharge current & A & 271.6 & 175 & 15.9\\ \hline
         Weight & kg & 25.2 & ? & 1\\ \hline
-        Internal resistance & m$\Omega$ & 6 & 24 & 192\\ \hline
+        Internal resistance & $\mathrm{m}\Omega$ & 6 & 24 & 192\\ \hline
     \end{tabular}
 \end{table}
 
@@ -120,16 +120,15 @@ The current low voltage battery uses Samsung INR21700-50G cells in a 12s28p conf
 For a more realistic impact analysis, the \ac{sr03} battery will be used. This is a much smaller battery with a reasonable capacity for this vessel. It uses Samsung INR21700-50s cells in a 12s7p configuration. This configuration yields the specifications shown in Table~\ref{tab:battery_comparison}.
 
 Additionally, to shorten the charging test time, another battery was used. This battery was provided by a startup called NAVICTUS and is a 12s1p pack with Samsung INR21700-53G cells.
-\section{PV System Impact on Autonomy}
+\section{PV system impact on autonomy}
 
-With \ac{sg01} battery (5844.56~Wh) and the maximum power that the solar panels can currently provide (526.4~W), the minimum time to fully charge the battery is 11 h and 7 min (5844.56~Wh / 526.4~W). This is a long time to charge a battery. There are two solutions to this problem: increase the power provided by the solar panels or decrease the battery capacity.
+With \ac{sg01} battery (5844.56~Wh) and the maximum power that the solar panels can currently provide (526.4~W), the minimum time to fully charge the battery is 11~h and 7~min (5844.56~Wh / 526.4~W). This is a long time to charge a battery. There are two solutions to this problem: increase the power provided by the solar panels or decrease the battery capacity.
 
-Let's consider reducing the battery capacity to 1512~Wh, the capacity of our solar boat (\acs{sr03}) battery. With this change alone, the battery is fully charged in 2 h and 53 min, which is a much more reasonable time. Additionally, if we increase the power provided by the solar panels to 977 W, the battery will be fully charged in 1 h and 33 min, which is an excellent time to charge a battery.
+An alternative approach is to reduce the battery capacity to $1512~\mathrm{Wh}$, corresponding to the battery capacity of \acs{sr03}. With this change alone, the battery can be fully charged in $2~\mathrm{h}$ and $53~\mathrm{min}$, which represents a much more reasonable charging time. Furthermore, increasing the power provided by the solar panels to $977~\mathrm{W}$ reduces the charging time to $1~\mathrm{h}$ and $33~\mathrm{min}$, providing a highly suitable charging time for the battery.
 
+The charging times are good for evaluating the \ac{pv} system, but the main goal is to maximize the time on water before full battery discharge. For this analysis, a consumption of $1000~\mathrm{W}$ is assumed. Considering the original battery, it takes 5~h 51~min to fully discharge without solar panels, 12~h 21~min with solar panels, and approximately 10 days with the additional solar panels. As previously said, this battery is overdimensioned and will be changed in the future.
 
-The charging times are good for evaluating the \ac{pv} system, but the main goal is to maximize the time on water before full battery discharge. For that, let's consider 1000~W of consumption. Considering the original battery, it takes 5~h 51~min to fully discharge without solar panels, 12~h 21min with solar panels, and approximately 10 days with the additional solar panels. As previously said, this battery is overdimensioned and will be changed in the future.
-
-To better understand the impact of the \ac{pv} system, let's consider the battery of \acs{sr03}. This battery takes 1~h and 30~min to fully discharge without solar panels, 3~h 12~min with solar panels, and approximately 2 days 18~h with the additional solar panels. 
+To better understand the impact of the \ac{pv} system, the battery of \acs{sr03} will be considered. This battery takes 1~h and 30~min to fully discharge without solar panels, 3~h 12~min with solar panels, and approximately 2 days 18~h with the additional solar panels. 
 
 In theory, reducing the battery capacity while increasing the solar panel area could allow the battery to be maintained without the need for external charging. Conversely, a larger battery capacity would allow the low-voltage system to draw more energy from the battery.
 
@@ -168,9 +167,9 @@ For pitch, $k=k_{yy}$ and $GM=GM_L$, whereas for roll, $k=k_{xx}$ and $GM=GM_T$.
 
 This formula is used with results given by the hydrostatic simulations, which were provided by \ac{tsb}, where $GM_L$ is $21.515~\mathrm{m}$ and $GM_t$ is $1.867~\mathrm{m}$. The radius of gyration is also calculated based on the longitude (L=8~m) and width/beam (B=2.5~m). Based on the International Towing Tank Conference (ITTC) recommendation \cite{ittc_seakeeping_2024}, when the radius of gyration for pitch and roll is unknown, use 0.25L and 0.35B to 0.40B, respectively.
 
-Based on the given values, the pitch and roll natural periods are 0.8654 and 1.2853, respectively, which is equivalent to 1.1555~Hz and 0.7780~Hz. These values represent an estimate of the natural frequencies of the vessel.
+Based on the given values, the pitch and roll natural periods are 0.8654~s and 1.2853~s, respectively, which is equivalent to 1.1555~Hz and 0.7780~Hz. These values represent an estimate of the natural frequencies of the vessel.
 
-As for the frequency of the waves, it has a wide range and depends on several factors. Studies on this subject show higher energy for waves with 1 to 30 seconds periods, which is equivalent to 0.033~Hz to 1~Hz Figure~\ref{fig:wave by period}.
+As for the frequency of the waves, it has a wide range and depends on several factors. Studies on this subject show higher energy for waves with 1~s to 30~s periods, which is equivalent to 0.033~Hz to 1~Hz Figure~\ref{fig:wave by period}.
 
 \begin{figure} [!ht]
     \centering
@@ -190,9 +189,8 @@ The environmental excitation experienced by \ac{sg01} was further investigated u
     \label{fig:sg01 wave}
 \end{figure}
 
-Both theoretical and experimental results predict or measure frequency up to 1~Hz. In the context of the \ac{mppt} algorithm, the goal will be a minimum speed of 1~Hz or 1 second and a typical speed of more than 2~Hz or 0.5 seconds.
+Both theoretical and experimental results predict or measure frequency up to 1~Hz. In the context of the \ac{mppt} algorithm, the goal will be a minimum speed of 1~Hz or 1~s and a typical speed of more than 2~Hz or 0.5~s. These values will directly influence the sampling time and algorithm working frequency, as it will discuss later. 
 
-These values will directly influence the sampling time and algorithm working frequency, as it will discuss later. 
 % https://geo.libretexts.org/Bookshelves/Oceanography/Introduction_to_Physical_Oceanography_(Stewart)/16%3A_Ocean_Waves/16.4%3A_Ocean-Wave_Spectra
 
 % See Swell Period and hight here https://bigsalty.com/en/weather/forecast/8350/

@@ -35,19 +35,18 @@ In 2015, \ac{tsb} was created with the goal of designing and building solar powe
 
 All these prototypes used solar energy to maximize their range and efficiency. In the first years, the energy produced was small, and the whole system was built using commercial \ac{ots} components. However, since the beginning of the \ac{tsb} project, the team has maintained the spirit of innovation, and the desire to develop all the systems in-house has been present. In previous years, the team has built its own batteries, telemetry systems, flight controllers, fuel cell controllers, etc. The team also designed more complex systems during the master's thesis. Until today a \ac{bms}, dual motor system, Marine Propulsion System, a \ac{mppt} and more.
 
-In 2020, the team started to build its own solar panels for São Rafael 03. To increase performance and the amount of information acquired by the solar panels' operation, in the same year, surge the first attempt to do a \ac{mppt}. This was the first step to achieve a fully functional product. The result was a working \ac{mppt} that was never implemented on any vessel because components constantly burned out, making it unreliable. Additionally, the project is outdated in its components and firmware and lacks configurability.
+In 2020, the team started to build its own solar panels for São Rafael 03. To increase performance and the amount of information acquired by the solar panels' operation, in the same year,  there was the first attempt to do a \ac{mppt}. This was the first step to achieve a fully functional product. The result was a working \ac{mppt} that was never implemented on any vessel because components constantly burned out, making it unreliable. Additionally, the project is outdated in its components and firmware and lacks configurability.
 
 
 The \ac{mppt} charger is a fundamental subsystem in photovoltaic energy systems, responsible for maximizing the power extracted from solar panels by ensuring continuous operation at the \ac{mpp}. A \ac{mppt} charger is typically a power converter that continuously monitors the voltage and current produced by the photovoltaic modules and adjusts their electrical operating point accordingly. By dynamically regulating these operating parameters, the \ac{mppt} compensates for variations in environmental conditions such as solar irradiance and temperature, which shift the \ac{mpp} over time. As a result, the photovoltaic system can operate more efficiently and deliver maximum available power under changing conditions~\cite{Comparative_study_MPPT_algorithms_2000}.
 
-In the context \ac{tsb} project, a solar system is specially important to increase the autonomy of our vessels. In 2023/24 season, the team was able to reduce the consumption of \ac{sr03} from 1.5~kW to 300~w by using solar energy
-Decreasing 80~\% of its consumption. With a costume made \ac{mppt}, we believe that we could reach even better performance while also increasing the data acquired about the system performance that would serve to improve the system.
+In the context of the \ac{tsb} project, a solar system is important to increase the autonomy of our vessels. In the 2023/24 season, the team was able to reduce the consumption of \ac{sr03} from 1.5~kW to 300~W by using solar energy, decreasing 80~\% of its consumption. With a custom-made \ac{mppt}, we believe that we could reach even better performance while also increasing the data acquired about the system performance that would serve to improve the system.
 
-Now, in the 2025/26 season, the relevance of the solar system decreased with our new vessel \ac{sg01}, since it uses around 20~KW of constant power. So the main power source will be hydrogen. However, this vessel will still use solar energy to power auxiliary systems, as a reliable green source that keeps the boat powered in all situations.
+Now, in the 2025/26 season, the relevance of the solar system decreased with our new vessel \ac{sg01}, since it uses around 20~kW of constant power. So the main power source will be hydrogen. However, this vessel will still use solar energy to power auxiliary systems, as a reliable green source that keeps the boat powered in all situations.
 
 \section{Objectives} 
 
-This project aims to design and implement a \ac{mppt} charger for the solar panels used in the \ac{tsb} vessels. The \ac{mppt} charger will convert the energy produced by the solar panel as efficiently as possible using a quality \acs{dc}-\acs{dc} converter and \ac{mpp} tracking algorithms.
+This project aims to design and implement a \ac{mppt} charger for the solar panels used in the \ac{tsb} vessels. The \ac{mppt} charger converts the energy produced by the solar panel as efficiently as possible using a quality \acs{dc}-\acs{dc} converter and \ac{mpp} tracking algorithms.
 
 The main objectives of this project are:
 
@@ -64,7 +63,7 @@ The main objectives of this project are:
 \end{itemize} 
 
 
-By achieving these objectives, the project will contribute to a more efficient solar system by maximizing the energy received from the solar panels and increasing the data available for performance tracking of the \ac{mppt} and solar panel. This data will be used to later improve the energy efficiency of the \ac{mppt} and take conclusions about the manufacture quality of the solar panels build by \ac{tsb} project. A cheap, efficient and versatile \ac{mppt} will also mean future savings to the team, since it could be used in a variety of vessels.
+By achieving these objectives, the project contributes to a more efficient solar system by maximizing the energy received from the solar panels and increasing the data available for performance tracking of the \ac{mppt} and solar panel. This data can be used to later improve the energy efficiency of the \ac{mppt} and draw conclusions about the manufacturing quality of the solar panels built by \ac{tsb} members. A low-cost, efficient, and versatile \ac{mppt} solution can also provide long-term cost savings for the team, as the same design could be adapted for use across a variety of vessels.
 
 In the context of \ac{tsb}, such complex projects with high scientific rigor that involve simulations, \ac{pcb} design, laboratory tests, and field tests are only possible in a master's thesis. So, for \ac{tsb}, the main objective is to increase the team's knowledge of this subject by increasing the documentation about it. Also, due to a drastic event by another team, which burned all their \acp{mppt} during the competition, the security of this system is the main concern.
 
@@ -79,11 +78,11 @@ This document is organized into seven chapters:
 
     \item \textbf{Chapter~\ref{chap:System}} describes the electrical architecture of \acs{sg01}, including the high and low voltage systems, the photovoltaic installation, and the batteries used in this work. The contribution of the solar system to vessel autonomy is analyzed, and the time scales of environmental variations are estimated in order to define the required tracking speed of the \acs{mppt} algorithm;
 
-    \item \textbf{Chapter~\ref{sec:introduction:background}} reviews the State-of-the-Art of photovoltaic systems and \acs{mppt} technology. It covers the operating principles of solar panels, the most common \acs{mppt} algorithms, non isolated \acs{dc}-\acs{dc} converter topologies, lithium-ion battery charging techniques, and commercially available solutions;
+    \item \textbf{Chapter~\ref{chap:soa}} reviews the State-of-the-Art of photovoltaic systems and \acs{mppt} technology. It covers the operating principles of solar panels, the most common \acs{mppt} algorithms, non-isolated \acs{dc}-\acs{dc} converter topologies, lithium-ion battery charging techniques, and commercially available solutions;
 
-    \item \textbf{Chapter~\ref{chap:imp}} presents the implementation of the proposed charger. The design of the synchronous boost converter, the selection of the processing unit and sensors, and the firmware architecture are described, including the charging state machine and communication interfaces;
+    \item \textbf{Chapter~\ref{chap:imp}} presents the implementation of the developed \ac{mppt} charger. The design of the synchronous boost converter, the selection of the processing unit and sensors, and the firmware architecture are described, including the charging state machine and communication interfaces;
 
-    \item \textbf{Chapter~\ref{chap:sims}} reports the simulations used to validate the converter design and the \acs{mppt} algorithm. A photovoltaic cell model and the boost converter are simulated in LTspice, while an analytical power-loss model is developed in MATLAB to estimate the efficiency and the contribution of each component. Additionally, using MATLAB/simulink, the algorithm speed and accuracy were tested ;
+    \item \textbf{Chapter~\ref{chap:sims}} reports the simulations used to validate the converter design and the \acs{mppt} algorithm. A photovoltaic cell model and the boost converter are simulated in LTspice, while an analytical power-loss model is developed in MATLAB to estimate the efficiency and the contribution of each component. Additionally, using MATLAB/Simulink, the algorithm speed and accuracy were tested ;
 
     \item \textbf{Chapter~\ref{chap:lab_res}} presents the experimental validation of the prototype. Three hardware iterations are assembled and tested in the laboratory, covering sensing accuracy, converter efficiency, thermal behavior, \acs{mppt} tracking performance, and field tests;
 

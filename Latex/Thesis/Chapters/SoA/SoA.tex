@@ -1,10 +1,10 @@
 \fancychapter{State-of-the-Art}
-\label{sec:introduction:background}
+\label{chap:soa}
 
 In this chapter, the main State-of-the-Art concepts regarding the engineering behind an \acs{mppt} charger and solar panels are explained. More specifically, it addresses key challenges such as: what is a solar panel, \acs{mppt} algorithms, \acs{dc}-\acs{dc} converter types, and battery charging techniques. Additionally, it contains a market analysis.  
 
 
-\section{Solar Panels}
+\section{Solar panels}
 
     \ac{pv} panels convert solar irradiance into electrical energy. A \acs{pv} panel consists of multiple solar cells electrically connected in series and/or parallel to achieve the desired voltage and current levels. As in conventional electrical systems, the interconnection topology directly affects the panel's electrical characteristics: series connections increase output voltage, while parallel connections increase output current~\cite{bendib_survey_mppt_methods}.
 
@@ -24,7 +24,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
         \label{fig:Solar_Cell}
     \end{figure}
 
-    When sunlight reaches the solar cell, the semiconductor absorbs the photon's energy. This energy excites electrons, allowing them to escape their atomic bonds and create electron hole pairs. The electric field at the p-n junction drives these free electrons toward the n-type layer and holes toward the p-type layer, generating an electric current when the cell is connected to an external circuit~\cite{photovoltaics_System_Design}, Figure~\ref{fig:Solar_Cell}.
+    When sunlight reaches the solar cell, the semiconductor absorbs the photon's energy. This energy excites electrons, allowing them to escape their atomic bonds and create electron-hole pairs. The electric field at the p-n junction drives these free electrons toward the n-type layer and holes toward the p-type layer, generating an electric current when the cell is connected to an external circuit~\cite{photovoltaics_System_Design}, Figure~\ref{fig:Solar_Cell}.
 
     The energy generated results in voltage and current outputs that are not constant. Voltage and current are interdependent, therefore, a variation in one parameter leads to a corresponding variation in the other. This relationship is nonlinear and can be characterized by a current-voltage (I-V) curve. Furthermore, the power output also varies with operating conditions and can be represented by a power-voltage (P-V) curve. Figure~\ref{fig:i-v,p-v} shows both curves.
     In both curves, there is a specific point where the power output is maximized, known as the \ac{mpp}. This point corresponds to a unique combination of voltage and current, denoted as $V_{mpp}$ and $I_{mpp}$, respectively. Operating the solar panel at this point ensures optimal energy extraction under a given condition.
@@ -48,7 +48,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
             \centering
             \includegraphics[width=1 \textwidth]{Images/Background/irradiance_i-v.pdf}
             \qquad
-            \caption{Cell temperature of 25~ºC and variable Irradiance. }
+            \caption{Cell temperature of $25~^\circ\mathrm{C}$ and variable irradiance. }
             \label{fig:irradiance_i-v}
         \end{subfigure}
         \hfill
@@ -56,11 +56,10 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
              \centering
             \includegraphics[width=1 \textwidth]{Images/Background/temperature_i-v.pdf}
             \qquad
-            \caption{Irradiance of 1~$\mathrm{kW/m}^2$ and variable temperature.}
+            \caption{Irradiance of $1000~\mathrm{W/m}^2$ and variable temperature.}
             \label{fig:temperature_i-v}
         \end{subfigure}
         \caption{I-V curves under different conditions~\cite{photovoltaics_System_Design}.}
-        \label{fig:iv-pv-side-by-side}
     \end{figure}
     
 
@@ -84,7 +83,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
     
     The output can be connected to different types of loads, like batteries, \acs{dc} loads or inverters. This project focuses on battery charging applications.
 
-\section{MPPT Algorithms}
+\section{MPPT algorithms}
     There are plenty of \ac{mppt} algorithms, each one with its own advantages and disadvantages. The choice of algorithm depends on the specific application, the desired performance, and the available resources. 
     In this work, the aim is to extract the maximum possible energy from a solar panel installed on a moving boat, which produces I-V curve variations due to rapid changes in irradiance from inclination, orientation, and clouds, as well as temperature changes from waves and wind.
     For these reasons, tracking speed and accuracy are the most important factors to consider.
@@ -109,14 +108,14 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
 
         The main drawback of this algorithm is that it oscillates around the \ac{mpp}, causing power losses. This oscillation can be reduced by decreasing the perturbation step size, but this also reduces the algorithm's tracking speed. This results in an inherent trade-off between tracking speed and accuracy~\cite{MPPT_Comparison_techniques,Comparison_PV_Array_MPPT_Techniques_2007}.
 
-        Another weal know issue of \ac{peo} is that it can get confused in rapidly changing environmental conditions, like fast irradiance changes caused by clouds. In this case, the algorithm can misinterpret the power change caused by environmental variation as its own perturbation, leading it to move away from the \ac{mpp} instead of toward it~\cite{Comparison_PV_Array_MPPT_Techniques_2007}. For example, if the perturbation is in the wrong direction but irradiance increases, the power output increases, and the algorithm continues perturbing in the wrong direction (Figure~\ref{fig:PeO_Divergence}).
+        Another well-known issue of \ac{peo} is that it can get confused in rapidly changing environmental conditions, like fast irradiance changes caused by clouds. In this case, the algorithm can misinterpret the power change caused by environmental variation as its own perturbation, leading it to move away from the \ac{mpp} instead of toward it~\cite{Comparison_PV_Array_MPPT_Techniques_2007}. For example, if the perturbation is in the wrong direction but irradiance increases, the power output increases, and the algorithm continues perturbing in the wrong direction (Figure~\ref{fig:PeO_Divergence}).
 
         \begin{figure}[!ht]
             \centering
             \begin{minipage}[b]{0.49\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{Images/Background/PeO.pdf}
-                \caption{Flow chart of the classic version of Perturb and Observe algorithm~\cite{Look-Up-Table_VS_PeO}.}
+                \caption{Flowchart of the classic version of Perturb and Observe algorithm~\cite{Look-Up-Table_VS_PeO}.}
                 \label{fig:PeO_flowchart}
             \end{minipage}
             \hfill
@@ -214,7 +213,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
             To improve the accuracy, the \acs{lut} table needs to be large, which increases the required memory resources. Also, by adding the temperature and/or irradiance to the table would increase the accuracy, making it almost 100\% accurate, but this would increase the size of the table exponentially. In extreme cases, the memory requirements became expensive and slow. There is a trade-off between size, speed, and accuracy that needs to be considered when using this method. Also, the \acs{lut} method does not adapt to the aging of the solar panel or changes in its characteristics over time, unless the table is updated periodically through new measurements, which adds maintenance time.
             
 
-\section{Types of DC-DC Converters}
+\section{Types of DC-DC converters}
     The \acs{dc}-\acs{dc} converter is a crucial component of an \acs{mppt} charger because it adjusts the solar panel operating point to match the \ac{mpp}. This choice is important to the project because it directly affects the overall system's efficiency, cost, and complexity.
 
     \acs{dc}-\acs{dc} converters fall into two main categories: isolated and non-isolated converters. The main difference between these two types of converters is the presence or absence of galvanic isolation between the input and output circuits~\cite{flexpower_isolated_vs_nonisolated_2025}.
@@ -228,7 +227,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
 
         \begin{table}[htbp]
             \centering
-            \caption{Comparison between Non-isolated and isolated converters.}
+            \caption{Comparison between non-isolated and isolated converters.}
             \label{tab:switching-vs-isolated-converters}
             \scriptsize
             \setlength{\tabcolsep}{5pt}
@@ -309,7 +308,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
 
 
 
-    \subsection{Comparison between Non-isolated DC-DC converters}
+    \subsection{Comparison between non-isolated DC-DC converters}
         All the non-isolated \acs{dc}-\acs{dc} topologies explained before have their own advantages and disadvantages. The choice of topology depends on the specific application, desired performance, and available resources. To help with this choice, Table~\ref{tab:dc-dc-comparison} shows a comparison between the most relevant characteristics of each topology~\cite{Comparative_Analysis_Non_Isolated_DC_DC_Converters_Solar_PV_2021}. The most significant advantages of each topology are highlighted according to the project's aim.
 
         \begin{table}[htbp]
@@ -499,7 +498,7 @@ Overall, none of the evaluated commercial \ac{mppt} chargers fully satisfy the t
                                     >{\centering\arraybackslash}X
                                     >{\centering\arraybackslash}X}
         \toprule
-        \textbf{Model} & \textbf{GVB-8-Li-CV (50.4V)} & \textbf{Smart Solar MPPT 100/20} &
+        \textbf{Model} & \textbf{GVB-8-Li-CV (50.4~V)} & \textbf{Smart Solar MPPT 100/20} &
         \textbf{Reboost V0.2.1} & \textbf{Rover Lite} & \textbf{MS4840N} \\
         \midrule
 

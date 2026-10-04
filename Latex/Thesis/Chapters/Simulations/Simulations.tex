@@ -3,11 +3,11 @@
 
     Simulations were used to validate the converter design and the \ac{mppt} algorithm before hardware implementation. This chapter presents LTspice simulations of the photovoltaic model and the boost converter, an analytical power-loss estimate in MATLAB, and the evaluation of the tracking algorithm in Simulink.
 
-    \section{DC-DC Converter}
+    \section{DC-DC converter}
 
         The converter was simulated in LTspice to confirm the component selection under representative charging conditions. This section presents the photovoltaic cell model and the boost converter simulations used to compare inductor and capacitor options and to estimate ripple and efficiency.
 
-    \subsection{Solar Panel model}
+    \subsection{Solar panel model}
 
         The simulations started in LTspice to test the converter under different conditions. To achieve that, a \ac{pv} electrical model of the cells was designed using a five parameter model (1M5P) configuration. More electrical models can simulate a solar panel, some with higher accuracy but greater complexity. This model was ideal for the simulation because it is both reliable and simple.
 
@@ -20,7 +20,7 @@
             \label{eq:1m5p}
         \end{equation}
 
-        These parameters are not directly provided by manufacturers, but can be extracted from the standard datasheet values, namely the open-circuit voltage ($V_{oc}$), short-circuit current ($I_{sc}$), voltage and current at the \ac{mpp} ($V_{mp}$, $I_{mp}$), and the respective temperature coefficients, through a set of equations that ensure the model matches these reference points under \ac{stc}. There are several ways to do it, however, it is outside the range of this work. To simplify, we used online tools for the calculations, which we will not explain in detail here. 
+        These parameters are not directly provided by manufacturers, but can be extracted from the standard datasheet values, namely the open-circuit voltage ($V_{oc}$), short-circuit current ($I_{sc}$), voltage and current at the \ac{mpp} ($V_{mp}$, $I_{mp}$), and the respective temperature coefficients, through a set of equations that ensure the model matches these reference points under \ac{stc}. There are several ways to do it, however, it is outside the range of this work. To simplify, it was used an online tool for the calculations, which we will not explain in detail here. 
 
         \begin{figure}[!ht]
             \centering
@@ -29,7 +29,7 @@
             \label{fig:pv_model}
         \end{figure}
         
-    \subsection{Boost Converter}
+    \subsection{Boost converter}
     \label{subsubsect:Sim_Boost}
         To validate the theoretical calculations, simulations in LTspice were carried out using the boost converter in steady state mode and a fixed duty cycle. 
 
@@ -50,19 +50,19 @@
 
         With the chosen five points, some simulations were carried out using capacitors and inductors that would fit the requirements calculated earlier. The objective of these simulations is to optimize the performance of the converter, leading to better choices.
 
-        The model was built in LTspice using manufacturer component models, except for the solar panel, which was implemented as described above. The battery was represented by a voltage source and a series resistor, and the transistor dead time was set to the prototype value, using the measured rise and fall times.
+        The model was built in LTspice using manufacturer component models, except for the solar panel, which was implemented as described above. The battery was represented by a voltage source and a series resistor, and the transistor dead time was set to the prototype value, using the measured rise and fall times. Figure~\ref{fig:sim_circuit} shows the simulation circuit and his parameters.
 
         \begin{figure}[!ht]
             \centering
             \includegraphics[width=0.70\textwidth]{Images/Implementation/Sim_circuit.png}
             \caption{Simulation circuit schematic.}
-            \label{}
+            \label{fig:sim_circuit}
         \end{figure}
 
 
-        The first simulations were carried out to choose the input and output capacitors. The idea is to simulate the circuit using a known inductor (68~uH) and change the capacitors for different configurations. All configurations are overdimensioned to give low ripples (current and voltage). So the main factor is the efficiency of the converter.
+        The first simulations were carried out to choose the input and output capacitors. The idea is to simulate the circuit using a known inductor ($68~\mu\mathrm{H}$) and change the capacitors for different configurations. All configurations are overdimensioned to give low ripples (current and voltage). So the main factor is the efficiency of the converter.
 
-        Table~\ref{tab:loss_capacitors_2} shows the results. The efficiency of all combinations is very high, however, the highest is the one with two 56~uF as input capacitors and three 220~uF capacitors as output capacitors. Unfortunately, the 220~uF capacitors were not available at the time, so the second best option was chosen: five 100~uF capacitors.
+        Table~\ref{tab:loss_capacitors_2} shows the results. The efficiency of all combinations is very high, however, the highest is the one with two $56~\mu\mathrm{F}$ as input capacitors and three $220~\mu\mathrm{F}$ capacitors as output capacitors. Unfortunately, the $220~\mu\mathrm{F}$ capacitors were not available at the time, so the second best option was chosen: five $100~\mu\mathrm{F}$ capacitors.
 
         It is worth noting that this is a simulation and therefore the efficiency is higher than what will be measured in laboratory results. Additionally, the difference between each combination is very small. To make the product cheaper, the third option would be as good as the one chosen.
 
@@ -72,7 +72,7 @@
             \centering
             \begin{tabular}{|c|cccc|}
             \hline
-            \textbf{Case \#} & \textbf{2x56 $\mu$F, 3x220 $\mu$F} & \textbf{100 $\mu$F, 3x220 $\mu$F} & \textbf{100 $\mu$F, 5x100 $\mu$F} & \textbf{2x56 $\mu$F, 5x100 $\mu$F} \\
+            \textbf{Case \#} & \textbf{$2\times56~\mu\mathrm{F}$, $3\times220~\mu\mathrm{F}$} & \textbf{$100~\mu\mathrm{F}$, $3\times220~\mu\mathrm{F}$} & \textbf{$100~\mu\mathrm{F}$, $5\times100~\mu\mathrm{F}$} & \textbf{$2\times56~\mu\mathrm{F}$, $5\times100~\mu\mathrm{F}$} \\
             \hline
             1 & 0.5729 & 0.5796 & 0.5856 & 0.5788 \\
             2 & 0.6762 & 0.6985 & 0.7069 & 0.6844 \\
@@ -85,9 +85,9 @@
             \label{tab:loss_capacitors_2}
         \end{table}
 
-        As in the previous simulation, the inductor was chosen by keeping all components with the same values (the capacitors used were Cin = 2x56uF and Cout = 5x100uF) and changing the inductor. Similar to before, all inductors simulated are within the minimum required.
+        As in the previous simulation, the inductor was chosen by keeping all components with the same values (the capacitors used were $C_\mathrm{in} = 2\times56~\mu\mathrm{F}$ and $C_\mathrm{out} = 5\times100~\mu\mathrm{F}$) and changing the inductor. Similar to before, all inductors simulated are within the minimum required.
 
-        Table~\ref{tab:loss_inductance_2} shows the losses and the inductor current ripple for each case. As before, the efficiency difference is very low but less linear than in the previous simulation, likely due to the inductor models chosen. The chosen inductor strongly influences the input ripple, which can generate heat and electrical interference. The $22~\mu\mathrm{H}$ inductor showed a higher ripple current, reaching values close to the input current. The inductor chosen was $68~\mu\mathrm{H}$, since it has overall good efficiency and a reasonable inductor current ripple.
+        Table~\ref{tab:loss_inductance_2} shows the losses and the inductor current ripple for each charging case. As before, the efficiency difference is very low but less linear than in the previous simulation, likely due to the inductor models chosen. The chosen inductor strongly influences the input ripple, which can generate heat and electrical interference. The $22~\mu\mathrm{H}$ inductor showed a higher ripple current, reaching values close to the input current. The inductor chosen was $68~\mu\mathrm{H}$, since it has overall good efficiency and a reasonable inductor current ripple.
 
         \begin{table}[!ht]
             \caption{Loss (\%) and $\Delta i_{L}$ ($I_{L,\max}-I_{L,\min}$) for different inductance values.}
@@ -98,8 +98,8 @@
             \hline
             \multirow{2}{*}{\textbf{Case \#}} & \multicolumn{5}{c|}{\textbf{Loss (\%)}} & \multicolumn{5}{c|}{\textbf{$\Delta i_{L}$ (A)}} \\
             \cline{2-11}
-            & \textbf{22 $\mu$H} & \textbf{33 $\mu$H} & \textbf{47 $\mu$H} & \textbf{68 $\mu$H} & \textbf{100 $\mu$H}
-            & \textbf{22 $\mu$H} & \textbf{33 $\mu$H} & \textbf{47 $\mu$H} & \textbf{68 $\mu$H} & \textbf{100 $\mu$H} \\
+            & \textbf{$22~\mu\mathrm{H}$} & \textbf{$33~\mu\mathrm{H}$} & \textbf{$47~\mu\mathrm{H}$} & \textbf{$68~\mu\mathrm{H}$} & \textbf{$100~\mu\mathrm{H}$}
+            & \textbf{$22~\mu\mathrm{H}$} & \textbf{$33~\mu\mathrm{H}$} & \textbf{$47~\mu\mathrm{H}$} & \textbf{$68~\mu\mathrm{H}$} & \textbf{$100~\mu\mathrm{H}$} \\
             \hline
             1 & 0.4206 & 0.4439 & 0.5453 & 0.5788 & 1.2659 & 2.6939 & 1.8906 & 1.3256 & 0.9781 & 0.6251 \\
             2 & 0.6645 & 0.6793 & 0.6627 & 0.6844 & 1.3664 & 4.7934 & 3.3416 & 2.3354 & 1.7066 & 1.0707 \\
@@ -147,9 +147,9 @@
             \begin{subfigure}{0.49\textwidth}
                 \centering
                 \includegraphics[width=0.99\textwidth]{Images/Implementation/vbat__sweep_sim_res2.pdf}
-                \caption{Output and Input current over battery voltage.}
+                \caption{Output and input current over battery voltage.}
             \end{subfigure}
-            \caption{Battery voltage sweep simulation results (Solar panel in \ac{mpp}).}
+            \caption{Battery voltage sweep simulation results (solar panel in \ac{mpp}).}
             \label{fig:voltage_sweep}
         \end{figure}
 
@@ -162,10 +162,10 @@
 
         Note: two Schottky diodes added in prototype version 1.1 were not included in these simulations. They increase the simulated efficiency by only $+0.03\%$, which is negligible given the short dead time ($0.375\%$ of the PWM period).
 
-    \section{Power Loss Estimation}
+    \section{Power loss estimation}
         \label{subsubsec:loss_estimation}
 
-        Although LTspice provides an accurate estimate of converter efficiency, it does not directly identify each component's contribution to total power dissipation. Therefore, an analytical power loss estimation was developed in MATLAB to estimate the individual losses of each component of the proposed synchronous boost converter. This estimation uses the electrical parameters of the selected components from their datasheets, along with the converter operating conditions.
+        Although LTspice provides an accurate estimate of converter efficiency, it does not directly identify each component's contribution to total power dissipation. Therefore, an analytical power loss estimation was developed in MATLAB to estimate the individual losses of each component of the designed synchronous boost converter. This estimation uses the electrical parameters of the selected components from their datasheets, along with the converter operating conditions.
 
         The total prototype losses are obtained by summing the losses associated with the GaN transistors, inductor, capacitors and auxiliary electronics:
 
@@ -242,7 +242,7 @@
             \label{fig:loss_breakdown}
         \end{figure}
 
-        The inductor \acs{dc} losses are the largest term, followed by the auxiliary electronics (mainly the auxiliary \acs{dc}--\acs{dc} conversion), the GaN conduction losses ($24.4\%$) and the capacitors ($23.5\%$). Overall, nearly half of the losses come from passive components and about one quarter from the semiconductors. Despite this, both the simulation and the analytical model indicate a highly efficient converter.
+        The inductor \acs{dc} losses are the largest term, followed by the auxiliary electronics (mainly the auxiliary \acs{dc}--\acs{dc} conversion), the GaN transistor losses ($24.4\%$) and the capacitors ($23.5\%$). Overall, nearly half of the losses come from passive components and about one quarter from the semiconductors. Despite this, both the simulation and the analytical model indicate a highly efficient converter.
 
 
 
@@ -258,7 +258,7 @@
 
         The panel (35 cells) and the \ac{sg01} battery match the real system. Measurement noise is included on the \ac{pv} side and averaged over 10 samples at $1~\mathrm{kHz}$ before being sent to the algorithm, which runs at $100~\mathrm{Hz}$ and implements both the sweep and \ac{peo}.
 
-        To understand the impact of each environment variation on the \ac{mpp} point, a sweep  was performed for different irradiance values and temperatures (Figures~\ref {fig:irr_sweep} and \ref{fig:temp_sweep}). For irradiance variations, the maximum duty cycle difference is 3\%. In contrast, the maximum duty cycle difference for temperature variations is 9\%. This means the algorithm will always be slower to temperature variations than to irradiance variations. However, it is more common to have a fast changing irradiance than temperature. The solar panels will heat slowly, and when covered in water, they cool by around 10 to 20ºC (values measured during tests).  
+        To understand the impact of each environment variation on the \ac{mpp} point, a sweep  was performed for different irradiance values and temperatures (Figures~\ref {fig:irr_sweep} and \ref{fig:temp_sweep}). For irradiance variations, the maximum duty cycle difference is 3\%. In contrast, the maximum duty cycle difference for temperature variations is 9\%. This means the algorithm will always be slower to temperature variations than to irradiance variations. However, it is more common to have a fast changing irradiance than temperature. The solar panels will heat slowly, and when covered in water, they cool by around $10~^\circ\mathrm{C}$ to $20~^\circ\mathrm{C}$ (values measured during tests).  
 
         \begin{figure}[!ht]
             \centering
@@ -299,7 +299,7 @@
                 \label{fig:peo_step_zoom}
             \end{subfigure}
 
-            \caption{Power response for different \ac{peo} step sizes during a temperature variation of $10\,^{\circ}\mathrm{C}$ per second.}
+            \caption{Power response for different \ac{peo} step sizes during a temperature variation of $10~^\circ\mathrm{C/s}$.}
             \label{fig:peo_step_comparison}
         \end{figure}
 
