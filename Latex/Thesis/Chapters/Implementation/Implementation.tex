@@ -43,7 +43,7 @@ Equation \ref{eq:duty} is one of the most important equations in boost converter
 
 However, these equations are only valid for ideal components since they do not take into account the parasitic elements of the components, such as the inductor resistance, the drain-source resistance, and the voltage drop across the diode (there are other parasitic components that also affect performance). In a real boost converter, these parasitic elements will cause a voltage drop and therefore reduce the output voltage. 
 
-The influence of the inductor resistance ($R_L$) and the diode voltage drop ($V_d$) can be briefly evaluated by modifying Equation~\ref{eq:vl} as follows:
+The influence of the transistor internal resistance ($R_{DS_{(on)}}$), the inductor resistance ($R_L$) and the diode voltage drop ($V_d$) can be briefly evaluated by modifying Equation~\ref{eq:vl} as follows:
 
 \begin{equation}
     V_L = \begin{cases}
@@ -69,9 +69,9 @@ In this case, at the stationary state, the average voltage across the inductor i
     \label{eq:vout2}
 \end{equation}
 
-Equation \ref{eq:vout2} shows the 3 causes of losses in a boost converter. The main cause is the voltage drop across the diode, which significantly reduces the output voltage (usually 0.3~V to 0.7~V). This will be solved by using a synchronous boost converter (Figure~\ref{fig:sync_boost}), which replaces the diode with a transistor. In synchronous boost converters, the voltage drop across the transistor is much smaller due to the low $R_{DS,on}$, usually below 0.1~V.
+Equation \ref{eq:vout2} shows the 3 causes of losses in a boost converter. The most significant is usually the voltage drop across the diode (typically 0.3~V to 0.7~V), which reduces the efficiency through a conduction loss of $V_d \cdot I_{out}$. This can be largely avoided by using a synchronous boost converter (Figure~\ref{fig:sync_boost}), which replaces the diode with a transistor. In this case, the voltage drop is only $R_{DS,on} \cdot I$, which is usually below 0.1~V.
 
-As for the inductor internal resistance, it cannot be removed entirely, so it must be taken into account when designing the boost converter. The same is true for the drain source resistance of the transistor, which is also not removable. Therefore, it is important to select components with low internal resistance to minimize losses and increase converter efficiency.
+As for the transistor and inductor internal resistance, it cannot be removed entirely, so it must be taken into account when designing the boost converter. Therefore, it is important to select components with low internal resistance to minimize losses and increase converter efficiency.
 
 \begin{figure}[!ht]
     \centering
@@ -257,21 +257,21 @@ Additionally, it has a low \ac{esr} of only $10.3~\mathrm{m}\Omega$, a high self
     
     There are many types of transistors (IGBT, MOSFET,  GaN, etc.), however, at this frequency (100~kHz) and power level the choice is between MOSFETs and GaN transistors (Figure~\ref{fig:tech_transistor}). The GaN (Gallium Nitride) transistor technology appeared in 1993 in lab experiments, however, it reached the market only more recently, first for radio frequency products in 2004 and only in 2009 for power electronics. GaN transistors have low internal resistance and very fast switching speeds, which can significantly reduce switching losses and therefore increase converter efficiency. Additionally, they have a high energy density and lower Vgs(on). However, they are more expensive and require a precise gate driver to operate correctly because their $V_\mathrm{GS,max}$ is usually low. 
 
-    In applications where the efficiency is a key factor in the design like solar inverters or \ac{mppt} charger, it is better to use the component that has lower Internal (On) Resistance (RdsOn) and supports higher switching frequency. In this case, GaN would be a better fit. MOSFETs would take second place since they can handle higher switching frequencies than IGBTs \cite{talat2024igbt}.
+    In applications where the efficiency is a key factor in the design like solar inverters or \ac{mppt} chargers, it is better to use the component that has lower Internal (On) Resistance (RdsOn) and supports higher switching frequency. In this case, GaN is the better fit. MOSFETs would take second place since they can handle higher switching frequencies than IGBTs \cite{talat2024igbt}.
 
     There are a lot of options in the market, however, there was one in particular that stood out due to its compact size, while having an integrated gate driver and two transistors in the same package. The \ac{ic} is the EPC23102, which was designed for power applications, with an incredibly low RdsOn (only $5.2~\mathrm{m}\Omega$), 35~A of maximum current, and a maximum operating voltage of 100~V.
     
-    Additionally, it incorporates shoot-through protection that protects the transistor from a control error, however, a dead time needs to be introduced in software. It uses a DFN package, which is good for heat dissipation and can always be attached to a heat sink for better performance. 
+    Additionally, it incorporates shoot-through protection that protects the transistor from a control error, however, a dead time needs to be introduced in firmware. It uses a DFN package, which has a good thermal performance.
 
 
     \begin{figure}[!ht]
         \centering
-        \includegraphics[width=0.7\textwidth]{Images/Implementation/tescnologies.jpg}
+        \includegraphics[width=0.6\textwidth]{Images/Implementation/tescnologies.jpg}
         \caption{Technologies selection based on power and switching frequency \cite{talat2024igbt}.}
         \label{fig:tech_transistor}
     \end{figure}
 
-\clearpage
+
 \section{Processing unit}
 The processing unit runs the \ac{mppt} algorithm, generates the PWM signals and handles sensing, protection and communication. This section describes the microcontroller selection and its configuration.
 
@@ -329,21 +329,20 @@ The processing unit runs the \ac{mppt} algorithm, generates the PWM signals and 
         
         Another timer was configured to trigger every millisecond, and it is used to serve as task interrupts however, each task is called at different periods (always around milliseconds), which is implemented with a counters and comparators.
 
-        The ADC can be configured in a variety of different ways, i chose to use the scan mode which reads multiple inputs in sequence. To read the measured values i am using the poling method however in theory if the DMA is used instead, the results could be better since it takes less time to read the ADC values and therefore a better average could be made. In practice i could not get reliable results and therefore the pooling method was adopted. The average is made with all data acquired between each \ac{mppt} algorithm call. On average, it uses 10 samples.
+        The ADC can be configured in a variety of different ways, i chose to use the scan mode which reads multiple inputs in sequence. To read the measured values i am using the poling method however in theory if the DMA is used instead, the results could be better since it takes less time to read the ADC values and therefore a better average could be made. In practice i could not get reliable results and therefore the pooling method was adopted. The average is made with all data acquired between each \ac{mppt} algorithm call. 
 
 \section{Sensors} 
+The \ac{mppt} algorithm and the monitoring system rely on measurements of the electrical and environmental conditions of the system. This section describes the sensors used to measure the voltage and current at the converter's input and output, as well as the temperature and irradiance.
 
 \subsection{Voltage and current sensing}
-    Accurate voltage and current measurements are essential for MPPT operation, since tracking algorithms directly rely on these quantities to estimate power and adjust the operating point of the \ac{pv} array. Measurement noise or inaccuracies directly impact tracking speed and accuracy.
-
     Voltage sensing is generally straightforward and can be implemented using resistive voltage dividers followed by an ADC. Additionally, it is suggested to use an op-amp as a buffer to reduce the impact of the ADC input capacitor, while charging. This buffer reduces noise and improves the accuracy of the measurement while also allowing the use of higher sampling rates.
     
     Current sensing, however, is more critical and requires careful consideration of the available measurement techniques.
 
     The two main techniques are:
     \begin{itemize}[leftmargin=4em, itemsep=1pt, topsep=2pt]
-        \item Hall effect current sensor.
-        \item Shunt resistor sensing with operational amplifiers;
+        \item Hall effect current sensor;
+        \item Shunt resistor sensing with operational amplifiers.
     \end{itemize}
 
     The Hall effect current sensor is a non-invasive method that uses the Hall effect to measure current. It provides galvanic isolation and can do bidirectional measurements. However, it is typically more expensive, has lower bandwidth, and may introduce additional noise due to its magnetic sensing nature.
@@ -359,7 +358,7 @@ The processing unit runs the \ac{mppt} algorithm, generates the PWM signals and 
 \subsection{Temperature and irradiance sensors}
     For security reasons, it is important to monitor the temperature of the \ac{pcb}. Also, monitoring the temperature and irradiance of the \ac{pv} panel is important for performance analysis and defect detection. These measurements can also be used to improve the \ac{mppt} algorithm, since the \ac{mpp} is dependent on temperature and irradiance.
 
-    For temperature sensing, there is a wide range of options, from simple thermistors to more complex digital temperature sensors. For this application, we used a simple thermistor because it is cheap and easy to implement. The thermistor is connected to a voltage divider and the voltage is read by the ADC. The thermistor used to measure ambient temperature and transistor temperature was the ERT-J1VS104FA, which has a resistance of $100~\mathrm{k}\Omega$ at $25~^\circ\mathrm{C}$ and a B value of 4330~K. The thermistor used to measure the \ac{pv} panel temperature is the 104JT-025, with a resistance of $100~\mathrm{k}\Omega$ at $25~^\circ\mathrm{C}$ and a B value of 4390~K. 
+    For temperature sensing, there is a wide range of options, from simple thermistors to more complex digital temperature sensors. For this application, it was used a simple thermistor because it is cheap and easy to implement. The thermistor is connected to a voltage divider and the voltage is read by the ADC. The thermistor used to measure ambient temperature and transistor temperature was the ERT-J1VS104FA, which has a resistance of $100~\mathrm{k}\Omega$ at $25~^\circ\mathrm{C}$ and a B value of 4330~K. The thermistor used to measure the \ac{pv} panel temperature is the 104JT-025, with a resistance of $100~\mathrm{k}\Omega$ at $25~^\circ\mathrm{C}$ and a B value of 4390~K. 
     The temperature can be calculated using the Steinhart-Hart equation \cite{arduinodiy2015ntc}.
 
     \begin{equation}
@@ -383,7 +382,7 @@ The processing unit runs the \ac{mppt} algorithm, generates the PWM signals and 
     This section explains how the firmware inside the \ac{mcu} is structured and how it works. Also, the basic idea behind the communication protocols used and how they are applied to this project as well as the \ac{gui} developed for configuration and data analysis. 
     
     \subsection{Firmware overview}
-        The firmware uses a flag-based scheduler with four tasks, shown in Figure~\ref{fig:Firmware flowchart}: ADC (1~ms), \ac{mppt} (20~ms), \acs{can} (100~ms) and serial (1~s). The periods are user configurable, originally the \ac{mppt} period was set to 10~ms (as it is in simulations) and increased to 20~ms to improve the measurement accuracy by increasing the number of samples taken. A 1~s watchdog timer resets the \ac{mcu} if a task crashes or enters infinite loops. Each task resets the watchdog after it finishes.
+        The firmware uses a flag-based scheduler with four tasks, shown in Figure~\ref{fig:Firmware flowchart}: ADC (1~ms), \ac{mppt} (20~ms), \acs{can} (100~ms) and serial (1~s). The periods are user configurable, originally the \ac{mppt} period was set to 10~ms (as it is in simulations) and increased to 20~ms to improve the measurement accuracy by increasing the number of samples taken. A 1~s watchdog timer resets the \ac{mcu} if a task crashes or enters infinite loops. 
 
         The fastest of these is the ADC task, which converts the analogue readings into current, voltage and temperature. If any value exceeds the configured limits, a fault is raised and the charging state machine is blocked for 5~s. After this delay the ADC task runs again and checks whether the faults have cleared. 
 
@@ -398,14 +397,14 @@ The processing unit runs the \ac{mppt} algorithm, generates the PWM signals and 
 
         \begin{figure}[!ht]
             \centering
-            \includegraphics[width=\textwidth]{Images/Implementation/MPPT_state_machine.drawio.pdf}
+            \includegraphics[width=0.9\textwidth]{Images/Implementation/MPPT_state_machine.drawio.pdf}
             \caption{Charging state machine.}
             \label{fig: charging state machine}
         \end{figure}
 
         The states are divided into charging and not charging. There are 5 "not charging" states:
         \begin{itemize}[leftmargin=4em, itemsep=1pt, topsep=2pt]
-            \item \textbf{Delay}: waits 200 cycles (4~s) to skip the transients and then decides the next state. This state is important to let the output capacitors discharge when load is disconnected;
+            \item \textbf{Delay}: waits 200 cycles (4~s) to skip the transients and then decides the next state. This state is important to let the output capacitors discharge when load is disconnected, therefore enabling the detection of the "No load" state;
             \item \textbf{Disable}: disables the \acs{dc}-\acs{dc};
             \item \textbf{No Source}: the solar panel is disconnected and therefore the \acs{dc}-\acs{dc} is disabled;
             \item \textbf{No load}: the battery is disconnected, and therefore the output voltage is set to the maximum battery voltage to prevent the need for a precharge circuit;
@@ -415,10 +414,10 @@ The processing unit runs the \ac{mppt} algorithm, generates the PWM signals and 
         As for the charging states, there are also five:
         \begin{itemize}[leftmargin=4em, itemsep=1pt, topsep=2pt]
             \item \textbf{Sweep delay}: wait between sweep steps to ignore transients;
-            \item \textbf{Sweep}: decrease the duty cycle until the end of the sweep. The sweep is used to find a true \ac{mpp} and ignore local maximums generated by shading;
+            \item \textbf{Sweep}: decrease the duty cycle until the end of the sweep. The sweep is used to find a true \ac{mpp} and ignore local maximums generated by partial shading;
             \item \textbf{MPPT algorithm}: runs the \ac{mppt} algorithm chosen;
             \item \textbf{CC}: if the current exceeds the battery limit, runs a proportional controller to follow the maximum current allowed;
-            \item \textbf{CV}: runs a proportional controller to control the \acs{pv} side by fixing the battery voltage.
+            \item \textbf{CV}: runs a proportional controller to control the \acs{pv} side by following the battery voltage.
         \end{itemize}
 
 
@@ -433,7 +432,7 @@ The processing unit runs the \ac{mppt} algorithm, generates the PWM signals and 
         
         \begin{figure}[!ht]
             \centering
-            \includegraphics[width=0.95\textwidth]{Images/Implementation/CAN protocol.png}
+            \includegraphics[width=0.85\textwidth]{Images/Implementation/CAN protocol.png}
             \caption{CAN protocol structure.}
             \label{fig:can_protocol}
         \end{figure}
@@ -490,7 +489,7 @@ The processing unit runs the \ac{mppt} algorithm, generates the PWM signals and 
 
         The CAN protocol is excellent for communication between boards, however, it is not the most practical protocol for configuration because the \ac{can} IDs can change between vessels and imply the use of an external hardware to communicate between the board and a computer.
 
-        In contrast, serial communication is done by just connecting a wire to the board, and since the protocol is only used for configuration and data analysis, it can be the same forever, and if it needs to be changed, it does not depend on any vessel. 
+        In contrast, serial communication is done by just connecting a cable to the board, and since the protocol is only used for configuration and data analysis, it can be the same forever, and if it needs to be changed, it does not depend on any vessel. 
 
         There is no default protocol to send data over serial, however, during the \ac{bms} thesis a serial protocol was created by the team and will serve has based for this project. Unfortunately, the firmware library is not compatible with STMs, so it was created from scratch.
 
@@ -513,13 +512,15 @@ The processing unit runs the \ac{mppt} algorithm, generates the PWM signals and 
         
 
     \subsection{EEPROM emulation}
-        To save the configuration received from the serial protocol, a library was used that emulates an EEPROM, which is a type of non-volatile memory that retains its contents after power down. EEPROMs have been used for many years in a wide range of devices to store settings, calibration data, and backups. In this project, no external EEPROM was added to the board, and the \ac{mcu} does not include one internally. However, the library can use internal flash memory, which is normally reserved for program code, to store data, thereby emulating EEPROM behavior.
+        To save the configuration received from the serial protocol, a library was used that emulates an EEPROM, which is a type of non-volatile memory that retains its contents after power down. EEPROMs have been used for many years in a wide range of devices to store settings, calibration data, and backups. In this project, no external EEPROM was added to the board, and the \ac{mcu} does not include one internally. However, the library can use internal flash memory, which is normally reserved for the flashed code, to store data, thereby emulating EEPROM behavior.
 
         The main disadvantages of this approach are limited storage capacity and reduced write endurance compared with a dedicated EEPROM. The STM32 internal flash can typically withstand on the order of 10,000 erase cycles per page, whereas external EEPROM devices often support roughly one order of magnitude more. Even so, this is not a practical limitation in this application. Configuration data is stored as a small set of 16-bit variables, and each save operation appends new records to flash rather than overwriting the previous value in place. Each page can hold 252 variables. For this project, a full board configuration requires 13 write operations, therefore, one flash page can hold many configuration updates before it becomes full and must be erased. Furthermore, the emulation is configured to use ten flash pages, with wear leveling implemented through page transfer and cleanup. When a page is full, the latest values are copied to another page and the old page is eventually erased. This distributes erase cycles across multiple pages and extends the effective lifetime of the memory.
 
         In conclusion, neither storage capacity nor endurance is expected to be a problem for this project. Under the current configuration, a complete configuration upload would need to be performed hundreds of thousands of times before the theoretical endurance limit of a flash page is reached, which is far beyond the expected use case of occasional configuration updates over serial.
 
         Since the emulated EEPROM shares the same physical flash as the firmware, care must be taken to ensure that program code is never placed in the reserved EEPROM region. This was achieved by modifying the linker script, which defines the memory map used during the build process. The length of the program flash region was reduced so that firmware is linked only below the first address saved for EEPROM emulation.
+
+        Two additional mechanisms were implemented to protect the emulated EEPROM from accidental corruption. The first is a magic word that is written to the first address of each page. This is a fixed 16-bit signature that indicates that the page was written by valid firmware rather than left as uninitialized or partially erased flash. The second is a validation process. Each variable is only considered valid if it is within the specified range.
 
 
     \section{Graphical User Interface}
@@ -535,8 +536,8 @@ The processing unit runs the \ac{mppt} algorithm, generates the PWM signals and 
 
         \begin{figure}[!ht]
             \centering
-            \includegraphics[width=0.95\textwidth]{Images/Implementation/GUI_MPPT_main.png}
-            \caption{MPPT tab.}
+            \includegraphics[width=0.90\textwidth]{Images/Implementation/GUI_MPPT_main.png}
+            \caption{MPPT monitor tab.}
             \label{fig:MPPT monitor GUI}
         \end{figure}
 

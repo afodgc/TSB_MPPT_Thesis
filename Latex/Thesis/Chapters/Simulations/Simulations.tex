@@ -9,7 +9,7 @@
 
     \subsection{Solar panel model}
 
-        The simulations started in LTspice to test the converter under different conditions. To achieve that, a \ac{pv} electrical model of the cells was designed using a five parameter model (1M5P) configuration. More electrical models can simulate a solar panel, some with higher accuracy but greater complexity. This model was ideal for the simulation because it is both reliable and simple.
+        The simulations started in LTspice to test the converter under different conditions. To achieve that, a \ac{pv} electrical model of the cells was designed using a five parameter model (1M5P) configuration. There are more electrical models that can simulate a solar panel, some with higher accuracy but greater complexity. This model was ideal for the simulation because it is both reliable and simple.
 
         The 1M5P model represents the solar cell as a single-diode equivalent circuit with a current source, a diode, a series resistance $R_s$ and a shunt resistance $R_{sh}$, as shown in Figure~\ref{fig:pv_model}. The current source models the photogenerated current $I_{ph}$, the diode the nonlinear $I$-$V$ characteristic of the p-n junction, $R_s$ the ohmic losses in the material and contacts, and $R_{sh}$ the leakage current.
 
@@ -45,7 +45,7 @@
 
         It is important to note that, in this \ac{cc}-\ac{cv} charging profile, the constant current is determined by the solar panel rather than the battery, as is typically assumed. This is only possible because the maximum charging current of the battery is lower than the maximum current that can be supplied by the solar panel. Therefore, during the \ac{cc} phase, the converter operates at the \ac{mpp} of the solar panel.
 
-        The timescale of the charging process also depends on the battery capacity, with larger capacities requiring longer charging times under otherwise equivalent conditions.
+        The timescale of the charging process depends on the battery capacity, with larger capacities requiring longer charging times under equivalent conditions.
 
 
         With the chosen five points, some simulations were carried out using capacitors and inductors that would fit the requirements calculated earlier. The objective of these simulations is to optimize the performance of the converter, leading to better choices.
@@ -247,7 +247,7 @@
 
 
     \section{MPPT algorithm}
-        The algorithm parameters (switching and sampling frequencies, step size and power dead band) must be tuned for speed without compromising stability. A MATLAB Simulink model of the boost converter, solar panel and battery was therefore used to evaluate the tracker (Figure~\ref{fig:Simulink mode}). A diode replaces the synchronous high-side switch, which does not affect the algorithm comparison.
+        The algorithm parameters (switching and sampling frequencies, step size and power dead band) must be tuned for speed without compromising stability. A MATLAB Simulink model of the boost converter, solar panel and battery was therefore used to evaluate the tracker performance (Figure~\ref{fig:Simulink mode}). To simplify the model, a diode replaces the synchronous high-side transistor, which does not affect the algorithm comparison.
 
         \begin{figure}[!ht]
             \centering
@@ -256,9 +256,9 @@
             \label{fig:Simulink mode}
         \end{figure}
 
-        The panel (35 cells) and the \ac{sg01} battery match the real system. Measurement noise is included on the \ac{pv} side and averaged over 10 samples at $1~\mathrm{kHz}$ before being sent to the algorithm, which runs at $100~\mathrm{Hz}$ and implements both the sweep and \ac{peo}.
+        The solar panel (35 cells) and battery were configured to match a 35 cells solar panel and \ac{sg01} battery. As in the real system the \ac{pv} side measurements include noise, which is filtered by averaging the last 10 samples at $1~\mathrm{kHz}$ before being sent to the algorithm, which runs at $100~\mathrm{Hz}$ and implements both the sweep and \ac{peo}.
 
-        To understand the impact of each environment variation on the \ac{mpp} point, a sweep  was performed for different irradiance values and temperatures (Figures~\ref {fig:irr_sweep} and \ref{fig:temp_sweep}). For irradiance variations, the maximum duty cycle difference is 3\%. In contrast, the maximum duty cycle difference for temperature variations is 9\%. This means the algorithm will always be slower to temperature variations than to irradiance variations. However, it is more common to have a fast changing irradiance than temperature. The solar panels will heat slowly, and when covered in water, they cool by around $10~^\circ\mathrm{C}$ to $20~^\circ\mathrm{C}$ (values measured during tests).  
+        To understand the impact of each environment variation on the \ac{mpp} point, a sweep  was performed for different irradiance values and temperatures (Figures~\ref {fig:irr_sweep} and \ref{fig:temp_sweep}). For irradiance variations, the maximum duty cycle difference is 3\%. In contrast, the maximum duty cycle difference for temperature variations is 9\%. This means the algorithm will always be slower to track temperature variations than to irradiance variations. However, it is more common to have a fast changing irradiance than temperature. The solar panels will heat slowly, and when covered in water, they cool by around $10~^\circ\mathrm{C}$ to $20~^\circ\mathrm{C}$ (values measured during tests).  
 
         \begin{figure}[!ht]
             \centering
@@ -277,7 +277,8 @@
             \end{minipage}
         \end{figure}
 
-        In the worst case ($9\%$), a tracking time of $0.5~\mathrm{s}$ at $100~\mathrm{Hz}$ allows 50 steps, i.e.\ an ideal step of $0.18\%$. Such a small step is easily confused with noise, so the parameters must be tuned to the actual system.
+        Assuming the worst-case variation of $9\%$, a combination of the step size and operating frequency must be selected to achieve the desired tracking time of $0.5~\mathrm{s}$. For example, with an operating frequency of $100~\mathrm{Hz}$, the algorithm has 50 steps to reach the \ac{mpp} within $0.5~\mathrm{s}$. Therefore, if the algorithm uses a step size of $9\%/50 = 0.18\%$, it could ideally reach the target tracking time in every case. However, such a small step size may make the algorithm more susceptible to measurement noise, potentially causing the perturbations to be indistinguishable from noise. Therefore, the step size and operating frequency must be tuned according to the characteristics of the system in which the algorithm is implemented.
+
 
         With the frequency fixed at $100~\mathrm{Hz}$, three step sizes were compared under successive temperature steps (Figure~\ref{fig:peo_step_comparison}). The smallest step never reaches the \ac{mpp}, most likely because of noise. The other two perform similarly, but the larger step oscillates more around the \ac{mpp}.
 
@@ -303,7 +304,7 @@
             \label{fig:peo_step_comparison}
         \end{figure}
 
-        The analysis was then extended to more severe operating-point variations. For a temperature step from $25~^\circ\mathrm{C}$ to $85~^\circ\mathrm{C}$ (Figure~\ref{fig:big_temp_step}), the $0.5\%$ step, which had performed well previously, required about $1~\mathrm{s}$ to reach within $5\%$ of the \ac{mpp}. This meets the $1~\mathrm{s}$ limit but not the typical $0.5~\mathrm{s}$ target. The $1\%$ and $2\%$ steps were faster but oscillated more; a step between $0.5\%$ and $1\%$ is therefore the best compromise. Occasional stalls are caused by measurement noise and the \ac{peo} deadband and can be reduced by further tuning.
+        The analysis was then extended to more severe operating-point variations. For a temperature step from $25~^\circ\mathrm{C}$ to $85~^\circ\mathrm{C}$ (Figure~\ref{fig:big_temp_step}), the $0.5\%$ step, which had performed well previously, required about $1~\mathrm{s}$ to reach within $5\%$ of the \ac{mpp}. This meets the $1~\mathrm{s}$ limit but not the typical $0.5~\mathrm{s}$ target. The $1\%$ and $2\%$ steps were faster but oscillated more around the \ac{mpp}. A step between $0.5\%$ and $1\%$ is therefore the best compromise. Occasional stalls are caused by measurement noise and the \ac{peo} deadband and can be reduced by further tuning.
 
         A rapid irradiance variation was also simulated (Figure~\ref{fig:big_irr_step}). The \ac{mpp} is reached almost instantaneously for all step sizes, as expected, because the duty-cycle change is about three times smaller than in the temperature case.
 

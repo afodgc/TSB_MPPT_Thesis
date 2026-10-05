@@ -27,7 +27,7 @@ Following the design and simulation stages, a prototype was manufactured and ass
     \end{figure}
 
     The \textbf{first prototype (V1)} iteration had several issues identified during the initial testing phase. For instance, an incorrect 3D model caused the main connector to be positioned incorrectly (Figure~\ref{fig:prototypes}).
-    Additionally, the flash connector did not provide 5~V, which made testing more difficult. The UART signals connected to the USB-C connector were swapped, and therefore the communication was only possible using an external USB to UART adapter. 
+    Additionally, the flash connector did not provide 5~V, which made testing more difficult. The UART signals were swapped, and therefore the communication was only possible using an external USB to UART adapter. 
 
     Although none of these issues were critical for the fundamental operation of the circuit, they made the testing phase more time-consuming and complex. Therefore, a second iteration was designed and manufactured with all issues fixed. 
 
@@ -260,7 +260,7 @@ Following the design and simulation stages, a prototype was manufactured and ass
         The \ac{pcb} was also tested in open circuit with and without driving the transistors. The results show the losses of the circuit without the boost converter. Around 0.5~W of losses are caused only by the measurement and control system. When the transistors are driven without any load, the converter losses are negligible because the current is too low. So the measured losses are approximately equal to the driving circuit + the measurement and control system. Based on these values, Table~\ref{tab:efficiency_results} also presents an estimate of the efficiency without the measurement and control system, and another without the driving circuit. The converter efficiency is around 97\% to 98\% for all test cases, which is close to the simulation measurements. From another perspective, this shows how significant the losses are in the rest of the circuit.         
 
     \subsection{Temperature rise}
-        The temperature of each element was measured before each test and after 10~min. All test show similar result, a temperature rise of up to $10~^\circ\mathrm{C}$. The inductor is the main heat element, reaching $43~^\circ\mathrm{C}$, the capacitors also reach around $40~^\circ\mathrm{C}$ however, they are placed side by side with the inductor which heats the capacitors. As expected, the transistors do not overheat. The maximum temperature measured was $40~^\circ\mathrm{C}$. 
+        The temperature of each element was measured before each test and after 10~min. All test show similar result, a temperature rise of up to $10~^\circ\mathrm{C}$. The inductor is the main heat element, reaching $43~^\circ\mathrm{C}$, the capacitors also reach around $40~^\circ\mathrm{C}$. As expected, the transistors do not overheat. The maximum temperature measured was $40~^\circ\mathrm{C}$. 
 
         The results are consistent with the expected behavior. In Section~\ref{subsubsec:loss_estimation}, it was concluded that the inductor exhibits the highest losses, followed by the transistors and the capacitors. Since the temperature rise is directly related to the power dissipated by each component, a similar trend was expected in the thermal measurements. The results confirm this expectation, with the inductor exhibiting the highest temperature.
 
@@ -317,7 +317,7 @@ Following the design and simulation stages, a prototype was manufactured and ass
 \section{MPPT}
     In this section, the charging state machine is tested, as well as the \ac{mppt} algorithm, to ensure the functionality of the prototype.
 
-    In the following tests, a laboratory setup was used, where a power supply (the SM 1500-CP-30) was used with an internal function that can simulate the behavior of a solar panel. This function was configured as a 35 cells solar panel at $25~^\circ\mathrm{C}$ and variable irradiance controlled by sending TCP messages. 
+    In the following tests, a laboratory setup was used, where a power supply (the SM 1500-CP-30) was used with an internal function that can simulate the behavior of a solar panel. This function was configured as a 35 cells solar panel at configurable temperature and irradiance controlled by sending TCP messages. 
 
     The load was the battery from \ac{sr03}, which is described in section~\ref{sec:battery}.
 
@@ -351,6 +351,12 @@ Following the design and simulation stages, a prototype was manufactured and ass
 
         The result is an efficiency curve (Figure~\ref{fig:eff over current}) that increases with both the input current and the irradiance, which are approximately proportional. Since the test was performed with different solar panel parameters, three curves were obtained. The converter is clearly more efficient at higher input voltages, that is, for panels with more cells in series.
 
+        Both trends are expected. At low currents, the efficiency is lower because the constant losses required to power the electronics (\ac{mcu}, sensors, etc.) have a larger relative impact. As the current increases, those losses become less significant and the efficiency stabilizes. After around 3~A ($400~\mathrm{W/m}^2$), the converter switching losses become dominant. Since they increase with the input current, a slight downward slope of the curve is expected.
+
+        The higher efficiency at higher input voltage is explained by the fact that a boost converter is more efficient at lower duty cycles. From equation \ref{eq:duty}, for a given output voltage the duty cycle decreases as the input voltage increases. Therefore, increasing the number of cells in series reduces the duty cycle and improves the efficiency.
+
+        On the other hand, if the input voltage is constant and the output voltage increases (Figure~\ref{fig:eff over output voltage}), efficiency decreases for the same reason. Equation \ref{eq:duty} shows that for a fixed input voltage, the duty cycle increases with the increase of the output voltage and therefore efficiency decreases.   
+
         \begin{figure}[!ht] 
             \centering 
             \begin{minipage}{0.49\textwidth}
@@ -367,13 +373,6 @@ Following the design and simulation stages, a prototype was manufactured and ass
                 \label{fig:eff over output voltage}
             \end{minipage} 
         \end{figure}
-
-
-        Both trends are expected. At low currents, the efficiency is lower because the constant losses required to power the electronics (\ac{mcu}, sensors, etc.) have a larger relative impact. As the current increases, those losses become less significant and the efficiency stabilizes. After around 3~A, the converter switching losses become dominant. Since they increase with the input current, a slight downward slope of the curve is expected.
-
-        The higher efficiency at higher input voltage is explained by the fact that a boost converter is more efficient at lower duty cycles. From equation \ref{eq:duty}, for a given output voltage the duty cycle decreases as the input voltage increases. Therefore, increasing the number of cells in series reduces the duty cycle and improves the efficiency.
-
-        On the other hand, if the input voltage is constant and the output voltage increases (Figure~\ref{fig:eff over output voltage}), efficiency decreases for the same reason. Equation \ref{eq:duty} shows that for a fixed input voltage, the duty cycle increases and therefore efficiency decreases.   
 
 
     \subsection{Tracking speed}
@@ -437,14 +436,14 @@ Following the design and simulation stages, a prototype was manufactured and ass
 
     \begin{figure}[!ht] 
         \centering 
-        \includegraphics[width=0.8\linewidth]{Images/LAB_res/charging_test_lab.pdf} 
+        \includegraphics[width=0.9\linewidth]{Images/LAB_res/charging_test_lab.pdf} 
         \caption{Full battery charge in laboratory.} 
         \label{fig:full charge in lab}
     \end{figure} 
 
-    The last test is a field test (on shore) with a solar panel. Several attempts were made to perfect the performance of the prototype. A lot of errors were encountered and fixed. For example, the first time the test was performed, it was used a solar panel of only 20 cells, which was never tested before, and did not work correctly because the duty cycle upper limit was too low. By increasing the duty cycle upper limit, the issue was resolved. Then in prototype version 1.2, the noise was reduced and the power deadband was too high, which made the \ac{mppt} algorithm not able to track slow environment changes. After some tests, the power deadband was completely removed. Some other adjustments were made to the state machine and the final test was performed.
+    The last test is a field test (on shore) with a solar panel. Several attempts were made to perfect the performance of the prototype. A lot of errors were encountered and fixed. For example, the first time the test was performed, it was used a solar panel of only 24 cells, which was never tested before, and did not work correctly because the duty cycle upper limit was too low. By increasing the duty cycle upper limit, the issue was solved. Then in prototype version 1.2, the noise was reduced and the power deadband was too high, which made the \ac{mppt} algorithm not able to track slow environment changes. After some tests, the power deadband was completely removed. Some other adjustments were made to the state machine and the final test was performed.
 
-    The final test was performed with two solar panels in series, with a total of 38 cells. The test was performed in a cloudy day, with a lot of irradiance variations. The results show the correct operation of the \ac{cc}-\ac{cv} charging curve, and the correct operation of the \ac{mppt} algorithm, Figure~\ref{fig:full charge in field}.
+    The final test was performed with two solar panels in series, with a total of 42 cells. The test was performed in a cloudy day, with a lot of irradiance variations. The results show the correct operation of the \ac{cc}-\ac{cv} charging curve, and the correct operation of the \ac{mppt} algorithm, Figure~\ref{fig:full charge in field}.
 
     Since the test was performed in a cloudy day, the irradiance was very unstable, which induces \acs{pv} current variations. The temperature of the solar panel was stable and therefore the \ac{pv} voltage only adjust slightly to reach the \ac{mpp}. 
 
@@ -453,7 +452,7 @@ Following the design and simulation stages, a prototype was manufactured and ass
     
     \begin{figure}[!ht] 
         \centering 
-        \includegraphics[width=0.8\linewidth]{Images/LAB_res/charging_test4.pdf} 
+        \includegraphics[width=0.9\linewidth]{Images/LAB_res/charging_test4.pdf} 
         \caption{Battery charging test. Voltage and current curve.} 
         \label{fig:full charge in field}
     \end{figure} 

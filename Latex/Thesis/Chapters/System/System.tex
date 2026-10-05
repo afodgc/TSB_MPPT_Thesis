@@ -80,7 +80,7 @@ Although the current photovoltaic installation already contributes significantly
 
 \section{Battery}
 \label{sec:battery}
-In recent years, \ac{tsb} have been producing our batteries, achieving a lower cost and a highly customizable solution. In \ac{sg01} we chose lithium-ion cells due to their ease of use and quick assembly. The battery assembly is done by the team members, and it begins by placing the cells on a plastic holder to increase structural strength, then using a spot welder, the series and parallel connections are made with nickel tabs (Figure~\ref{fig:SG01_battery}). In parallel, some thermistors are placed in different locations of the battery to ensure a precise and robust temperature reading. In the end, the battery is placed in a case with a \ac{bms} and all necessary connections.
+In recent years, \ac{tsb} have been producing our batteries, achieving a lower cost and a highly customizable solution. For \ac{sg01} it was chosen lithium-ion cells due to their ease of use and quick assembly. The battery assembly is done by the team members, and it begins by placing the cells on a plastic holder to increase structural strength, then using a spot welder, the series and parallel connections are made with nickel tabs (Figure~\ref{fig:SG01_battery}). In parallel, some thermistors are placed in different locations of the battery to ensure a precise and robust temperature reading. In the end, the battery is placed in a case with a \ac{bms} and all necessary connections.
 
 \begin{figure} [!ht]
     \centering
@@ -124,13 +124,14 @@ Additionally, to shorten the charging test time, another battery was used. This 
 
 With \ac{sg01} battery (5844.56~Wh) and the maximum power that the solar panels can currently provide (526.4~W), the minimum time to fully charge the battery is 11~h and 7~min (5844.56~Wh / 526.4~W). This is a long time to charge a battery. There are two solutions to this problem: increase the power provided by the solar panels or decrease the battery capacity.
 
-An alternative approach is to reduce the battery capacity to $1512~\mathrm{Wh}$, corresponding to the battery capacity of \acs{sr03}. With this change alone, the battery can be fully charged in $2~\mathrm{h}$ and $53~\mathrm{min}$, which represents a much more reasonable charging time. Furthermore, increasing the power provided by the solar panels to $977~\mathrm{W}$ reduces the charging time to $1~\mathrm{h}$ and $33~\mathrm{min}$, providing a highly suitable charging time for the battery.
+Considering the approach of reducing the battery capacity to $1512~\mathrm{Wh}$, corresponding to the battery capacity of \acs{sr03}, the battery can be fully charged in $2~\mathrm{h}$ and $53~\mathrm{min}$, which represents a much more reasonable charging time. Furthermore, increasing the power provided by the solar panels to $977~\mathrm{W}$ reduces the charging time to $1~\mathrm{h}$ and $33~\mathrm{min}$, providing a highly suitable charging time for the battery.
 
-The charging times are good for evaluating the \ac{pv} system, but the main goal is to maximize the time on water before full battery discharge. For this analysis, a consumption of $1000~\mathrm{W}$ is assumed. Considering the original battery, it takes 5~h 51~min to fully discharge without solar panels, 12~h 21~min with solar panels, and approximately 10 days with the additional solar panels. As previously said, this battery is overdimensioned and will be changed in the future.
+The charging times are good metrics to evaluate the \ac{pv} system, but the main goal is to maximize the time on water before full battery discharge. For this analysis, a consumption of $1000~\mathrm{W}$ is assumed. Considering the original battery, it takes 5~h 51~min to fully discharge without solar panels, 12~h 21~min with solar panels, and approximately 10 days with the additional solar panels. As previously said, this battery is overdimensioned and will be changed in the future.
 
 To better understand the impact of the \ac{pv} system, the battery of \acs{sr03} will be considered. This battery takes 1~h and 30~min to fully discharge without solar panels, 3~h 12~min with solar panels, and approximately 2 days 18~h with the additional solar panels. 
 
-In theory, reducing the battery capacity while increasing the solar panel area could allow the battery to be maintained without the need for external charging. Conversely, a larger battery capacity would allow the low-voltage system to draw more energy from the battery.
+In theory, reducing the battery capacity while increasing the solar panel area could allow the battery to be maintained without the need for external charging. 
+From another prescpective, the power cunsumption can be increased without the need to increase the battery capacity.
 
 In practice, however, the solar panels will not continuously operate under \ac{stc} conditions. Consequently, the power generated will generally be lower than the nominal value, and an appropriate margin must therefore be considered when sizing the battery and solar generation system.
 
@@ -140,7 +141,7 @@ In practice, however, the solar panels will not continuously operate under \ac{s
 
 In engineering, the term ``fast'', used in the title of this thesis, needs to be associated with a time scale. A process can only be considered fast when compared with another process with a longer characteristic time. Therefore, this section investigates the characteristic time scales associated with \ac{mpp} variations caused by environmental changes, with particular emphasis on the vessel's oscillatory motion and its implications for the required speed of the \ac{mppt} algorithm.
 
-When analyzing \ac{mpp} variations, two main factors are temperature and irradiance. Temperature variations are generally slower than variations in irradiance. Although rapid temperature changes can occur, for example when water comes into contact with the photovoltaic panels, such events are considered unusual during normal operation and are therefore not considered in this analysis. Irradiation, by contrast, can vary more rapidly as the angle of the solar panels changes with vessel roll and pitch. 
+When analyzing \ac{mpp} variations, the two main factors are temperature and irradiance. Temperature variations are generally slower than variations in irradiance. Although rapid temperature changes can occur, for example when water comes into contact with the photovoltaic panels, such events are considered unusual during normal operation and are therefore not considered in this analysis. Irradiation, by contrast, can vary more rapidly as the angle of the solar panels changes with vessel roll and pitch. 
 
 The motion of a vessel subjected to waves can be described as a forced dynamic system. The vessel has characteristic natural frequencies associated with its different modes of motion, including roll, pitch and heave. The response to wave excitation depends on the relationship between the excitation frequency and the vessel's corresponding natural frequency. In particular, when the excitation frequency approaches a natural frequency, the response amplitude can increase significantly due to resonance. The vessel does not, however, necessarily oscillate at its natural frequency when subjected to excitation at another frequency, the steady state response occurs primarily at the excitation frequency, while the natural frequency determines the dynamic response and its amplitude.
 
@@ -169,7 +170,7 @@ This formula is used with results given by the hydrostatic simulations, which we
 
 Based on the given values, the pitch and roll natural periods are 0.8654~s and 1.2853~s, respectively, which is equivalent to 1.1555~Hz and 0.7780~Hz. These values represent an estimate of the natural frequencies of the vessel.
 
-As for the frequency of the waves, it has a wide range and depends on several factors. Studies on this subject show higher energy for waves with 1~s to 30~s periods, which is equivalent to 0.033~Hz to 1~Hz Figure~\ref{fig:wave by period}.
+As for the frequency of the waves, it has a wide range and depends on several factors. Studies on this subject show higher energy for waves with 1~s to 30~s periods, which is equivalent to 0.033~Hz to 1~Hz, Figure~\ref{fig:wave by period}.
 
 \begin{figure} [!ht]
     \centering

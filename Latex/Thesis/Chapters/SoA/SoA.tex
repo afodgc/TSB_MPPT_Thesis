@@ -165,7 +165,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
             e = \frac{I}{V} + \frac{dI}{dV}
         \end{equation}
 
-        Comparative analysis shows that the \ac{incond} algorithm performs better than the \acs{peo} method. This outcome is expected, as the Incremental Conductance technique was developed specifically to address the limitations inherent in the \acs{peo} approach~\cite{Intelligent_PV_Module_2006}. For example, the \ac{incond} method eliminates the oscillation problem around the MPP that is characteristic of the \acs{peo} method. Additionally, \ac{incond} performs better under rapidly changing environmental conditions, such as sudden irradiance variations, because it uses derivative information that is less sensitive to transient disturbances~\cite{bendib_survey_mppt_methods}. The downside is increased complexity and, therefore, more parameters, which increases simulation and tuning time. Also, it uses fractions, which can be very demanding for \acp{mcu}.
+        Comparative analysis shows that the \ac{incond} algorithm performs better than the \acs{peo} method. This outcome is expected, as the Incremental Conductance technique was developed specifically to address the limitations inherent in the \acs{peo} approach~\cite{Intelligent_PV_Module_2006}. For example, the \ac{incond} method eliminates the oscillation problem around the MPP that is characteristic of the \acs{peo} method. Additionally, \ac{incond} performs better under rapidly changing environmental conditions, such as sudden irradiance variations, because it uses derivative and variable step size~\cite{bendib_survey_mppt_methods}. The downside is increased complexity and, therefore, more parameters, which increases simulation and tuning time. Also, it uses fractions, which can be very demanding for \acp{mcu}.
 
         \begin{figure}[!ht]
             \centering
@@ -327,14 +327,14 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
                                         >{\centering\arraybackslash}X
                                         >{\centering\arraybackslash}X}
             \toprule
-            \textbf{Topology} & \textbf{Boost} & \textbf{Buck} & \textbf{Buck-Boost} & \textbf{ZETA} & \textbf{CUK} & \textbf{SEPIC} \\
+            \textbf{Topology} & \textbf{Boost} & \textbf{Buck} & \textbf{Buck-Boost} & \textbf{CUK} & \textbf{SEPIC} & \textbf{ZETA} \\
             \midrule
             \multicolumn{7}{l}{\textit{\textbf{Electrical performance}}} \\
-            Efficiency & \DG High & \DG High & \DG High & \DG Medium/High &  Medium & Medium \\
+            Efficiency & \DG High & \DG High & \DG High & Medium & Medium & \DG Medium/High \\
             EMI & \G Low & \G Low & High & Medium & Medium & Medium \\
-            Input current ripple & \G Low  & High & High & \G Low & \G Very low & Medium \\
-            Output current ripple & High & \G Low & High & \G Very low & \G Low & Medium \\
-            Output voltage ripple & Medium & \DG Low & Medium & \DG Low & Medium & High \\
+            Input current ripple & \G Low  & High & High & \G Very low & Medium & \G Low \\
+            Output current ripple & High & \G Low & High & \G Low & Medium & \G Very low \\
+            Output voltage ripple & Medium & \DG Low & Medium & Medium & High & \DG Low \\
             \midrule
             \multicolumn{7}{l}{\textit{\textbf{Structural characteristics}}} \\
             Circuit complexity & \G Low & \G Low & \G Low & Medium & Medium & Medium \\
@@ -344,8 +344,8 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
             \midrule
             \multicolumn{7}{l}{\textit{\textbf{Functional aspects}}} \\
             Type & \G Step-Up & Step-Down & \DG Step-Down/Up & \DG Step-Down/Up & \DG Step-Down/Up & \DG Step-Down/Up \\
-            Versatility & Low & Low & Medium & \G High & Medium & \G High \\
-            Inverted output & \G No & \G No & Yes & \G No & Yes & \G No \\
+            Versatility & Low & Low & Medium & Medium & \G High & \G High \\
+            Inverted output & \G No & \G No & Yes & Yes & \G No & \G No \\
             Reliability & \G High & \G High & \G High & Medium & Medium & Medium \\
             \midrule
             \multicolumn{7}{l}{\textit{\textbf{Economic}}} \\
@@ -362,7 +362,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
 
         The buck converter can be excluded from this comparison since, in this project, the solar panel voltage is lower than the battery voltage, therefore, a step-down converter is not suitable.
         However, when choosing between the boost and the step-up/down converters, there is a trade-off. 
-        The boost converter is simpler, cheaper, and more efficient. On the other hand, step-up/down converters are more versatile because they can operate over a wide range of input voltages, which is useful since solar panel size and battery voltage can change.
+        The boost converter is simpler, cheaper, and more efficient. On the other hand, step-up/down converters are more versatile because they can operate over a wide range of input voltages, which is useful since solar panel size and battery voltage can change over the next few years.
 
         Since the solar panel voltage is always lower than the battery voltage in this project, the boost converter is the most suitable topology because of its simplicity, cost-effectiveness, and high efficiency. However, if versatility were to become a priority, the ZETA converter would be the preferred choice among the step-up/down topologies, owing to its non-inverted output voltage and low output current ripple, which are advantageous for battery charging applications.
 
@@ -371,12 +371,12 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
 
     As the demand for electronic devices and E-vehicles increases, the need for efficient, compact, and lightweight batteries has emerged. Among many existing technologies, lithium-ion batteries have one of the best energy-to-weight/volume ratios and, at this moment, it is the technology used in \ac{tsb} batteries. But like every other battery technology, they must be charged properly to ensure safety and longevity~\cite{Charging_Algorithms_Lithium_Ion_Batteries_Overview_2012}.
 
-    To charge these batteries properly, the \ac{mppt} algorithm can operate alone if an additional converter is used in series. But in most of \ac{mppt} chargers, the \ac{mppt} and the battery charging unit are integrated in the same converter. This way, the \ac{mppt} algorithm can adjust the solar panel operating point to extract maximum power, while the battery charging technique ensures the battery charges properly. A proper combination of both algorithms/techniques is essential to ensure both maximum energy extraction and safe battery charge.
+    To charge these batteries properly, the \ac{mppt} algorithm can operate alone if an additional converter is used in series. But in most of \ac{mppt} chargers, the \ac{mppt} and the battery charging unit are integrated in the same converter. This way, the \ac{mppt} algorithm can adjust the solar panel operating point to extract maximum power, while the battery charging technique ensures the battery charges properly. A proper combination of both is essential to ensure both maximum energy extraction and safe battery charge.
 
     Several charging techniques are available for lithium-ion batteries. For the application considered in this work, the most relevant approach is the constant-current constant-voltage (\acs{cc}-\acs{cv}) charging method~\cite{Charging_Algorithms_Nickel_Lithium_Battery_2011}.It is also widely used in commercial chargers because of its simplicity and effectiveness~\cite{Review_Different_Charging_Techniques_Lithium_Polymer_Battery_2015}. 
     This method consists of two main phases (Figure~\ref{fig:CC-CV profile}). In the first phase, the battery is charged at a constant current until it reaches its maximum voltage. In the second phase, the voltage is held constant at this limit while the current gradually decreases as the battery approaches full charge. Once the current drops below a certain threshold, the charging process is terminated to prevent overcharging~\cite{Review_Different_Charging_Techniques_Lithium_Polymer_Battery_2015}.
 
-    When employing the \acs{cc}-\acs{cv} charging technique with a \ac{mppt} controller, the initial \ac{cc} phase is regulated by the \ac{mppt} algorithm, which extracts the maximum available power from the solar panel, limited by the maximum charging current. Once the maximum charge current is reached, it operates at \ac{cc}. Once the \ac{cv} phase is reached, the \ac{mppt} function is disabled, and the power converter increases the solar panel voltage to progressively reduce the charging current while keeping the output voltage constant.
+    When employing the \acs{cc}-\acs{cv} charging technique with a \ac{mppt} controller, the initial \ac{cc} phase is regulated by the \ac{mppt} algorithm, which extracts the maximum available power from the solar panel, limited by the maximum charging current. If the maximum charge current is reached, it operates at \ac{cc}. Once the \ac{cv} phase is reached, the \ac{cc}/\ac{mppt} function is disabled, and the power converter increases the solar panel voltage to progressively reduce the charging current while keeping the output voltage constant.
 
 
     \begin{figure} [!ht]
@@ -479,7 +479,7 @@ The Smart Solar MPPT 100/20, developed by Victron Energy, offers high efficiency
 
 Other commercial solutions, such as the Rover Lite and MS4840N, provide acceptable performance but rely on communication protocols incompatible with the project requirements and offer limited technical documentation.
 
-The Reboost V0.2.1 is an open source \ac{mppt} charger originally developed for automotive applications. While it provides flexibility and near adequate specifications, its reliance on expensive and discontinued components, along with the use of a boost topology, limits scalability and adaptability to potential future battery voltage changes.
+The Reboost V0.2.1 is an open source \ac{mppt} charger originally developed for automotive applications. While it provides flexibility and near adequate specifications, its reliance on expensive and discontinued components limits its use.
 
 Overall, none of the evaluated commercial \ac{mppt} chargers fully satisfy the technical, economic, and configurability requirements of this project, motivating the development of a custom solution.
 
