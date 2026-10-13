@@ -16,6 +16,11 @@
 \usepackage[T1]{fontenc}
 \usepackage{url}
 \extrafloats{24}
+\setlength{\textfloatsep}{8pt plus 2pt minus 4pt}
+\setlength{\floatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{4pt}
+\setlength{\belowcaptionskip}{0pt}
 
 \begin{document}
 
@@ -26,309 +31,519 @@
 \thanks{This manuscript is a draft conference summary of the MSc dissertation \emph{Fast response MPPT charger for the Técnico Solar Boat}.}}
 
 \maketitle
+% Conference mode omits page numbers; the proceedings add them.
+% Plain numbers are kept on this draft, including the title page.
+\pagestyle{plain}
+\thispagestyle{plain}
 
 \begin{abstract}
-Solar-powered competition boats must convert photovoltaic energy under irradiance that changes with waves, heading, and shading. This paper summarizes the design, simulation, and experimental validation of a custom maximum-power-point-tracking (MPPT) charger for the low-voltage battery of São Gabriel 01, the latest vessel of Técnico Solar Boat. The charger is a 100~kHz synchronous boost converter built around a GaN half-bridge and an STM32L476 microcontroller. A perturb-and-observe algorithm was selected as the best compromise between tracking speed, accuracy, and implementation effort for the measured vessel motion. The power stage was sized for strings of 20 to 40 series cells charging a 12-series lithium-ion battery (43.2~V nominal) and was checked in LTspice and with an analytical loss model. A hand-assembled prototype, costing about 125~\texteuro{}, reached a measured end-to-end efficiency of 96.6--96.8\% and an estimated power-stage efficiency of 97--98\%. Tracking settled within 100~ms in typical irradiance and temperature steps and within 200~ms in the most demanding step, with about 99\% tracking accuracy. Laboratory and outdoor charges followed the expected constant-current constant-voltage profile. The board also provides CAN telemetry and a configuration interface for integration in the vessel.
+    Solar-powered vessels need effective energy conversion under rapidly changing conditions. The solar panels operate in their maximum power point (MPP) thanks to a maximum power point tracker (MPPT) charger. This work presents the design, simulation, and testing of a fast-response MPPT charger for the low-voltage battery of São Gabriel 01, the latest vessel of Técnico Solar Boat (TSB). The developed prototype is a syncronous boost converter operating at 100~kHz, controlled by a STM32 microcontroller. A perturb-and-observe (P\&O) algorithm was selected as the best compromise between tracking speed, accuracy, and complexity. Both the algorithm and the converter were simulated in LTspice and Matlab. A hand-assembled prototype, costing about 125~\texteuro{}, reached a measured efficiency of 96.6--96.8\% (including all prototype losses) and an estimated power-stage efficiency of 97-98\%. Tracking settled within 100~ms in typical irradiance and temperature steps and within 200~ms in the most demanding tests, with about 99\% tracking accuracy. The prototype was tested in laboratory and outdor conditions, following the expected CC-CV charging curve. The board also provides CAN telemetry and a configuration interface for integration in the vessel.
+
 \end{abstract}
 
 \begin{IEEEkeywords}
-MPPT, perturb and observe, synchronous boost converter, photovoltaic charging, solar boat.
+    MPPT, perturb and observe, synchronous boost converter, solar energy, solar boat.
 \end{IEEEkeywords}
 
 \section{Introduction}
 
-The share of electricity from renewable sources has risen from 20.82\% in 1985 to 31.92\% in 2024, of which solar accounted for 6.9\% worldwide and 14.5\% in Portugal~\cite{ourworldindata_electricity_mix_2025}. Photovoltaic generation is attractive for vehicles because it is modular, quiet, and needs little maintenance~\cite{shahira2022_electrical_design_solar_boat}. In maritime transport, which is a non-negligible part of European CO$_2$ emissions~\cite{icct_transport_eu_carbon_budget}, small solar craft are a practical way to test high-efficiency electrical architectures.
+    The share of electricity from renewable sources has risen from 20.82\% in 1985 to 31.92\% in 2024, of which solar accounted for 6.9\% worldwide and 14.5\% in Portugal~\cite{ourworldindata_electricity_mix_2025}. Its application in vehicles is attractive due to it is modularity, low noise, and low maintenance~\cite{shahira2022_electrical_design_solar_boat}. In 2018, 29\% of total CO2 emissions in the EU came from the transport sector, with 4\% coming from the maritime sector alone~\cite{icct_transport_eu_carbon_budget}.
 
-Técnico Solar Boat (TSB) designs and races such craft. The current vessel, São Gabriel 01 (SG01), is a hydrofoil boat entered in the Sea Lab class of the Monaco Energy Boat Challenge. Propulsion is a 130~kW motor on a 300--600~V bus intended for a hydrogen source. Auxiliary loads (dashboard, telemetry, flight control, and throttle) sit on a 30--50~V bus and are the loads that solar energy is meant to sustain. Losing that bus stops the boat even if the high-voltage system is healthy.
+    In 2015 Técnico Solar Boat (TSB) was created with the ambition to design and manufacture vessels ruining on renewable energies. These vessels compete in the Monaco Energy Boar Challenge, where teams from around the world race and demonstrate their innovations. TSB has manufactured seven vessels to date, with the latest being São Gabriel 01 (SG01), a hydrofoil boat that competes in the Sea Lab class. The vessel is propelled by a 130~kW motor on a 300-600~V bus, powered by hydrogen (still being implemented). To power all electronics, coling system, flight control, telemetry, electric steering, etc. an additional battery is used with lower voltage (30-50.4~V), which is charged by the solar panels.
 
-Earlier TSB boats used commercial off-the-shelf MPPT chargers. An in-house attempt in 2020 produced a working converter that was never installed: devices failed in operation, the firmware could not be reconfigured, and the design no longer matched the parts and protocols used by the team. Commercial units that do fit a 48~V lithium charge either omit CAN telemetry, fix the charge voltage, cost more than the team can repeat across four parallel trackers, or track too slowly for a pitching deck. A separate incident, in which another team destroyed its MPPTs during a race, made protection and predictable failure behavior a design constraint rather than an afterthought.
+    To charge the battery using solar panels a maximum power point tracker charger need to be used, since the maximum power point (MPP) of the solar panels change with irradiance and temperature. These products track the MPP while charging the battery. Figs.~\ref{fig:iv_irr} and \ref{fig:iv_temp} show that shift. At a cell temperature of $25~^\circ\mathrm{C}$, a higher irradiance raises the panel current and, with it, the available power. At $1000~\mathrm{W/m}^2$, a higher cell temperature lowers the panel voltage and therefore the power~\cite{photovoltaics_System_Design}. A MPPT charger that uses a fixed voltage misses both movements of the MPP.
 
-An MPPT charger is a power converter that continuously moves the photovoltaic operating point to the maximum power point (MPP) as irradiance and temperature move the current--voltage curve~\cite{Comparative_study_MPPT_algorithms_2000}. On SG01 the panel voltage is always below the battery voltage, so the converter must step up. This work contributes:
-\begin{itemize}
-    \item a tracking-time requirement derived from the vessel's measured and estimated pitch and roll, rather than from a generic ``fast MPPT'' claim;
-    \item a synchronous boost charger sized for the installed Maxeon strings and a 12-series lithium-ion battery, with perturb and observe (P\&O) combined with constant-current constant-voltage (CC--CV) charging;
-    \item simulation of the power stage and of the tracker, followed by a three-revision prototype with CAN telemetry;
-    \item laboratory evidence of efficiency, thermal margin, tracking speed, and a full charge, plus a short outdoor charge on a real panel.
-\end{itemize}
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=0.8\linewidth, trim=0 3 0 19, clip]{Images/Background/irradiance_i-v.pdf}
+        \caption{I--V curves at a cell temperature of $25~^\circ\mathrm{C}$ and variable irradiance~\cite{photovoltaics_System_Design}.}
+        \label{fig:iv_irr}
+    \end{figure}
 
-\section{Vessel, Array, and Tracking Requirement}
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=0.8\linewidth, trim=0 7 0 17, clip]{Images/Background/temperature_i-v.pdf}
+        \caption{I--V curves at $1000~\mathrm{W/m}^2$ and variable cell temperature~\cite{photovoltaics_System_Design}.}
+        \label{fig:iv_temp}
+    \end{figure}
+
+    Earlier TSB boats used commercial MPPT chargers. An in-house attempt in 2020 worked, but it was never installed because it was not robust, and it no longer matches the team's standards. Units that fit the voltage range are expensive, provide no telemetry, or track slowly. This work therefore builds a fast tracker, a validated power stage, CAN telemetry, and a way to change the configuration.
+
+\section{System}
 \label{sec:system}
 
-\subsection{Electrical architecture}
+    \subsection{Electrical architecture}
 
-Fig.~\ref{fig:architecture} shows the split between the high-voltage propulsion bus and the low-voltage auxiliary bus. Auxiliary consumption is taken as 1000~W continuous. The figure is an estimate: hydrofoiling, displacement sailing, and autonomous modes do not draw the same actuator power, and a cooling loop that may later move to the high-voltage bus is excluded. Four independent MPPTs feed the low-voltage battery so that deck regions with different irradiance are not forced to a single operating point.
+    The electrical system is composed by an low voltage and an high voltage system. The high-voltage system is responsible for propelling the vessel. The low voltage system is responsible for the rest of the electrical components of the vessel, such as the electric string, throttle, telemetry, flight control, etc. 
+    A low voltage battery was built by the team using lithium-ion cells in a 12s28p configuration. To increase the autonomy of the low voltage battery, 12 solar panels were built by the team and are attached to the deck, connected to four MPPT chargers, totaling a maximum power of 526.4~W. However, there is still room to grow. Unused deck area could raise that to about $977~\mathrm{W}$. 
 
-\begin{figure}[!t]
-    \centering
-    \includegraphics[width=0.92\linewidth,height=0.22\textheight,keepaspectratio]{Images/System/Sys_diagram.pdf}
-    \caption{Simplified electrical architecture of SG01. Solar conversion serves the low-voltage auxiliary battery.}
-    \label{fig:architecture}
-\end{figure}
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=0.85\linewidth,height=0.16\textheight,keepaspectratio]{Images/System/Sys_diagram.pdf}
+        \caption{Simplified electrical architecture of SG01. Solar conversion serves the low-voltage auxiliary battery.}
+        \label{fig:architecture}
+    \end{figure}
 
-\subsection{Photovoltaic installation and battery}
+    Based on the current installation and on previous vessels made by TSB, it was defined that the prototype must be able to use cell strings from 20 to 40 series cells and is optimized for 35 cells (Table~\ref{tab:pv}). 
 
-The present array uses 140 Maxeon Gen~3 cells in ten panels built by the team, with a total active area of $2.171~\mathrm{m}^2$. At standard test conditions the theoretical peak is $526.4~\mathrm{W}$. Unused deck area could raise that to about $977~\mathrm{W}$. Each cell string seen by one charger is specified from 20 to 40 series cells and is optimized for 35 cells (Table~\ref{tab:pv}). Electroluminescence inspection was used before installation to reject cracked cells.
+    \begin{table}[!t]
+        \centering
+        \caption{String operating points at the MPP (Maxeon Gen~3).}
+        \label{tab:pv}
+        \footnotesize
+        \setlength{\tabcolsep}{3.5pt}
+        \begin{tabular}{lccccc}
+            \toprule
+            String & $V_{\mathrm{mpp}}$ & $I_{\mathrm{mpp}}$ & $P_{\mathrm{mpp}}$ & $V_{\mathrm{oc}}$ & $I_{\mathrm{sc}}$ \\
+            & (V) & (A) & (W) & (V) & (A) \\
+            \midrule
+            40 cells & 24.68 & 6.05 & 149.31 & 29.0 & 6.374 \\
+            35 cells & 21.88 & 6.05 & 132.37 & 25.4 & 6.374 \\
+            20 cells & 12.34 & 6.05 & 74.66 & 14.5 & 6.374 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
 
-The onboard low-voltage pack is a 12s28p assembly of Samsung INR21700-50G cells (43.2~V nominal, 50.4~V maximum, 30~V minimum, 135.8~Ah). It was carried over from another boat and is heavier than SG01 needs. Autonomy estimates therefore also use the smaller 12s7p pack from São Rafael 03 (35~Ah, 1512~Wh). A 12s1p pack (5.14~Ah) was used only to shorten laboratory charge tests. Both TSB packs accept more current than a string can deliver (short-circuit current $6.37~\mathrm{A}$), so on the boat the panel, not the battery, sets the constant-current phase.
+    The onboard low-voltage pack is a 12s28p assembly of Samsung INR21700-50G cells (43.2~V nominal, 50.4~V maximum, 30~V minimum, 135.8~Ah). It was carried over from another boat and is heavier than SG01 needs. Autonomy estimates therefore also use the smaller 12s7p pack from another vessel TSB vessel, São Rafael 03 (35~Ah, 1512~Wh). 
+    % A 12s1p pack (5.14~Ah) was used only to shorten laboratory charge tests. 
 
-\begin{table}[!t]
-    \centering
-    \caption{String operating points at the MPP (Maxeon Gen~3).}
-    \label{tab:pv}
-    \footnotesize
-    \setlength{\tabcolsep}{3.5pt}
-    \begin{tabular}{lcccc}
-        \toprule
-        String & $V_{\mathrm{mp}}$ & $I_{\mathrm{mp}}$ & $P_{\mathrm{mp}}$ & $V_{\mathrm{oc}}$ \\
-        & (V) & (A) & (W) & (V) \\
-        \midrule
-        40 cells & 24.68 & 6.05 & 140 & 29.0 \\
-        35 cells & 21.88 & 6.05 & 122 & 25.4 \\
-        20 cells & 12.34 & 6.05 & 70 & 14.5 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
+    At STC the present array roughly doubles the endurance of the 1512~Wh pack under a 1000~W auxiliary load, from 1~h~30~min with no sun to 3~h~12~min with sun. Higher cell temperature and lower irradiance reduce that gain.
 
-With 526~W available, the oversized pack needs about 11~h to charge from empty and the 1512~Wh pack about 2~h~53~min. At 1000~W of auxiliary load the 1512~Wh pack lasts 1~h~30~min with no sun and 3~h~12~min if the present array delivers its STC power, roughly doubling endurance. The larger pack stretches from 5~h~51~min to 12~h~21~min. These figures are upper bounds: marine irradiance is below $1000~\mathrm{W/m}^2$ for most of a day, which is why tracking losses matter.
+    \subsection{How fast the tracker must be}
+    To increase the energy extracted by the MPPT charger, the tracking algorithm must be capable of responding to changes in the operating environment. Many of these changes are unpredictable, such as a reduction in temperature caused by seawater covering the solar panels. However, in a solar vessel, one periodic source of variation can be used as a basis for defining the required tracking speed: the vessel's roll and pitch motion.
+    
+    The frequency of these oscillations is determined by the wave excitation and the natural frequencies of the hull. An approximation performed for SG01 resulted in natural periods of $0.87~\mathrm{s}$ in pitch and $1.29~\mathrm{s}$ in roll. These values indicate that the vessel response is expected to be amplified when the excitation frequency approaches the corresponding natural frequencies. Furthermore, studies indicate that a significant portion of wave energy is concentrated at periods between approximately $1$ and $30~\mathrm{s}$~\cite{newfrontiers2018}. Therefore, the vessel is expected to experience oscillations with frequencies within a similar range to those of the incident waves.
 
-\subsection{How fast the tracker must be}
+    To obtain a more representative estimate for the operating conditions of the vessel, several datasets were collected from SG01. The resulting data showed spectral peaks at approximately $0.05~\mathrm{Hz}$ and $0.5~\mathrm{Hz}$.
 
-Temperature on deck usually moves slowly. Irradiance does not. Roll and pitch change the incidence angle on a time scale set by the waves and by the hull. Hydrostatic data give metacentric heights $GM_L = 21.515~\mathrm{m}$ and $GM_T = 1.867~\mathrm{m}$. With ITTC radii of gyration of $0.25L$ in pitch and about $0.4B$ in roll ($L = 8~\mathrm{m}$, $B = 2.5~\mathrm{m}$)~\cite{ittc_seakeeping_2024,rao2011mechanical}, the undamped natural periods are $0.87~\mathrm{s}$ in pitch and $1.29~\mathrm{s}$ in roll. Wave energy is concentrated between roughly 1 and 30~s~\cite{newfrontiers2018}. Records taken with SG01 adrift show spectral peaks near $0.05~\mathrm{Hz}$ and $0.5~\mathrm{Hz}$.
+    Based on these observations, the tracking speed requirement was defined such that the operating point should return to the MPP within $1~\mathrm{s}$, with a target tracking time of $0.5~\mathrm{s}$ under typical conditions. This requirement ensures that the MPPT algorithm can respond sufficiently quickly to the periodic variations caused by the vessel's motion. In comparison, a tracking time of one to two seconds, as specified by some integrated charge controllers, may result in significant energy losses during rapidly varying operating conditions.
 
-The design target follows those periods: the operating point should be back at the MPP in under 1~s, and typically in under 0.5~s. A tracker that needs one or two seconds, which is what some integrated charge controllers specify, gives away energy on every wave.
 
-\section{Choices for Algorithm, Topology, and Charging}
-\label{sec:choices}
+\section{State of the art}
+\label{sec:soa}
 
-\subsection{Tracking method}
+    \subsection{MPPT algorithm}
 
-Partial shading can create extra local peaks~\cite{Comparison_PV_Array_MPPT_Techniques_2007}, but the dominant disturbance on this boat is a fast, nearly uniform change of irradiance. Four families were compared against that disturbance.
+    Four methods were compared for this charger: constant voltage, perturb and observe, incremental conductance, and a look-up table. The comparison uses the three quantities that matter on SG01: how quickly the operating point returns to the MPP after a change of irradiance or temperature, how close it stays once it is there, and how much computation each update requires.
 
-Constant-voltage control holds the panel near a fixed fraction of the open-circuit voltage, often 71--78\%~\cite{Comparison_PV_Array_MPPT_Techniques_2007}. It is cheap and wrong whenever temperature or irradiance moves that fraction, and the open-circuit measurement interrupts production.
+    \textbf{Constant voltage:}
+    The converter is controlled to hold the panel at one chosen voltage. In the simplest form that voltage is a fixed number. A widely used variant sets it to a fraction of the open-circuit voltage, typically 71-78\%, or to a fraction of the short-circuit current~\cite{Comparison_PV_Array_MPPT_Techniques_2007,MPPT_Comparison_techniques}. The reference is measured by opening or shorting the panel for one sample, or by reading a dummy cell so that the main string keeps producing power~\cite{Comparison_PV_Array_MPPT_Techniques_2007}. The controller then regulates the panel to that reference. No power calculation is required. Accuracy depends on the assumption that the MPP stays at a fixed fraction of $V_{\mathrm{oc}}$ or $I_{\mathrm{sc}}$. Irradiance and temperature both move this fraction~\cite{Comparative_study_MPPT_algorithms_2000}, so the panel settles offset from the true peak, and every open-circuit sample is an interval with no delivered power.
 
-P\&O perturbs the panel voltage and keeps the direction that raises power~\cite{chermitti2012improvement,Look-Up-Table_VS_PeO}. It is the method used in most commercial chargers. It oscillates around the MPP, and a step that is too coarse wastes power while a step that is too fine loses the point when the curve moves. A fast irradiance change can also be mistaken for the effect of the last perturbation, so the tracker walks away from the MPP~\cite{4112312,Comparison_PV_Array_MPPT_Techniques_2007}.
+    \textbf{Perturb and observe:}
+    P\&O applies a small voltage step and compares the panel power before and after it~\cite{chermitti2012improvement,Look-Up-Table_VS_PeO}. The next step follows the signs of the two changes:
+    \begin{equation}
+    \begin{aligned}
+    \Delta P > 0 &\Rightarrow \text{repeat the sign of }\Delta V,\\
+    \Delta P < 0 &\Rightarrow \text{reverse the sign of }\Delta V.
+    \end{aligned}
+    \label{eq:po}
+    \end{equation}
+    A step that raises the power moved the operating point toward the peak, so it is repeated. A step that lowers the power moved the point away from the peak, so the direction is reversed. Two samples and a comparison are enough, which is why the method is used in most commercial chargers. At the peak the same rule has no stop condition: the next step leaves the MPP, power falls, and the following step returns, so the panel oscillates around the peak. A smaller step shrinks that oscillation and needs more updates to follow a given change~\cite{MPPT_Comparison_techniques,Comparison_PV_Array_MPPT_Techniques_2007}. A rise in irradiance between the two samples can also be read as a successful step, so \eqref{eq:po} walks away from the MPP~\cite{4112312}. 
 
-Incremental conductance uses $dP/dV = 0$ at the MPP, rewritten as $dI/dV = -I/V$~\cite{Intelligent_PV_Module_2006,Comparison_PV_Array_MPPT_Techniques_2007}. It can stop the steady-state dither and it behaves more cleanly when irradiance changes quickly~\cite{bendib_survey_mppt_methods}. The cost is extra tuning and a division on every sample.
+    \textbf{Incremental conductance:}
+    On the power-voltage curve the slope is positive on the left of the MPP, zero at the MPP, and negative on the right. Expanding the derivative gives a test that uses only current and voltage~\cite{Intelligent_PV_Module_2006,Comparison_PV_Array_MPPT_Techniques_2007}:
+    \begin{equation}
+    \frac{dP}{dV}=I+V\frac{dI}{dV}.
+    \label{eq:inc}
+    \end{equation}
+    The operating point is located by comparing the incremental conductance $dI/dV$ with the conductance $I/V$:
+    \begin{equation}
+    \begin{aligned}
+    \frac{dI}{dV} &= -\frac{I}{V} && \text{at the MPP},\\
+    \frac{dI}{dV} &> -\frac{I}{V} && \text{left of the MPP},\\
+    \frac{dI}{dV} &< -\frac{I}{V} && \text{right of the MPP}.
+    \end{aligned}
+    \label{eq:inccond}
+    \end{equation}
+    The voltage is increased on the left of the peak, decreased on the right, and held when the two conductances match. The hold condition and variable step size based on the slope values, remove the steady oscillation of P\&O. A sudden change of irradiance is also less likely to be taken as a step in the wrong direction, because the decision uses the local slope rather than the sign of $\Delta P$ alone~\cite{bendib_survey_mppt_methods}. Each update needs a significant computational power. Also, its complexity makes it harder to tune.
 
-A look-up table can apply a duty cycle in one cycle, but the table does not follow cell aging, and accuracy costs memory.
+    \textbf{Look-up table:}
+    A table stores the duty cycle that places the panel at the MPP for each pair of measured voltage and current~\cite{MPPT_Comparison_techniques}. The entries come from a panel model or from a laboratory sweep. At run time the controller selects the nearest entry and applies that duty cycle in one cycle. Extra axes, such as temperature or irradiance, raise the accuracy and also the memory and the maintenance. Aging, a repaired string, or a different number of series cells leaves the stored duty cycles wrong until the table is rebuilt~\cite{Look-Up-Table_VS_PeO}.
 
-P\&O was implemented. Incremental conductance is the natural next algorithm on the same hardware; it was left out so that sensing, protection, and the charge state machine could be validated with a tracker whose failure modes are well known. The oscillation and divergence limits are handled by a small duty-cycle step, a power deadband, and a periodic voltage sweep that rejects local peaks.
+    The devolved prototype uses a classic P\&O algorithm. It was chosen because of its high performance and low complexity, making it ideal for rapid prototyping. The incremental conductance approach promises better performance and is therefore the strongest candidate for future implementations. 
 
-\subsection{Why a synchronous boost stage}
+    \subsection{Battery charge profile}
+    \label{sec:cccv}
 
-Galvanic isolation is unnecessary between the deck panels and the low-voltage battery, and a transformer would add loss, volume, and cost~\cite{Review_Isolated_Non_isolated_DC_DC_Converters_MVDC_2021}. Among non-isolated stages, a buck converter cannot be used: even a 40-cell string has $V_{\mathrm{oc}} = 29~\mathrm{V}$, below the 30~V battery floor. Buck--boost, Cuk, SEPIC, and ZETA converters would tolerate a future change of string length, at the price of more magnetics and a lower efficiency~\cite{Comparative_Analysis_Non_Isolated_DC_DC_Converters_Solar_PV_2021,Non_Isolated_DC_DC_Converters_MPPT_Controller_2021}. ZETA would be the fallback if step-up and step-down were both required, because the output is not inverted and the output current ripple is low. They are not required here.
+    The stage keeps the panel at the MPP and charges a lithium-ion battery~\cite{Charging_Algorithms_Lithium_Ion_Batteries_Overview_2012}. The method is constant-current constant-voltage (CC--CV), as in most commercial lithium chargers (Fig.~\ref{fig:cccv})~\cite{Charging_Algorithms_Nickel_Lithium_Battery_2011,Review_Different_Charging_Techniques_Lithium_Polymer_Battery_2015}. Below the voltage limit the battery charges at constant current. Since the source is a solar panel with lower current than the maximum battery current, in this stage the MPPT algorithm is employed to provide the maximum current possible to the battery, with a configured maximum. If the output current reaches the maximum battery charging current, a proportional controller is used to maintain this current and the MPPT algorithm steps aside. When the battery voltage reaches the limit, the CC/MPPT algorithm is switched off and enters the constant voltage (CV) stage. In this stage a proportional controller holds the output voltage and lets the current fall.     The charge ends once the current drops below a cutoff, which is what stops the pack from overcharging.
 
-The ideal boost relation is
-\begin{equation}
-    V_{\mathrm{out}} = \frac{V_{\mathrm{in}}}{1-D}, \qquad I_{\mathrm{in}} = \frac{I_{\mathrm{out}}}{1-D}.
-    \label{eq:boost}
-\end{equation}
-With inductor resistance, MOSFET $R_{\mathrm{DS(on)}}$, and a diode drop $V_d$, the output falls by approximately $V_d$ plus resistive terms in the numerator. At this voltage a Schottky drop of 0.3--0.7~V is a large fraction of the loss budget. Replacing the diode with a second MOSFET (Fig.~\ref{fig:sync}) removes that term and leaves conduction loss $I^2 R_{\mathrm{DS(on)}}$~\cite{lee_high-efficiency_2019}. Literature efficiencies for a well-designed boost stage reach the high nineties~\cite{Review_Isolated_Non_isolated_DC_DC_Converter_PV_Application_2018}; the specification for this board was only $>90\%$, with a measured target well above that.
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=0.8\linewidth]{Images/Background/CC-CV.png}
+        \caption{CC--CV charge curve~\cite{Charging_Algorithms_Lithium_Ion_Batteries_Overview_2012}.}
+        \label{fig:cccv}
+    \end{figure}
 
-\begin{figure}[!t]
-    \centering
-    \includegraphics[width=0.72\linewidth]{Images/Implementation/Conventional-synchronous-boost-converter.png}
-    \caption{Synchronous boost stage. The diode of the classical boost is replaced by a controlled MOSFET~\cite{lee_high-efficiency_2019}.}
-    \label{fig:sync}
-\end{figure}
+    Faster lithium profiles shorten the charge at the same current, at the cost of extra switching and complexity~\cite{Charging_Algorithms_Lithium_Ion_Batteries_Overview_2012,Review_Different_Charging_Techniques_Lithium_Polymer_Battery_2015}. CC--CV is used here for its robustness and simplicity. The laboratory and outdoor charges later in the paper are the measured form of this curve.
 
-\subsection{Battery charge profile}
 
-The panel current is below half of the maximum charge current of either TSB pack, and the pack is not expected to see more than about 20 cycles per year. Multi-stage lithium profiles that try to shorten charge time are therefore unnecessary~\cite{Charging_Algorithms_Lithium_Ion_Batteries_Overview_2012,Review_Different_Charging_Techniques_Lithium_Polymer_Battery_2015}. CC--CV is used. While the battery voltage is below the limit, the tracker extracts maximum panel power, with a current limit above it. At the voltage limit the tracker is replaced by a proportional loop that holds the battery voltage and lets the current fall. Charging stops below a cutoff current.
+    \subsection{DC-DC converter}
 
-\subsection{What the catalogue does not provide}
+    The algorithm sets the panel operating point through a DC--DC converter. Galvanic isolation is not required, so a non-isolated topology is used: a transformer would add size and loss without a function this charger needs.
 
-Integrated controllers such as the BQ24650, MAX20801, and SPV1040 do not support a 48~V lithium rail at the required current. The LT8491 does, and it already implements P\&O and CC--CV, but its tracking time is 1--2~s and its interface is I\textsuperscript{2}C rather than the vessel CAN bus. Complete chargers were no closer. The Genasun GVB-8-Li-CV already used by TSB is efficient (typically 96--99\%) and tracks at about 15~Hz, but it has no communication, no adjustable set-points, and costs about 240~\texteuro{}. Victron's SmartSolar MPPT 100/20 is a buck converter and wants a higher panel voltage than these short strings provide. An open design (Reboost) uses a GaN boost stage but depends on costly or discontinued parts. None of the reviewed units combine a boost stage, a sub-second tracker, configurable CC--CV limits, and the team's CAN protocol at a cost that can be repeated four times on one boat.
+    The three fundamental non-isolated topologies are the buck, boost, and buck-boost converters. Their main difference is their ability to increase or decrease the input voltage. The requirements of this project specify a battery voltage range of $30$--$50.4~\mathrm{V}$ and a maximum solar panel voltage of $29~\mathrm{V}$ (Table~\ref{tab:pv}). Therefore, a boost converter is required to increase the input voltage from the solar panel to the voltage required by the battery.
+
+    A classical boost converter stores energy in one inductor while the transistor is on and releases it to the battery through a diode while the transistor is off. Considering ideal devices, the conversion formula between the input and the output is given by:
+    \begin{equation}
+        V_{\mathrm{out}} = \frac{V_{\mathrm{in}}}{1-D}, \qquad I_{\mathrm{in}} = \frac{I_{\mathrm{out}}}{1-D}.
+        \label{eq:boost}
+    \end{equation}
+
+    Considering the diode voltage drop, the transistor drain-source resistance and the inductor resistance, the equation is rewrite as follows:   
+    \begin{equation}
+        V_{\mathrm{out}} = \frac{V_{\mathrm{in}} - D\, R_{\mathrm{DS(on)}} I_{\mathrm{DS}} - R_L I_L}{1-D} - V_d.
+        \label{eq:vout}
+    \end{equation}
+
+    The resistive terms reduce the delivered voltage. The diode voltage drop is typically 0.3-0.7~V. Considering the MPP of 35 cells ($V_{mpp}=21.88~V$, $I_{mpp}=6.05~A$) and the battery at 30~V, ideally the output current is 4.41~A. Considering a diode voltage drop of 0.5~V, the losses caused by the diode are 2.21~W (1.67 \% of the converted power). To reduce these losses synchronous boost converter was employed.
+
+    The synchronous boost converter (Fig.~\ref{fig:sync}), replaces the diode with a transistor~\cite{lee_high-efficiency_2019}. The term $V_d$ in equation \ref{eq:vout} becomes the voltage drop of the transistor. Using the transistor chosen further (section~\ref{sec:impl}), with a $R_{\mathrm{DS(on)}} = 5.2~\mathrm{m}\Omega$ and the same current, the losses are only 0.1~W (0.07\% of the converted power). The inductor equivalent series resistance (ESR) and MOSFET on-resistance remain in \eqref{eq:vout}. These components need to be sized properly in order to reduce the converter losses.
+
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=0.72\linewidth]{Images/Implementation/Conventional-synchronous-boost-converter.png}
+        \caption{Synchronous boost stage. The diode of the classical boost is replaced by a controlled MOSFET~\cite{lee_high-efficiency_2019}.}
+        \label{fig:sync}
+    \end{figure}
+
+
+
 
 \section{Implementation}
 \label{sec:impl}
 
-\subsection{Power stage}
+    \subsection{Power stage}
+    The synchronous boost converter is designed to step~up a string of 20 to 40 cells, up to a 12-series lithium-ion battery, 30 to 50.4~V. The switching frequency was defined as 100~kHz. This frequency is reasonable compromise between low ripple voltage and current and high switching losses. 
+    Since the battery rail is connected to the vessel electronics, the output voltage ripple goal was defined as $\Delta V_{\mathrm{out}} = 0.1~\mathrm{V}$. The input voltage ripple must be low too, so that the readings are not affected.
 
-The switching frequency is 100~kHz: high enough to shrink the inductor, low enough that hard-switched GaN loss stays acceptable. Output voltage ripple is limited to $0.1~\mathrm{V}$ so that electronics sharing the battery rail are not disturbed, and input ripple to $0.5~\mathrm{V}$ so that the voltage sample used by P\&O is meaningful.
+    The components of the converter are chosen to meet the requirements, while also ensuring safety and low losses.
 
-Continuous conduction sets a floor on inductance. With ripple factor $r = \Delta I_L / I_{L,\mathrm{avg}}$, the inductance that satisfies the ripple at a given duty cycle is largest at $D = 1/3$:
-\begin{equation}
-    L = \frac{4}{27}\,\frac{V_{\mathrm{out}}}{I_{\mathrm{out}}\, r\, f_{\mathrm{sw}}}.
-    \label{eq:L}
-\end{equation}
-At $50.4~\mathrm{V}$, $10~\mathrm{A}$, and $r = 2$ (the continuous-conduction boundary) this is only $3.7~\mu\mathrm{H}$. A ripple factor of 0.4 raises it to $19~\mu\mathrm{H}$. The built inductor is $68~\mu\mathrm{H}$ (Würth 74437529203680), which corresponds to $r \approx 0.11$. It is rated 16~A, with $10.3~\mathrm{m}\Omega$ DC resistance. Saturation is specified at 7.2~A for a 10\% drop and 10.6~A for a 30\% drop. The worst-case sum of string short-circuit current and half the ripple exceeds the 10\% figure, but that corner (open-circuit voltage and short-circuit current at once) does not occur, and the extra inductance keeps the ripple acceptable after a partial drop.
+    \subsubsection{Inductor}
+    The inductor size directly influences the inductor ripple current, electromagnetic noise and AC losses. All of these factors are reduced with higher inductance. However, lower inductances can be more efficient by reducing the equivalent series resistance (ESR). Also, the converter can operate in two modes, continuous conduction mode (CCM) and discontinuous conduction mode (DCM). At DCM the inductor current reaches zero which increases the converter losses and noise. Therefore, the inductor must be sized to operate at CCM .
 
-The same corner-frequency argument gives $250~\mu\mathrm{F}$ on the output for $0.1~\mathrm{V}$ ripple at 10~A and $D = 0.5$, and $100~\mu\mathrm{F}$ on the input for $0.5~\mathrm{V}$. LTspice comparisons of capacitor banks (Section~\ref{sec:sim}) selected two $56~\mu\mathrm{F}$, 63~V electrolytics at the input and five $100~\mu\mathrm{F}$, 100~V electrolytics at the output, plus $1~\mu\mathrm{F}$ and $100~\mathrm{nF}$ ceramics for the switching edges. Parallel parts cut ESR and share ripple current.
+    While the low-side transistor is on, the inductor voltage is $V_{\mathrm{in}}$ for $D/f_{\mathrm{sw}}$ seconds, so:
+    \begin{equation}
+         V_L = L \cdot \frac{di_L}{dt} \Leftrightarrow \Delta I_L = \frac{V_{\mathrm{in}} D}{L\, f_{\mathrm{sw}}}.
+        \label{eq:dIL}
+    \end{equation}
+    The ripple is written as a fraction of the average inductor current, $r = \Delta I_L / I_{L,\mathrm{avg}}$, with $I_{L,\mathrm{avg}} = I_{\mathrm{out}}/(1-D)$ from \eqref{eq:boost}. Replacing \eqref{eq:dIL} and $V_{\mathrm{in}} = V_{\mathrm{out}}(1-D)$ gives the inductance that meets a chosen ripple:
+    \begin{equation}
+        L = \frac{V_{\mathrm{out}}(1-D)^{2} D}{I_{\mathrm{out}}\, r\, f_{\mathrm{sw}}}.
+        \label{eq:L}
+    \end{equation}
+    The duty-cycle factor $(1-D)^{2}D$ is largest at $D = 1/3$, where it equals $4/27$. The inductance that still meets the ripple at that worst duty cycle is:
+    \begin{equation}
+        L_{\min} = \frac{4}{27}\,\frac{V_{\mathrm{out}}}{I_{\mathrm{out}}\, r\, f_{\mathrm{sw}}}.
+        \label{eq:Lmin}
+    \end{equation}
 
-At 100~kHz and roughly 100~W, GaN is the device that minimizes $R_{\mathrm{DS(on)}}$ and switching energy~\cite{talat2024igbt}. The EPC23102 integrates the half-bridge and its gate driver: $5.2~\mathrm{m}\Omega$, 100~V, 35~A, in a package that can be cooled through the board. Shoot-through protection is internal, but the firmware still inserts dead time. With the 80~MHz timer, a dead-time code of 3 measures 32~ns (rise 19~ns, fall 22~ns). Codes 2 and 3 differ by about 0.01~percentage points of efficiency in simulation, so the margin is kept. Complementary 100~kHz PWM from an 80~MHz clock has 0.125\% duty-cycle steps. Version 1.1 added Schottky diodes across the GaN devices; with only 0.375\% of the period spent in dead time their measured benefit was negligible, and they were left off the final bill of materials.
+    CCM ends when the current valley touches zero, which is $r = 2$. At the maximum battery voltage, $V_{\mathrm{out}} = 50.4~\mathrm{V}$, and at the 10~A (Max($I_{pv}$)+Margin), \eqref{eq:Lmin} then gives
+    \begin{equation}
+        L_{\min}(r=2) = \frac{4}{27}\cdot\frac{50.4}{10\cdot 2\cdot 100\times 10^{3}} = 3.73~\mu\mathrm{H}.
+    \end{equation}
+    That is the CCM/DCM boundary. An inductor of $3.73~\mu\mathrm{H}$ runs at the largest ripple while in CCM, with high core loss, device stress, and magnetic interference. The same expression at a ripple factor of 0.4, a peak-to-peak ripple of 40\% of the average current, gives a reasonable design reference of:
+    \begin{equation}
+        L_{\min}(r=0.4) = 18.7~\mu\mathrm{H}.
+    \end{equation}
+    
+    After the optimizations in Section~\ref{sec:sim}, the inductance of $68~\mu\mathrm{H}$ (Würth 74437529203680) was chosen. This results in a low ripple factor of $r \approx 0.11$.
 
-\subsection{Sensing and processor}
+    The inductor also has to carry the current without overheating or saturating. The rated current must higher than $6.37~\mathrm{A}$ (short-circuit current of the solar panels) with margin, so the specification was set at 10~A. The selected inductor is rated 16~A, with a DC resistance of $10.3~\mathrm{m}\Omega$ and a self-resonant frequency of 5.7~MHz. Saturation is specified to 7.2~A for a 10\% inductance drop and at 10.6~A for a 30\% drop. 
+    
+    The saturation current must be higher than the solar panel short circuit current plus half the ripple current. Considering the open circuit voltage and maximum duty cycle of 100\%, the minimum saturation current is calculated as follows: 
+    \begin{equation}
+        \Delta I_L = \frac{29}{68\times 10^{-6}\cdot 100\times 10^{3}} = 4.26~\mathrm{A},
+    \end{equation}
+    \begin{equation}
+        I_{\mathrm{pk}} = 6.37 + \frac{4.26}{2} = 8.5~\mathrm{A},
+    \end{equation}
 
-The microcontroller is an STM32L476 (Cortex-M4F, 80~MHz, 1~MB flash, 128~kB RAM). A faster clock or a 16-bit ADC would improve duty-cycle and measurement resolution; this part was already standard in TSB, which shortened bring-up. It provides the CAN controller, complementary PWM with dead time, and three 12-bit ADCs. An independent watchdog resets the core if the control loop stops kicking it. The ADC is scanned and polled; each P\&O update averages the samples gathered since the previous update, about ten samples at 1~kHz.
+    A string cannot be at open-circuit voltage and short-circuit current at the same time, so 8.5~A is an overdimensioned value and not a real operating point. The inductor chosen as slightly lower specification, however if the inductance has already fallen by 30\%, the remaining $48~\mu\mathrm{H}$ is still above the $18.7~\mu\mathrm{H}$ minimum from \eqref{eq:Lmin}. 
 
-Panel and battery currents use INA253A2 shunt amplifiers with PWM rejection, at $0.2~\mathrm{V/A}$. On a 3.0~V, 12-bit reference the current quantum is $3.7~\mathrm{mA}$. Voltages use dividers of $10/210$, a quantum of $15~\mathrm{mV}$. Board and transistor temperature use NTC thermistors and the usual $B$-parameter equation; the transistor sensor also drives a comparator that turns the half-bridge off above a hardware threshold. A footprint for a TSL2591 light sensor is on the board but was not populated: the device saturates outdoors and does not match the solar spectrum. A better irradiance input is a small cell of the same type, read as a temperature-corrected short-circuit current.
+    \subsubsection{Capacitors}
+    During the low-side switch on-time, the output capacitor supplies the battery current. Assuming the input current is the fixed design parameter, the capacitance required to limit the output and input voltage ripples to $\Delta V_{\mathrm{out}}$ and $\Delta V_{\mathrm{in}}$, respectively, are given by:
 
-\subsection{Firmware}
+    \begin{equation}
+        C_{\mathrm{out}} = \frac{I_{\mathrm{in}}(1-D)D}{\Delta V_{\mathrm{out}}\, f_{\mathrm{sw}}},
+        \qquad
+        C_{\mathrm{in}} = \frac{I_{\mathrm{in}} D}{\Delta V_{\mathrm{in}}\, f_{\mathrm{sw}}}.
+        \label{eq:C}
+    \end{equation}
+    For a fixed $I_{\mathrm{in}}$, the product $D(1-D)$ reaches its maximum at $D=0.5$. Substituting $I_{\mathrm{in}} = 10~\mathrm{A}$, $\Delta V_{\mathrm{out}} = 0.1~\mathrm{V}$, and $f_{\mathrm{sw}} = 100~\mathrm{kHz}$ into Equation~\ref{eq:C} yields a minimum output capacitance of $C_{\mathrm{out}} = 250~\mu\mathrm{F}$. Using the same operating point in the input capacitance expression, with $\Delta V_{\mathrm{in}} = 0.5~\mathrm{V}$, gives $C_{\mathrm{in}} = 100~\mu\mathrm{F}$. These values represent the minimum capacitance required to satisfy the specified voltage-ripple limits. The selected capacitors must also meet the voltage-rating and RMS-current requirements.
 
-A 1~ms tick schedules two main jobs. The measurement job converts ADC codes, applies the calibration described in Section~\ref{sec:results}, and latches a fault if a limit is crossed. Faults hold the converter off for 5~s and are then rechecked, so a noise spike does not become a permanent shutdown. The power job updates the state machine of Fig.~\ref{fig:sm} and writes the duty cycle.
+    The input capacitors must withstand the maximum open-circuit voltage of a 40-cell solar panel string, $29~\mathrm{V}$, plus the input voltage ripple of $0.5~\mathrm{V}$, resulting in a minimum voltage rating of $29.5~\mathrm{V}$. Similarly, the output capacitors must withstand the maximum battery voltage of $50.4~\mathrm{V}$ plus the output voltage ripple of $0.1~\mathrm{V}$, giving a minimum voltage rating of $50.5~\mathrm{V}$.
 
-\begin{figure}[!t]
-    \centering
-    \includegraphics[width=\linewidth,height=0.30\textheight,keepaspectratio]{Images/Implementation/MPPT_state_machine.drawio.pdf}
-    \caption{Charge state machine. Tracking runs only while both the string and the battery are present and inside their limits.}
-    \label{fig:sm}
-\end{figure}
+    The RMS value of the triangular inductor ripple current is given by $(\Delta I_L/2)/\sqrt{3}$. For $\Delta I_L = 4.26~\mathrm{A}$, this results in an input current ripple of $1.23~\mathrm{A}$. As for the output, equation~\ref{eq:icout_ripple} is used calculate the ripple current based on input voltage, inductor ripple and duty cycle (0 maximizes the equation).
+    \begin{equation}
+        I_{ripple_{out}} > \sqrt{\frac{I_{\mathrm{in}}^{2}}{4} + \frac{\Delta I_L^{2}}{12}(1-D)^2}  
+        \label{eq:icout_ripple}
+    \end{equation}
+        
+    \begin{equation}
+        I_{ripple_{out}} = \sqrt{\frac{6.37^{2}}{4} + \frac{4.26^{2}}{12}} = 3.42~\mathrm{A}.
+    \end{equation}
 
-Idle states cover a start-up delay, a disabled bridge, a missing panel, a missing battery, and a finished charge. In the last two, the output is held at the maximum battery voltage so that reconnecting the pack does not demand a separate precharge path. Charge states are a voltage sweep (to step over local maxima), the P\&O loop, a current-limit loop, and a voltage-limit loop. Sweep steps are separated by a short delay so that each sample is taken after the LC transient.
+    A single electrolytic capacitor typically cannot provide 3.4~A of ripple current with a few hundred microfarads, therefore, several capacitors were connected in parallel, which also increase efficiency by reducing ESR.
 
-Set-points live in internal flash, written by an EEPROM emulation library with wear leveling across ten pages. A full configuration is a handful of 16-bit values, so endurance is not a practical limit. The linker script keeps program code out of that region.
+    Two $56~\mu\mathrm{F}$ were chosen for the input capacitance. Each is rated for 2.4~A, 4.8~A together, and the ESR is $22~\mathrm{m}\Omega$. This capacitor was chosen mainly due to its low ESR. For the output, five $100~\mu\mathrm{F}$ electrolytic capacitors, each rated for 100~V and 0.8~A. Together, create a $500~\mu\mathrm{F}$ capacitor bank with 4.0~A rating.
 
-Telemetry uses the team CAN 2.0A layout: 5~bits of device identifier and 6~bits of message identifier, with the top three message bits selecting which of up to eight trackers is speaking. Each tracker publishes battery-side, panel-side, and auxiliary frames. A serial framing format (start byte, identifiers, length, payload, checksum, end byte) carries the same measurements plus the configuration records, so a laptop can set current and voltage limits, P\&O parameters, and CAN identifiers without a CAN adapter. A Qt application plots the operating point against a family of power--voltage curves and shows the CC--CV trajectory.
+    Additionally, several ceramic capacitors were added to filter the high frequency switching noise.
+
+    \subsubsection{Transistors}
+    The transistor is one of the main components of the power converter. Its choice will directly influence the efficiency of the converter. The MOSFETS and GaN transistors are the two main technologies that fit both the frequency and power requirements (150~W and 100~kHz). However, the GaN transistor is the leading edge technologies, standing out due to its fast switching, low drain-source resistance and high power density~\cite{talat2024igbt}.
+
+    The chosen component was the EPC23102, which is a GaN device, that integrates two transistors and its gate drivers, with $5.2~\mathrm{m}\Omega$ internal resistance, 100~V, 35~A, in a small package. 
+
+    \subsection{Sensing and processor}
+    The microcontroller is responsible for controlling the power stage, sensor acquisition, and communication. The chosen microcontroller is an STM32L476 (Cortex-M4, 80~MHz, 1~MB flash, 128~kB RAM), which provides CAN, UART and I2C communication, sixteen 12-bit ADCs and complementary PWM signals. It was chosen because it was already in use in TSB, which limited cost and development risk. A faster clock would increase the duty-cycle precision, and a 16-bit ADC would increase the sensors' precision.
+
+    Several safety mechanisms are implemented in the firmware to ensure reliable and safe operation. The most basic protection consists of detecting overvoltage, overcurrent, and overtemperature conditions, which trigger the shutdown of the DC-DC converter for at least $5~\mathrm{s}$. To prevent shoot-through in the power stage, a dead time of $32~\mathrm{ns}$ is inserted between the complementary PWM signals. Additionally, an independent watchdog timer with a timeout of $1~\mathrm{s}$ resets the microcontroller if it is not refreshed within the specified interval, helping to recover from software faults such as infinite loops or execution failures.
+
+    The solar panel and battery voltages and currents are measured and used by the MPPT and charging algorithms. Current sensing is implemented using the INA253A2, an integrated current-sensing device that combines a shunt resistor, a current-sensing amplifier, and a PWM rejection mechanism. The device measures the voltage drop across the integrated shunt resistor and produces an output voltage proportional to the measured current, with a sensitivity of $0.2~\mathrm{V/A}$. This output is then sampled by the microcontroller's ADC.
+
+    Voltage measurements are performed using resistive voltage dividers, which scale the measured voltages to levels compatible with the microcontroller's ADC input range. Using a 3~V voltage reference, the theoretical voltage and current measurement precision is 3.66~mA and 15.38~mV, respectively.
+
+    Additionally, the board is capable of measuring the temperature of the transistors, ambient temperature, and solar panel temperature using NTC thermistor. 
+
+    \subsection{Firmware}
+
+    A 1~ms tick runs four tasks (Fig.~\ref{fig:Firmware flowchart}): ADC task every 1~ms, the MPPT state machine every 20~ms, CAN task every 100~ms, and serial task every 1~s. The ADC task scales the input reading to the correct units and detects faults. If a fault is detected the Charging state machine is blocked for at least 5 seconds, until the fault is cleared. The MPPT tasks does an average of the last samples and runs the charging state machine. The state machine (Fig.~\ref{fig:sm}) is responsible to decide in which state of the charging curve is in and update the duty cycle accordingly. The ruining period of this task can be changed. Initially 10~ms were used (as in simulations), but it was increased to provide more samples between each step.
+
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=0.75\linewidth]{Images/Implementation/Block diagram-Firmware_flowchart.drawio.pdf}
+        \caption{Firmware flowchart.}
+        \label{fig:Firmware flowchart}
+    \end{figure}
+
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=\linewidth,height=0.18\textheight,keepaspectratio]{Images/Implementation/MPPT_state_machine.drawio.pdf}
+        \caption{Charge state machine. Tracking runs only while both the string and the battery are present and inside their limits.}
+        \label{fig:sm}
+    \end{figure}
+
+    The states are divided into charging and non-charging. The non charging contains the delay, disable, No source, No load and Charge finished. The delay lets the output capacitors settle, so that the no load state is no misinterpret. The disable and no source sates just keep the DC-DC turn off. The No load and Charge finished states keep the output voltage at the maximum battery voltage to prevent inrush current when a device is connected. The charge states are Sweep delay, sweep, MPPT algorithm, constant current (CC) and constant voltage (CV). The MPPT algorithm, CC and CV states are responsible for the charging curve, while the sweep and sweep delay are used only one time to find the global MPP. The sweep is optional and is used to ignore local MPPs caused by shading.
+
+    The CAN and serial tasks provide two different communication options. The CAN is a widely used protocol in the automotive sector to let all components communicate with in the same bus. It is already in use in TSB vessels and therefore it was implemented. Additionally, the serial protocol was implemented to simplify the configuration process through a Graphical User Interface (GUI). 
+
+    The GUI was implemented using Qt framework. It provides an accessible user interface to analyze the acquired data and configure the board parameters. The configuration is stored in internal flash by an EEPROM-emulation library and upload on reset. 
 
 \section{Simulation}
 \label{sec:sim}
 
-\subsection{Converter}
+    \subsection{Converter}
 
-The string was represented in LTspice by a single-diode five-parameter model~\cite{LOBRANO2013894}, with parameters fitted to $V_{\mathrm{oc}}$, $I_{\mathrm{sc}}$, and the MPP. The battery was a voltage source in series with its resistance. Manufacturer switch and passive models were used, including the measured rise, fall, and dead times.
+    The solar panel was modeled in LTspice using a five parameter model (1M5=P)~\cite{LOBRANO2013894}, with parameters fitted to $V_{\mathrm{oc}}$, $I_{\mathrm{sc}}$, and the MPP. The battery was a voltage source in series with its resistance (battery internal resistance). Manufacturer models of transistors, capacitors and inductors were used, including the measured rise, fall, and dead times. The converter was run in steady state at a fixed duty cycle, so each run is one operating point rather than a tracking transient.
 
-Five points along a CC--CV trajectory of a 35-cell string were simulated. Capacitor banks all lost well under 1\% on the high-power points; the chosen pair (two $56~\mu\mathrm{F}$ at the input, five $100~\mu\mathrm{F}$ at the output) was the best among parts that were actually in stock. Inductors from $22~\mu\mathrm{H}$ to $100~\mu\mathrm{H}$ were then compared with that capacitor set. Smaller cores waste less DC resistance but produce several amperes of current ripple; $100~\mu\mathrm{H}$ increases loss. At $68~\mu\mathrm{H}$ the inductor ripple stays near 1--2~A (Table~\ref{tab:ripple}) and the loss on the four high-power points is 0.58--0.75\%. The fifth point, deep in the constant-voltage tail, loses 3.5\% because the processed power is small. Both voltage ripples are inside the $0.1~\mathrm{V}$ and $0.5~\mathrm{V}$ specifications. A battery-voltage sweep shows the expected trend: efficiency falls as the conversion ratio rises.
+    Every comparison uses the same five points of the CC-CV curve of a 35-cell string at its MPP (Fig.~\ref{fig:cc-cv points}). Points 1 to 3 lie on the constant-current interval, where the battery voltage rises from its minimum towards the limit. Here the current is set by the string, not by the battery, because the pack accepts more than the string can supply (Section~\ref{sec:cccv}). Point 4 and 5 is in the constant-voltage stage, where the voltage is held and the current drops, and with it the converted power too. Points 1 to 3 therefore test the converter at full power across its conversion ratio, and point 4 and 5 tests it at light load.
 
-\begin{table}[!t]
-    \centering
-    \caption{LTspice ripple and loss with $L = 68~\mu\mathrm{H}$, two $56~\mu\mathrm{F}$ input capacitors, and five $100~\mu\mathrm{F}$ output capacitors.}
-    \label{tab:ripple}
-    \footnotesize
-    \setlength{\tabcolsep}{3.2pt}
-    \begin{tabular}{ccccc}
-        \toprule
-        Point & $\Delta V_{\mathrm{bat}}$ & $\Delta V_{\mathrm{pv}}$ & $\Delta I_L$ & Loss \\
-        & (V) & (V) & (A) & (\%) \\
-        \midrule
-        1 & 0.041 & 0.015 & 0.98 & 0.58 \\
-        2 & 0.049 & 0.021 & 1.71 & 0.68 \\
-        3 & 0.053 & 0.024 & 1.96 & 0.75 \\
-        4 & 0.041 & 0.022 & 2.01 & 0.67 \\
-        5 & 0.030 & 0.022 & 1.96 & 3.46 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=\linewidth]{Images/Implementation/cc_cv_points_right.pdf}
+        \caption{CC-CV charge of a 35-cell string and the five operating points used in the converter simulations.}
+        \label{fig:cc-cv points}
+    \end{figure}
 
-LTspice does not attribute the loss. An analytical model sums transistor conduction, switching and $C_{\mathrm{oss}}$ energy, dead-time reverse conduction, inductor DC loss plus AC loss from the manufacturer's REDEXPERT tool, capacitor ESR loss, gate-drive charge, shunt loss, and the 3.3~V and 5~V auxiliary rails:
-\begin{align}
-    P_{\mathrm{sw}} &= \tfrac{1}{2} V_{\mathrm{out}} I_{L} (t_r+t_f) f_{\mathrm{sw}} + \tfrac{1}{2} C_{\mathrm{oss}} V_{\mathrm{out}}^{2} f_{\mathrm{sw}}, \\
-    P_{\mathrm{dead}} &= 2\, V_f I_{L}\, t_{\mathrm{dead}}\, f_{\mathrm{sw}}.
-\end{align}
-At the second operating point the model predicts $1.98~\mathrm{W}$, or 98.5\% efficiency (Fig.~\ref{fig:loss}). Inductor copper is the largest term. GaN conduction is about 24\% of the total and the capacitors about 24\%. Auxiliary electronics are comparable to the magnetics, which is why end-to-end efficiency and power-stage efficiency must be reported separately. Board copper is absent from the model and shows up later as a gap versus the bench.
+    The capacitor bank was chosen first, with the inductor held at $68~\mu\mathrm{H}$. Four capacitor banks were compared. The lowest loss used two $56~\mu\mathrm{F}$ inputs and three $220~\mu\mathrm{F}$ outputs. Those $220~\mu\mathrm{F}$ capacitors were not available at the moment, therefore, two $56~\mu\mathrm{F}$ and five $100~\mu\mathrm{F}$
+    were chosen, being the second best option. Both options showed losses lower than 1\% at the 3 CC points, with a slightly difference of around 0.01\%. To minimize costs, using a single $100~\mu\mathrm{F}$ capacitor at the input and five $100~\mu\mathrm{F}$ capacitors at the output would be a suitable option. However, this configuration would increase power losses due to the higher equivalent series resistance (ESR) of the capacitor bank.
+    
+    The inductor was then chosen with those capacitors fixed, sweeping $22$ to $100~\mu\mathrm{H}$ over the same five points. At $22~\mu\mathrm{H}$ the current ripple reaches $5.6~\mathrm{A}$, comparable to the solar panel current, and the light-load loss climbs to $6.7\%$. At $100~\mu\mathrm{H}$ the ripple drops below $1.3~\mathrm{A}$, and losses below 3.9\%. The $68~\mu\mathrm{H}$ part sits between the two, with slightly higher ripple current of $1$-$2~\mathrm{A}$, the lowest light-load loss of the sweep, and high-power loss within a few hundredths of a point of the smaller inductors. It keeps the inductor ripple low without the copper loss of the $100~\mu\mathrm{H}$ core.
 
-\begin{figure}[!t]
-    \centering
-    \includegraphics[width=0.95\linewidth,height=0.24\textheight,keepaspectratio]{Images/Implementation/fig_loss_breakdown.pdf}
-    \caption{Analytical loss split at operating point 2. Total loss $1.98~\mathrm{W}$ (98.5\%).}
-    \label{fig:loss}
-\end{figure}
+    Table~\ref{tab:ripple} records the results with the chosen components. Both voltage ripples are inside the $0.1~\mathrm{V}$ and $0.5~\mathrm{V}$ specifications. The fifth point, in the end of the CV stage, loses $3.5\%$.
 
-\subsection{Tracker tuning}
+    \begin{table}[!t]
+        \centering
+        \caption{LTspice ripple and loss with $L = 68~\mu\mathrm{H}$, two $56~\mu\mathrm{F}$ input capacitors, and five $100~\mu\mathrm{F}$ output capacitors.}
+        \label{tab:ripple}
+        \footnotesize
+        \setlength{\tabcolsep}{3.2pt}
+        \begin{tabular}{ccccc}
+            \toprule
+            Point & $\Delta V_{\mathrm{bat}}$ & $\Delta V_{\mathrm{pv}}$ & $\Delta I_L$ & Loss \\
+            & (V) & (V) & (A) & (\%) \\
+            \midrule
+            1 & 0.041 & 0.015 & 0.98 & 0.58 \\
+            2 & 0.049 & 0.021 & 1.71 & 0.68 \\
+            3 & 0.053 & 0.024 & 1.96 & 0.75 \\
+            4 & 0.041 & 0.022 & 2.01 & 0.67 \\
+            5 & 0.030 & 0.022 & 1.96 & 3.46 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
 
-A Simulink model of the boost stage, the 35-cell string, and the SG01 battery was used to choose the P\&O step before the hardware existed. The plant model is a diode boost rather than the synchronous stage; efficiency is not the quantity under test. Sensor noise is included, and the algorithm receives a 10-sample average.
+    LTspice does not split the loss by component. An analytical sum of conduction, switching, \(C_{\mathrm{oss}}\), dead time, inductor copper (from the manufacturer's REDEXPERT tool), capacitor ESR, gate drive, shunts, and the 3.3~V and 5~V rails predicts \(1.98~\mathrm{W}\) at point~2, or 98.5\% (Fig.~\ref{fig:loss}). Inductor copper is the largest term. GaN conduction and the capacitors are about 24\% each. PCB copper is absent from the model and accounts for part of the gap to the bench.
 
-A sweep of the steady-state duty cycle shows that irradiance, from high sun to heavy cloud, moves the optimum by about 3\% of duty cycle, whereas temperature from cold panels to a hot deck moves it by about 9\%. The slow disturbance is therefore the one that demands range, and the fast disturbance is the one that demands a short step. At 100~Hz, fifty steps fit inside the 0.5~s budget, so a 0.18\% step would cross a 9\% move in time. That step disappears into the noise. Steps of 0.5\%, 1\%, and 2\% were compared on a $10~^\circ\mathrm{C/s}$ ramp and on a step from $25~^\circ\mathrm{C}$ to $85~^\circ\mathrm{C}$. The 0.5\% step was accurate and, on the large temperature step, took about 1~s to enter a $\pm 5\%$ power band, which is the specification limit. Larger steps arrived sooner and dithered more. Irradiance steps from 1000 to $200~\mathrm{W/m}^2$ were recovered almost immediately at every step size, consistent with the smaller duty-cycle travel. A step between 0.5\% and 1\% was carried to the bench.
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=0.85\linewidth,height=0.18\textheight,keepaspectratio]{Images/Implementation/fig_loss_breakdown.pdf}
+        \caption{Analytical loss split at operating point 2. Total loss $1.98~\mathrm{W}$ (98.5\%).}
+        \label{fig:loss}
+    \end{figure}
+
+    \subsection{Tracker tuning}
+
+    The P\&O parameters, update rate, step size, and power deadband, set the tracking speed, the steady-state oscillation, and the sensitivity to measurement noise. They were tuned in a MATLAB Simulink model of the boost converter, the 35-cell string, and the SG01 battery before the hardware existed. The high-side transistor is replaced by a diode, which simplifies the model and does not affect the algorithm comparison. The solar panel side measurements carry noise, as on the real board, therefore an averaged is executed over the last ten samples at 1~kHz. The algorithm runs at 100~Hz and includes the voltage sweep and the P\&O loop.
+
+    The first question is how far the MPP moves. A duty-cycle sweep at several irradiances and temperatures shows that irradiance, from $1000~\mathrm{W/m}^2$ to $200~\mathrm{W/m}^2$, shifts the duty cycle by about 3\% (at MPP), while temperature, from $25~^\circ\mathrm{C}$ to $85~^\circ\mathrm{C}$, shifts it by about 9\%. Temperature is therefore the disturbance that sets the required travel, even though irradiance changes faster. Temperature steps do not decrease $60~^\circ\mathrm{C}$ in such shot time.
+
+    At 100~Hz, fifty updates fit in the 0.5~s budget, so a 0.18\% step would cover the 9\% temperature travel, but a step that small is lost in the measurement noise. Compared on slow and fast changes, a 0.1\% step is slow and can be confused with noise, a 2\% step arrives quickly and oscillates around the MPP, and the useful range is 0.5--1\%. The final values were set on the bench, because sensor error changes the step that the simulation suggests.
+
 
 \section{Experimental Results}
 \label{sec:results}
 
-Three boards were fabricated (Eurocircuits) and soldered by hand. The bill of materials is about 90~\texteuro{} and the bare board 3--35~\texteuro{}, so a finished charger is about 125~\texteuro{}, against 240~\texteuro{} for the Genasun unit it is intended to replace. Version 1 had a misplaced connector, a programming header without 5~V, and swapped UART pins. Version 1.1 fixed those errors, added the optional Schottky diodes and a fan connector, and was the board used for most of the numbers below. Version 1.2 moved the sense filters next to the ADC pins and fitted the extra ceramics that the noise tests required. The outdoor charge used version 1.2.
+    Three boards were fabricated by Eurocircuits and soldered by hand (Fig.~\ref{fig:pcbs}). The bill of materials is about 90~\texteuro{} and the board 3--35~\texteuro{}, so a finished charger is about 125~\texteuro{}, against 240~\texteuro{} for the commercial unit. Most tests used version 1.1. The CISPR~25 scan and the outdoor charge used version 1.2, which moved the sense filters next to the ADC and added the ceramics required by the noise tests.
 
-\subsection{Measurement error and switching noise}
-
-Voltage readings from 0 to 51~V had mean absolute errors of 60~mV on the battery divider and 112~mV on the panel divider before correction. The error is close to linear, and subtracting it in firmware reduced both to about 29~mV. Current errors were 100~mA on the battery shunt and 8.5~mA on the panel shunt; battery-current calibration reduced the mean error to 5.3~mA. Per-board calibration is reasonable in a thesis prototype and tedious in a fleet, so the production path is still tighter resistors or a one-point trim.
-
-Early runs tripped overcurrent protection on switching spikes. The input current wandered between about 4 and 12~A during those events. The output ceramic network was a single $1~\mu\mathrm{F}$, against ten $1~\mu\mathrm{F}$ parts on the GaN evaluation board. Adding nine $1~\mu\mathrm{F}$ capacitors cut the input-current excursion from 1.8~A to 640~mA and the input-voltage excursion from 2.0~V to 350~mV. Six additional $100~\mathrm{nF}$ capacitors brought the input-current spike to about 290~mA. The Schottky diodes did not improve the spectrum enough to justify their cost. A conducted scan from 22~V into a $10~\Omega$ load at $D = 52.5\%$, and a second scan at no load with the output held at 50.4~V, stayed under the CISPR~25 Class~5 limits in the tabulated bands. The setup had no LISN and no shielded room, so this is an indication, not a certificate. Version 1.2, with the filters at the microcontroller, also cleaned the one-minute sense records that version 1.1 left noisy.
-
-\subsection{Efficiency and temperature}
-
-The bridge was run open-loop from a supply into a resistive load at the same CC--CV points used in simulation. Table~\ref{tab:eff} includes the 0.51~W drawn by the controller. End-to-end efficiency is 96.6--96.8\%. Removing the controller, and then the gate-drive overhead measured with the bridge switching at no load, puts the power stage near 97.4--98.2\%. That is about two points below the analytical 98.5\%, in line with copper and layout loss that the spreadsheet omitted, and well above the 90\% floor.
-
-\begin{table}[!t]
-    \centering
-    \caption{Measured efficiency. The last two columns subtract the 0.51~W controller rail and the additional no-load switching overhead.}
-    \label{tab:eff}
-    \footnotesize
-    \setlength{\tabcolsep}{2.6pt}
-    \begin{tabular}{lcccc}
-        \toprule
-        Case & $P_{\mathrm{in}}$ & $P_{\mathrm{out}}$ & $\eta$ & $\eta$ stage \\
-        & (W) & (W) & (\%) & (\%) \\
-        \midrule
-        1 & 127.4 & 123.4 & 96.8 & 97.6 \\
-        2 & 129.1 & 124.7 & 96.6 & 97.4 \\
-        3 & 127.5 & 123.2 & 96.6 & 97.4 \\
-        4 & 73.1 & 70.8 & 96.8 & 98.2 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-With the tracker closed and a photovoltaic supply emulator, efficiency rises with panel current until about 3~A and then declines slightly as switching loss grows. Longer strings are more efficient because they reduce $D$ in \eqref{eq:boost}. Raising the battery voltage at fixed panel voltage does the opposite.
-
-After 10~min the inductor was the hottest part, near $43~^\circ\mathrm{C}$, with the adjacent electrolytics and the GaN devices a few degrees lower, matching the loss ranking. A three-hour run at the highest-power point leveled off after about 40~min in free air. Inside a closed box, as the chargers are mounted on the boat, temperatures leveled after about 60~min and the peak was $51.6~^\circ\mathrm{C}$. No fan is required at this power.
-
-\subsection{Tracking and charging}
-
-The emulator (Delta SM~1500-CP-30, photovoltaic mode, 35 cells, $25~^\circ\mathrm{C}$ unless temperature was the stimulus) fed the charger into the 12s7p pack. The final P\&O settings, after the sweep suggested by simulation, are a 1~kHz sample rate, a 50~Hz update, a 0.7\% duty-cycle step, and a 700~mW power deadband. The slower update relative to the 100~Hz Simulink cases leaves the 0.7\% step inside the 0.5--1\% window and keeps the dither inside the deadband.
-
-Disconnecting the source or the load produced the corresponding idle states. With both connected, the machine sat in P\&O; raising irradiance until the output current hit a 2~A test limit moved it into current limit. On a real panel the sweep walked the voltage across the curve and then handed the peak to P\&O. The emulator occasionally overcurrent-tripped during a sweep, so sweep tests used the panel.
-
-An irradiance staircase (1000 down to $200~\mathrm{W/m}^2$ in $200~\mathrm{W/m}^2$ steps every 2~s, then a single jump back) and a temperature staircase ($25~^\circ\mathrm{C}$ to $85~^\circ\mathrm{C}$ in $10~^\circ\mathrm{C}$ steps, then a single jump back) were applied over TCP. Fig.~\ref{fig:stairs} shows the measured power. Time to re-enter $\pm 5\%$ of the MPP power was under 100~ms on the irradiance steps and on the gradual temperature steps. The $85~^\circ\mathrm{C}$ to $25~^\circ\mathrm{C}$ jump, the case simulation had flagged as slowest, took about 200~ms. Average tracking accuracy was about 99\%, with the largest offset at $85~^\circ\mathrm{C}$, where residual sense noise is the likely cause. Both numbers meet the 1~s / 0.5~s requirement from Section~\ref{sec:system} with margin.
-
-\begin{figure}[!t]
-    \centering
-    \begin{minipage}[t]{0.48\linewidth}
+    \begin{figure}[!t]
         \centering
-        \includegraphics[width=\linewidth]{Images/LAB_res/irr_stairway.pdf}
-        \centerline{\footnotesize (a)}
-    \end{minipage}\hfill
-    \begin{minipage}[t]{0.48\linewidth}
+        \includegraphics[width=0.9\linewidth,keepaspectratio, trim=0 90 0 90, clip]{Images/LAB_res/pcbs.jpeg}
+        \caption{Front side of the three prototypes versions.}
+        \label{fig:pcbs}
+    \end{figure}
+
+    \subsection{Measurement error}
+
+    From 0 to 51~V, the mean absolute voltage error was 60~mV on the battery divider and 112~mV on the panel divider. The error is nearly linear, and subtracting it in firmware brings both means to about 29~mV. The mean absolute current error was 100~mA on the battery shunt and 8.5~mA on the solar panel shunt, the same correction on the battery channel brings that mean to 5.3~mA. All measured imprecision do not have a meaningful affect on the algorithm.
+
+    \subsection{Conducted emissions}
+
+    The charger shares the vessel with a CAN bus and with radio equipment. Conducted noise on the supply lines is the path that reaches both, so the prototype was compared with CISPR~25:2021, the standard for radio disturbance from electronic components used on vehicles. The standard defines five limit classes for conducted voltage on the power lines. Class~5 is the most strict. Table~\ref{tab:cispr} lists the peak and average limits of all five classes in the bands used for this comparison, from the long-wave range through the FM broadcast band.
+
+    \begin{table}[!t]
         \centering
-        \includegraphics[width=\linewidth]{Images/LAB_res/temp_stairway.pdf}
-        \centerline{\footnotesize (b)}
-    \end{minipage}
-    \caption{Closed-loop power during (a) the irradiance staircase and (b) the temperature staircase. The tracker stays on the moving MPP and recovers the large final step in a fraction of a second.}
-    \label{fig:stairs}
-\end{figure}
+        \caption{CISPR~25 conducted voltage limits, peak/average in dB$\mu$V, for the five EMC classes.}
+        \label{tab:cispr}
+        \footnotesize
+        \setlength{\tabcolsep}{3pt}
+        \begin{tabular}{lccccc}
+            \toprule
+            Band (MHz) & Class 1 & Class 2 & Class 3 & Class 4 & Class 5 \\
+            \midrule
+            0.15--0.3 & 113/100 & 103/90 & 93/80 & 83/70 & 73/60 \\
+            0.53--2   & 95/82   & 87/74  & 79/66 & 71/58 & 63/50 \\
+            5.9--6.2  & 77/64   & 71/58  & 65/52 & 59/46 & 53/40 \\
+            30--54    & 77/64   & 71/58  & 65/52 & 59/46 & 53/40 \\
+            68--108   & 61/48   & 55/42  & 49/36 & 43/30 & 37/24 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
 
-A full laboratory charge of the 12s1p pack reproduced CC--CV (Fig.~\ref{fig:charge}): P\&O held the panel at the MPP until the voltage limit, the current then decayed at constant voltage, and the machine entered the finished state. Outdoors, a 20-cell module under wind and two deliberate moves of the panel still produced a recognizable CC interval followed by CV. The outdoor run used revision 1.2. The charger has not yet been operated on SG01.
+    The scan was made after the output decoupling had been corrected. The first board had a single $1~\mu\mathrm{F}$ ceramic at the output, against ten $1~\mu\mathrm{F}$ parts on the GaN evaluation board, and input-current spikes of about 1.8~A were tripping the overcurrent protection. Nine additional $1~\mu\mathrm{F}$ capacitors cut that excursion to 640~mA, and six $100~\mathrm{nF}$ capacitors brought it to about 290~mA. The spectral measurement was performed on that decoupled hardware.
 
-\begin{figure}[!t]
-    \centering
-    \includegraphics[width=0.95\linewidth,height=0.22\textheight,keepaspectratio]{Images/LAB_res/charging_test_lab.pdf}
-    \caption{Laboratory charge of the 12s1p pack from the photovoltaic emulator. Constant current is the panel MPP; constant voltage follows once the cell limit is reached.}
-    \label{fig:charge}
-\end{figure}
+    The supply was set to 22~V, the load was $10~\Omega$, and the duty cycle was fixed at 52.5\% (Fig.~\ref{fig:cispr_load}). The measurement was then repeated with the load removed and the output held at 50.4~V (Fig.~\ref{fig:cispr_noload}). In both conditions the recorded level stays below the Class~5 peak and average limits of Table~\ref{tab:cispr} in every listed band. The no-load spectrum sits higher. With little load current the switching waveform changes, and a larger share of the measured energy falls at the high-frequency end of the scan.
 
-Table~\ref{tab:vsreq} collects the quantities the project set out to hit. Efficiency, cost, and tracking time are met on the bench. The open items are a campaign on SG01 and a second algorithm on the same hardware.
+    % A line-impedance stabilization network and a shielded room were not available, so the source impedance was that of the laboratory supply and the trace includes ambient pickup. The numbers are an indication, and they are not a CISPR~25 certificate. Ambient pickup raises a reading. A trace that still lies under the Class~5 limit, with that contribution included, places the charger below the most severe limit in the standard at the two operating points that were tested.
 
-\begin{table}[!t]
-    \centering
-    \caption{Requirements and what the prototype measured.}
-    \label{tab:vsreq}
-    \footnotesize
-    \setlength{\tabcolsep}{3pt}
-    \begin{tabular}{p{0.28\linewidth}p{0.30\linewidth}p{0.32\linewidth}}
-        \toprule
-        Item & Target & Result \\
-        \midrule
-        End-to-end efficiency & $>90\%$ & 96.6--96.8\% \\
-        Power-stage efficiency & --- & 97.4--98.2\% \\
-        Tracking time & $<1~\mathrm{s}$, typically $<0.5~\mathrm{s}$ & $<100~\mathrm{ms}$, worst $200~\mathrm{ms}$ \\
-        Tracking accuracy & high & $\approx 99\%$ \\
-        Unit cost & below the 240~\texteuro{} charger in use & $\approx 125$~\texteuro{} \\
-        Enclosure temperature & no extra cooling & peak $51.6~^\circ\mathrm{C}$ \\
-        Telemetry & vessel CAN, configurable limits & CAN and serial \\
-        \bottomrule
-    \end{tabular}
-\end{table}
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=0.8\linewidth,height=0.15\textheight,keepaspectratio, trim=0 110 0 53, clip]{Images/LAB_res/noise_w_load.pdf}
+        \caption{Conducted spectrum with a $10~\Omega$ load, from 22~V at $D = 52.5\%$. The trace stays below the CISPR~25 Class~5 limits in the bands of Table~\ref{tab:cispr}.}
+        \label{fig:cispr_load}
+    \end{figure}
+
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=0.8\linewidth,height=0.15\textheight,keepaspectratio, trim=0 110 0 53, clip]{Images/LAB_res/noise_w_no_load.pdf}
+        \caption{Conducted spectrum with no external load and the output held at 50.4~V. The level is higher than in Fig.~\ref{fig:cispr_load} and remains below the same Class~5 limits.}
+        \label{fig:cispr_noload}
+    \end{figure}
+
+    \subsection{Efficiency and temperature}
+
+    The efficiency was measured with a fix duty cycle and resistive load to match four charging points of the CC-CV curve present in simulation. The reading (Table~\ref{tab:eff}) includes every loss on the board, sensing and control included. The end-to-end efficiency is 96.6-96.8\%, which is above the 90\% target. Considering a power consumption of 0.5~W with the DC-DC turned off, the efficiency of the boost converter is 97.4-98.2\%. The remaining gap between simulation and experimental result is likely due to PCB copper, which simulations omit.
+
+    \begin{table}[!t]
+        \centering
+        \caption{Measured efficiency. The last column subtracts the 0.51~W control rail and the no-load switching overhead.}
+        \label{tab:eff}
+        \footnotesize
+        \setlength{\tabcolsep}{2.6pt}
+        \begin{tabular}{lcccc}
+            \toprule
+            Case & $P_{\mathrm{in}}$ & $P_{\mathrm{out}}$ & $\eta$ & $\eta$ power stage \\
+            & (W) & (W) & (\%) & (\%) \\
+            \midrule
+            1 & 127.4 & 123.4 & 96.8 & 97.6 \\
+            2 & 129.1 & 124.7 & 96.6 & 97.4 \\
+            3 & 127.5 & 123.2 & 96.6 & 97.4 \\
+            4 & 73.1 & 70.8 & 96.8 & 98.2 \\
+            OC & 0.5 & 0 & 0 & 0 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    A second efficiency test was run with the MPPT algorithm active and connected to a battery and a photovoltaic emulator (SM 1500-CP-30). The emulator irradiance setting was slowly increased via TCP connection. The result (Fig.~\ref{fig:eff over current}) show an increase in efficiency with irradiance/current, since the impact of the auxiliary circuit consumption is reduced. After around 3~A ($400~\mathrm{W/m}^2$), the slopes slightly down as switching loss grows. Longer strings are more efficient at every irradiance point since the $V_{\mathrm{in}}$ increases, duty cycle decreases and therefore the efficiency increases. 
+
+    % A second test ran the tracker closed on a photovoltaic emulator, sweeping irradiance from 100 to $1000~\mathrm{W/m}^2$ in $10~\mathrm{W/m}^2$ steps held for 2~s, for three string lengths at $V_{\mathrm{bat}}=43.4~\mathrm{V}$ (). Efficiency rises with panel current while the fixed 0.51~W rail is amortized, flattens near 3~A (about $400~\mathrm{W/m}^2$), then slopes slightly down as switching loss grows. Longer strings are more efficient at every current because a higher $V_{\mathrm{in}}$ lowers $D$ in \eqref{eq:boost}.
+
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=0.8\linewidth,height=0.18\textheight,keepaspectratio]{Images/LAB_res/eff_ipv2.pdf}
+        \caption{Converter efficiency versus panel current for three string lengths at $V_{\mathrm{bat}}=43.4~\mathrm{V}$.}
+        \label{fig:eff over current}
+    \end{figure}
+
+    The temperature of the components was analyzed during 3~h in a close box, at MPP in case 3 of the CC-CV curve. The results (Figure~\ref{fig:3h_temp_test_close_box}) showed an increase of temperature in the first 60 min and then stalled. All temperatures are within the safety limits, reaching only a peak of $51.6~^\circ\mathrm{C}$. It is concluded that no force cooling is required.
+
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=0.8\linewidth,height=0.18\textheight,keepaspectratio]{Images/LAB_res/Temperatures_vs_time_close box.pdf}
+        \caption{Component temperatures during a 3~h run at charging point~3 inside a closed box.}
+        \label{fig:3h_temp_test_close_box}
+    \end{figure}
+
+    \subsection{Tracking and charging}
+
+    Laboratory test using a Delta SM~1500-CP-30 in photovoltaic mode, configured as a 35-cell string with irradiance and temperature set over TCP, charging the 12s7p pack. The operator sets the environment, so each profile can be repeated. After bench tuning, the P\&O loop samples at 1~kHz, updates at 50~Hz, steps 0.7\% of duty cycle, and uses a 700~mW power deadband. The update is slower than the 100~Hz of the Simulink study so that each decision averages more samples, the step lies in the 0.5--1\% window that study identified, however a power deadband was still needed to ignore the excessive noise identified in version 1.1. If the readings are within the deadband, the algorithm ignores it. In version 1.2 the senors noise was solved and the power deadband was removed.
+
+    The state machine was checked first. After some troubleshooting and tuning, the state machine behave as it is supposed. Only the sweep occasionally tripped overcurrent protection when used with the photovoltaic emulator. However, it works as expected with a solar panel.
+
+    Tracking speed was tested with two scripted profiles (Figs.~\ref{fig:irr_stair} and \ref{fig:temp_stair}). Irradiance fell from 1000 to $200~\mathrm{W/m}^2$ in $200~\mathrm{W/m}^2$ steps every 2~s, then jumped back in one step. Temperature rose from 25 to $85~^\circ\mathrm{C}$ in $10~^\circ\mathrm{C}$ steps every 2~s, then dropped back in one step. Gradual steps represent ordinary operation, the jumps are the worst case. Time to re-enter $\pm 5\%$ of the MPP power was below 100~ms on every gradual step and on the irradiance jump. The $85$ to $25~^\circ\mathrm{C}$ jump, the slowest case in simulation, took about 200~ms. Average tracking accuracy was about 99\%, with the largest offset at $85~^\circ\mathrm{C}$, most likely from measurement noise. Both figures meet the 1~s limit and the 0.5~s typical target with margin.
+
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=0.8\linewidth,height=0.16\textheight,keepaspectratio]{Images/LAB_res/irr_stairway.pdf}
+        \caption{Closed-loop power during the irradiance staircase. The tracker stays on the moving MPP and recovers the final step from 200 to $1000~\mathrm{W/m}^2$ in a fraction of a second.}
+        \label{fig:irr_stair}
+    \end{figure}
+
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=0.8\linewidth,height=0.16\textheight,keepaspectratio]{Images/LAB_res/temp_stairway.pdf}
+        \caption{Closed-loop power during the temperature staircase. The slowest recovery is the final step from $85~^\circ\mathrm{C}$ to $25~^\circ\mathrm{C}$.}
+        \label{fig:temp_stair}
+    \end{figure}
+
+    Two full charges close the campaign, both into a 12s1p, 5.14~Ah pack chosen to keep the charge time short. From the emulator (Fig.~\ref{fig:charge}), the charge followed CC--CV: P\&O held the string at the MPP until the battery reached its voltage limit, the current then decayed at constant voltage, and the machine entered the finished state. The second charge was outdoors, on shore, from two panels in series (42 cells) on a cloudy day (Fig.~\ref{fig:full charge in field}). Panel current followed the changing irradiance, while panel voltage, set by a nearly constant temperature, moved only slightly to stay at the MPP. An interruption occurred due to accidentally disconnection of the solar panels.
+    This run used revision 1.2, on which the lower noise made the 700~mW deadband too large for slow outdoor changes. The deadband was removed for the test. The charger has not yet been operated on SG01.
+
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=0.95\linewidth,height=0.16\textheight,keepaspectratio]{Images/LAB_res/charging_test_lab.pdf}
+        \caption{Laboratory charge of the 12s1p pack from the photovoltaic emulator. Constant current is the panel MPP; constant voltage follows once the cell limit is reached.}
+        \label{fig:charge}
+    \end{figure}
+
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=0.95\linewidth,height=0.16\textheight,keepaspectratio]{Images/LAB_res/charging_test4.pdf}
+        \caption{Outdoor on-shore charge from two series panels (42 cells) on a cloudy day. Both the CC and CV intervals are visible.}
+        \label{fig:full charge in field}
+    \end{figure}
 
 \section{Conclusion}
 
-The auxiliary bus of a solar hydrofoil does not need a high-power tracker. It needs a repeatable boost charger that follows deck irradiance on a sub-second scale, speaks the boat's CAN protocol, and survives a student-built assembly. Vessel measurements set that scale at about 0.5--1~s. A synchronous 100~kHz boost stage and a tuned P\&O loop meet it: 96.6--96.8\% from panel to battery, about 97--98\% in the power stage, tracking usually inside 100~ms and inside 200~ms in the worst tested step, at roughly 99\% of available power. Component temperatures saturate near $52~^\circ\mathrm{C}$ in an enclosure. The parts cost about half of the commercial charger now fitted, and the set-points are configurable.
+    A fast-response MPPT charger was designed, built, and tested for the low-voltage auxiliary battery of SG01. The vessel's motion was used to establish the tracking requirements: following changes in irradiance or temperature, the operating point should return to the MPP within $1~\mathrm{s}$, with a target of $0.5~\mathrm{s}$ under typical conditions. These requirements guided the development of a $100~\mathrm{kHz}$ synchronous GaN boost converter, dimensioned using the electrical relationships governing the inductor and capacitors and subsequently refined through LTspice simulations. The power stage was combined with a P\&O algorithm, initially tuned in Simulink and subsequently refined through laboratory testing.
 
-The prototype is not yet a fleet design. Current-sense error still depends on a per-board fit, the loss model misses layout resistance, and there is no campaign on the vessel or across several battery voltages and string lengths. Interleaving the four chargers that already share the battery would cancel output ripple and allow a smaller capacitor bank. A 16-bit ADC and a faster PWM clock would tighten the 0.7\% step. Incremental conductance, or a variable-step P\&O, should be run on the same board against the staircases already scripted, and a matched-cell irradiance sensor would make that comparison quantitative.
+    The charger achieves an end-to-end efficiency of $96.6$-$96.8\%$, exceeding the target of $90\%$. Excluding the power consumption of the auxiliary electronics, the boost converter efficiency is approximately $97.4$-$98.2\%$. The tracking algorithm returns to within $\pm 5\%$ of the MPP power in less than $100~\mathrm{ms}$ following typical irradiance and temperature changes, and within $200~\mathrm{ms}$ following the largest temperature step tested. 
+
+    Conducted emissions remain below the CISPR~25 Class~5 limits. Thermal testing in a closed enclosure showed that the hottest component reached a steady-state temperature of $51.6~^\circ\mathrm{C}$ without forced cooling.
+    
+    Complete CC-CV charging cycles were demonstrated both in the laboratory and outdoors on shore, demonstrating the functionality of the prototype. The assembled charger costs approximately 125~\texteuro{}, compared with approximately 240~\texteuro{} for the commercial MPPT charger currently in use. In addition, the unit supports configuration through a graphical user interface over serial communication and communication with the vessel's systems via CAN.
+
+    Although the prototype is not yet a finished product, its functionality has been demonstrated, and it is suitable for installation on SG01, pending onboard validation. The main remaining step is testing aboard the vessel, where environmental variations may be more severe and less predictable than those encountered in laboratory and onshore tests. Following this validation, alternative MPPT algorithms should be implemented, tuned, and compared under equivalent operating conditions. Adding a dedicated irradiance sensor, alongside the temperature sensing already available on the board, would improve the estimation of conversion losses and provide additional information to support the tracking algorithms. Further improvements could include a microcontroller with a native 16-bit ADC to increase measurement resolution and a higher clock frequency to improve PWM duty-cycle resolution. Finally, interleaving the four chargers that share the battery could reduce both component costs and output-voltage ripple.
+
 
 \bibliographystyle{IEEEtran}
 \bibliography{../Thesis/Bibliography/Bibliography}
