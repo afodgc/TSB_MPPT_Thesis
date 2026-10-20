@@ -260,7 +260,7 @@ Following the design and simulation stages, a prototype was manufactured and ass
         The \ac{pcb} was also tested in open circuit with and without driving the transistors. The results show the losses of the circuit without the boost converter. Around 0.5~W of losses are caused only by the measurement and control system. When the transistors are driven without any load, the converter losses are negligible because the current is too low. So the measured losses are approximately equal to the driving circuit + the measurement and control system. Based on these values, Table~\ref{tab:efficiency_results} also presents an estimate of the efficiency without the measurement and control system, and another without the driving circuit. The converter efficiency is around 97\% to 98\% for all test cases, which is close to the simulation measurements. From another perspective, this shows how significant the losses are in the rest of the circuit.         
 
     \subsection{Temperature rise}
-        The temperature of each element was measured before each test and after 10~min. All test show similar result, a temperature rise of up to $10~^\circ\mathrm{C}$. The inductor is the main heat element, reaching $43~^\circ\mathrm{C}$, the capacitors also reach around $40~^\circ\mathrm{C}$. As expected, the transistors do not overheat. The maximum temperature measured was $40~^\circ\mathrm{C}$. 
+        The temperature of each element was measured before each test and after 10~min. All tests show similar results, a temperature rise of up to $10~^\circ\mathrm{C}$. The inductor is the main heat element, reaching $43~^\circ\mathrm{C}$, the capacitors also reach around $40~^\circ\mathrm{C}$. As expected, the transistors do not overheat, the maximum temperature measured was $43~^\circ\mathrm{C}$. 
 
         The results are consistent with the expected behavior. In Section~\ref{subsubsec:loss_estimation}, it was concluded that the inductor exhibits the highest losses, followed by the transistors and the capacitors. Since the temperature rise is directly related to the power dissipated by each component, a similar trend was expected in the thermal measurements. The results confirm this expectation, with the inductor exhibiting the highest temperature.
 
@@ -430,32 +430,57 @@ Following the design and simulation stages, a prototype was manufactured and ass
         
     
 \section{Charging test}
-    To prove the functionality of the developed prototype, two charging tests were recorded. Both tests use the smaller battery described in section~\ref{sec:battery}.
+    To validate the functionality of the developed prototype, three charging tests were conducted. All tests used the smaller battery described in Section~\ref{sec:battery}.
 
-    By using the SM 1500-CP-30 power supply in photovoltaic function connected to the \ac{mppt} charger, the battery was fully charged. Figure~\ref{fig:full charge in lab} shows the result where the CC-CV charging curve was achieved. In \ac{cc} mode, the algorithm tracked the \ac{mpp} successfully. At \ac{cv}, the output voltage is constant, and the output current dropped slowly. 
+The first test was performed in the laboratory using an SM 1500-CP-30 power supply operating in photovoltaic simulation mode and connected to the \ac{mppt} charger. The battery was successfully charged to completion. Figure~\ref{fig charge in lab} shows the measured charging curves, which follow the expected \ac{cc}-\ac{cv} charging profile. During \ac{cc} operation, the \ac{mppt} algorithm successfully tracked the \ac{mpp}. Once the charger entered \ac{cv} mode, the output voltage remained constant while the charging current gradually decreased.
 
-    \begin{figure}[!ht] 
-        \centering 
-        \includegraphics[width=0.9\linewidth]{Images/LAB_res/charging_test_lab.pdf} 
-        \caption{Full battery charge in laboratory.} 
-        \label{fig:full charge in lab}
-    \end{figure} 
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.9\linewidth]{Images/LAB_res/charging_test_lab.pdf}
+\caption{Full battery charging cycle performed in the laboratory.}
+\label{fig charge in lab}
+\end{figure}
 
-    The last test is a field test (on shore) with a solar panel. Several attempts were made to perfect the performance of the prototype. A lot of errors were encountered and fixed. For example, the first time the test was performed, it was used a solar panel of only 24 cells, which was never tested before, and did not work correctly because the duty cycle upper limit was too low. By increasing the duty cycle upper limit, the issue was solved. Then in prototype version 1.2, the noise was reduced and the power deadband was too high, which made the \ac{mppt} algorithm not able to track slow environment changes. After some tests, the power deadband was completely removed. Some other adjustments were made to the state machine and the final test was performed.
+The second test was conducted outdoors, on shore, using a solar panel. Several iterations were required to achieve satisfactory performance, during which multiple issues were identified and resolved. In the initial attempt, a 24-cell solar panel was used for the first time. The charger did not operate correctly because the upper duty-cycle limit was too low. Increasing this limit resolved the issue. Subsequently, testing of prototype version 1.2 revealed that the power deadband was too large, preventing the \ac{mppt} algorithm from tracking gradual changes in environmental conditions. Following several tests, the power deadband was removed entirely. Further adjustments were also made to the state machine before the final test was conducted.
 
-    The final test was performed with two solar panels in series, with a total of 42 cells. The test was performed in a cloudy day, with a lot of irradiance variations. The results show the correct operation of the \ac{cc}-\ac{cv} charging curve, and the correct operation of the \ac{mppt} algorithm, Figure~\ref{fig:full charge in field}.
+The test was performed using two solar panels connected in series, resulting in a total of 42 cells. It was performed on a cloudy day, with substantial variations in solar irradiance. As shown in Figure~\ref{fig charge in field}, the prototype successfully implemented the expected \ac{cc}-\ac{cv} charging profile while tracking the \ac{mpp}. The unstable irradiance caused variations in the \ac{pv} current, whereas the relatively stable panel temperature resulted in only minor adjustments to the \ac{pv} voltage as the operating point followed the \ac{mpp}. The test was interrupted once due to an accidental disconnection of the solar panel.
 
-    Since the test was performed in a cloudy day, the irradiance was very unstable, which induces \acs{pv} current variations. The temperature of the solar panel was stable and therefore the \ac{pv} voltage only adjust slightly to reach the \ac{mpp}. 
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.9\linewidth]{Images/LAB_res/charging_test4.pdf}
+\caption{Battery charging test conducted outdoors, showing the measured voltage and current.}
+\label{fig charge in field}
+\end{figure}
 
-    The test was interrupted one time due to an accidental disconnection of the solar panel.
+To validate the prototype under its intended operating conditions, a final test was conducted on the water. The same solar panels were installed on the deck of NAV-45 (Figure~\ref{fig:NAV-45}), the NAVICTUS prototype, and connected to the \ac{mppt} charger and a test battery.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.7\linewidth]{Images/LAB_res/NAV-45.jpeg}
+\caption{NAV-45 with the solar panels installed on deck.}
+\label{fig:NAV-45}
+\end{figure}
+
+Several limitations affected this test. First, the solar panels were not in optimal condition, limiting the available power. Second, the solar array lacked bypass diodes, making it particularly sensitive to partial shading. Under these conditions, the current may be limited by the weakest illuminated cell. Furthermore, the setup was electrically isolated from the vessel's remaining systems as a precaution. Consequently, its effects on the vessel's electronics could not be evaluated. Finally, the vessel's roll, pitch, and heading measurements were not perfectly synchronized with the converter data, resulting in a slight temporal offset between the two datasets.
+
+Despite these limitations, the test was successful: the prototype charged the battery while the vessel was on the water. The battery and solar panel electrical measurements shown in Figure~\ref{fig charge on water} confirm the correct operation of the charger. Several periods of near-zero power output occurred due to shading. Whenever sufficient solar power was available, the converter successfully tracked the \ac{mpp}. Towards the end of the test, the vessel performed more pronounced turns, resulting in larger power variations.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.9\linewidth]{Images/LAB_res/charging_test_NAVICTUS.pdf}
+\caption{Battery charging test conducted on the water, showing the measured voltage and current.}
+\label{fig charge on water}
+\end{figure}
+
+Synchronizing the converter measurements with the vessel data makes it possible to examine the relationship between shading, vessel orientation, and the \ac{mppt} response, as illustrated in Figure~\ref{fig charge on water set}. The solar panels were shaded by the vessel when the heading was greater than approximately $310^\circ$ or less than approximately $40^\circ$. At other headings, the charger generally tracked the \ac{mpp}. The power profile also appears to follow changes in roll at several points during the test, particularly when the roll angle was relatively large. However, the temporal offset between the datasets and the limitations of the measurements prevent a reliable quantitative comparison or definitive conclusions about the influence of vessel motion on tracking performance. Further tests with improved data acquisition and more controlled conditions are required to investigate these effects.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.9\linewidth]{Images/LAB_res/charging_test_NAVICTUS_set.pdf}
+\caption{Comparison of solar power with the vessel's roll, pitch, and heading.}
+\label{fig charge on water set}
+\end{figure}
+
+
+
     
-    
-    \begin{figure}[!ht] 
-        \centering 
-        \includegraphics[width=0.9\linewidth]{Images/LAB_res/charging_test4.pdf} 
-        \caption{Battery charging test. Voltage and current curve.} 
-        \label{fig:full charge in field}
-    \end{figure} 
-
-
-    % \textcolor{red}{Add tests in water if time permits.}

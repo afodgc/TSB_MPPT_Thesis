@@ -216,52 +216,45 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
 \section{Types of DC-DC converters}
     The \acs{dc}-\acs{dc} converter is a crucial component of an \acs{mppt} charger because it adjusts the solar panel operating point to match the \ac{mpp}. This choice is important to the project because it directly affects the overall system's efficiency, cost, and complexity.
 
-    \acs{dc}-\acs{dc} converters fall into two main categories: isolated and non-isolated converters. The main difference between these two types of converters is the presence or absence of galvanic isolation between the input and output circuits~\cite{flexpower_isolated_vs_nonisolated_2025}.
+    Isolated converters provide galvanic isolation, typically through a transformer, and are used when the photovoltaic array is tied to the grid or when safety standards require it~\cite{Review_Isolated_Non_isolated_DC_DC_Converters_MVDC_2021,flexpower_isolated_vs_nonisolated_2025}. Isolation is not required between the deck panels and the low-voltage battery of \ac{sg01}. Non-isolated converters are therefore preferred: they are more efficient, cheaper, smaller and simpler. The remainder of this section reviews only non-isolated topologies.
 
-
-    \subsection{Non-isolated versus isolated DC-DC converters}
-        Galvanic isolation is usually achieved by using a transformer, which provides electrical isolation between the input and output sides of the converter. This isolation is important in applications where safety is a concern, such as in medical devices or industrial equipment, as it helps to prevent electrical shock and damage to sensitive components. In solar energy systems and E-mobility, isolated converters are often used when the solar panel is connected to the grid~\cite{Review_Isolated_Non_isolated_DC_DC_Converters_MVDC_2021}, as they help protect against voltage spikes and other electrical disturbances. Also, non-isolated converters can provide much higher/lower gain, which is useful for applications where 
-        solar panels \ac{mpp} voltage differs greatly from the battery or load voltage (typically medium/high voltages, which is not the case). 
-
-        In contrast, non-isolated converters do not provide galvanic isolation between the input and output circuits. However, they generally offer higher efficiency, lower cost, reduced size, and lower circuit complexity (Table~\ref{tab:switching-vs-isolated-converters}). They also pose fewer thermal management challenges and are simpler to design. These advantages, along with the fact that galvanic isolation is not required for this application, led to excluding isolated \acs{dc}-\acs{dc} converters from this project.
-
-        \begin{table}[htbp]
-            \centering
-            \caption{Comparison between non-isolated and isolated converters.}
-            \label{tab:switching-vs-isolated-converters}
-            \scriptsize
-            \setlength{\tabcolsep}{5pt}
-            \renewcommand{\arraystretch}{1.1}
-            \begin{adjustbox}{max width=0.95\textwidth}
-                \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4cm}
-                                            >{\centering\arraybackslash}X
-                                            >{\centering\arraybackslash}X}
-                \toprule
-                Type & Non-isolated Converters & Galvanic Isolated Converters \\
-                \midrule
-
-                Circuit Complexity & \G Low & \R High \\
-                Efficiency & \G High & \Y Medium \\
-                Size & \G Compact & \R Large \\
-                Electromagnetic Interference (EMI) & \Y Medium/High &  \R High\\
-                Switching Frequency & \Y Medium & \Y Medium \\
-                Thermal Management & \G Easier & \Y Moderate \\
-                Control Complexity & \Y Moderate & \Y Moderate \\
-                Gain & \Y Near 1 & \G Very High/low \\
-                Cost & \G Low & \R High \\
-                \bottomrule
-                \end{tabularx}
-            \end{adjustbox}
-            \begin{center}
-                Legend: \fcolorbox{black}{light_red}{undesired} \fcolorbox{black}{light_yellow}{medium} \fcolorbox{black}{light_green}{good}
-            \end{center}
-        \end{table}
-
-        
-        
-
-        
-            
+%    \subsection{Non-isolated versus isolated DC-DC converters}
+%        Galvanic isolation is usually achieved by using a transformer, which provides electrical isolation between the input and output sides of the converter. This isolation is important in applications where safety is a concern, such as in medical devices or industrial equipment, as it helps to prevent electrical shock and damage to sensitive components. In solar energy systems and E-mobility, isolated converters are often used when the solar panel is connected to the grid~\cite{Review_Isolated_Non_isolated_DC_DC_Converters_MVDC_2021}, as they help protect against voltage spikes and other electrical disturbances. Also, non-isolated converters can provide much higher/lower gain, which is useful for applications where
+%        solar panels \ac{mpp} voltage differs greatly from the battery or load voltage (typically medium/high voltages, which is not the case).
+%
+%        In contrast, non-isolated converters do not provide galvanic isolation between the input and output circuits. However, they generally offer higher efficiency, lower cost, reduced size, and lower circuit complexity (Table~\ref{tab:switching-vs-isolated-converters}). They also pose fewer thermal management challenges and are simpler to design. These advantages, along with the fact that galvanic isolation is not required for this application, led to excluding isolated \acs{dc}-\acs{dc} converters from this project.
+%
+%        \begin{table}[htbp]
+%            \centering
+%            \caption{Comparison between non-isolated and isolated converters.}
+%            \label{tab:switching-vs-isolated-converters}
+%            \scriptsize
+%            \setlength{\tabcolsep}{5pt}
+%            \renewcommand{\arraystretch}{1.1}
+%            \begin{adjustbox}{max width=0.95\textwidth}
+%                \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4cm}
+%                                            >{\centering\arraybackslash}X
+%                                            >{\centering\arraybackslash}X}
+%                \toprule
+%                Type & Non-isolated Converters & Galvanic Isolated Converters \\
+%                \midrule
+%
+%                Circuit Complexity & \G Low & \R High \\
+%                Efficiency & \G High & \Y Medium \\
+%                Size & \G Compact & \R Large \\
+%                Electromagnetic Interference (EMI) & \Y Medium/High &  \R High\\
+%                Switching Frequency & \Y Medium & \Y Medium \\
+%                Thermal Management & \G Easier & \Y Moderate \\
+%                Control Complexity & \Y Moderate & \Y Moderate \\
+%                Gain & \Y Near 1 & \G Very High/low \\
+%                Cost & \G Low & \R High \\
+%                \bottomrule
+%                \end{tabularx}
+%            \end{adjustbox}
+%            \begin{center}
+%                Legend: \fcolorbox{black}{light_red}{undesired} \fcolorbox{black}{light_yellow}{medium} \fcolorbox{black}{light_green}{good}
+%            \end{center}
+%        \end{table}
 
 
     \subsection{Non-isolated DC-DC converters}
@@ -401,77 +394,77 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
 
 
 \section{Commercial Options}
-    To assess the feasibility of adopting a \ac{ots} solution, this section reviews existing commercial options for solar battery charging with \ac{mppt} capability. Both specialized \acp{ic} and complete commercial \ac{mppt} chargers are considered, and their electrical, functional, and economic characteristics are evaluated against the requirements of this project. The objective is to identify whether a commercially available solution can satisfy the constraints of the application or, alternatively, to justify the need for a custom designed converter and control system.
+    To assess the feasibility of adopting a \ac{ots} solution, this section reviews complete commercial \ac{mppt} chargers for solar battery charging. Their electrical, functional, and economic characteristics are evaluated against the requirements of this project. The objective is to identify whether a commercially available charger can satisfy the constraints of the application or, alternatively, to justify the need for a custom designed converter and control system.
 
-\subsection{Specialized ICs}
-\label{sec:ICs}
-    Several commercially available \acf{ic} are specifically designed for solar battery charging and \ac{mppt} applications. These devices are relevant to this project since, if suitable, they could significantly reduce design complexity by integrating functions such as \acs{dc}-\acs{dc} conversion, protection mechanisms, and an \acs{mppt} algorithm.
+% \subsection{Specialized ICs}
+% \label{sec:ICs}
+%     Several commercially available \acf{ic} are specifically designed for solar battery charging and \ac{mppt} applications. These devices are relevant to this project since, if suitable, they could significantly reduce design complexity by integrating functions such as \acs{dc}-\acs{dc} conversion, protection mechanisms, and an \acs{mppt} algorithm.
+%
+%     Table~\ref{tab:commercial-ics-comparison} summarizes four commonly used commercial \acp{ic}. Characteristics marked in red indicate incompatibilities with the project requirements, leading to the exclusion of the corresponding devices.
+%
+%     The BQ24650RVAT is a stand-alone synchronous buck battery charge controller that implements a high-efficiency battery charger and provides safety features. By adding a \ac{mcu} to run a \acs{mppt} algorithm and current and voltage sensors, this \acs{ic} can track the \ac{mpp} of a solar panel, making it appropriate for applications with 12/24~V batteries and high-power panels, such as electric vehicles. However, it does not support the required 48~V battery voltage and is therefore unsuitable for this work.
+%
+%     The MAX20801TPBA+ and SPV1040TTR target low-power IoT applications with small batteries and solar panels. Both devices cannot meet the 48~V output requirement, and limited publicly available information on tracking speed further restricts performance evaluation.
+%
+%     The LT8491IUKJ\#PBF offers a wide input and output voltage range, buck-boost operation, high efficiency, communication capabilities, and \acs{cc}-\acs{cv} charging. Despite these advantages, its reported \acs{mppt} tracking speed of up to 2~s is insufficient for the dynamic conditions of this application. Additionally, its I\textsuperscript{2}C interface would require an additional microcontroller to provide \acs{can} communication, increasing system cost.
+%
+%     \begin{table}[htbp]
+%         \centering
+%         \caption{Comparison of commercial specialized \acp{ic}.}
+%         \label{tab:commercial-ics-comparison}
+%         \scriptsize
+%         \setlength{\tabcolsep}{4pt}
+%         \renewcommand{\arraystretch}{1.05}
+%         \begin{adjustbox}{max width=0.95\textwidth}
+%         \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.7cm}
+%                                     >{\centering\arraybackslash}X
+%                                     >{\centering\arraybackslash}X
+%                                     >{\centering\arraybackslash}X
+%                                     >{\centering\arraybackslash}X}
+%         \toprule
+%         \textbf{Model} & \textbf{BQ24650RVAT} & \textbf{MAX20801TPBA+} & \textbf{SPV1040TTR} & \textbf{LT8491IUKJ\#PBF} \\
+%         \midrule
+%
+%         \multicolumn{5}{l}{\textit{\textbf{Electrical specifications}}} \\
+%         Input voltage & \R 5 to 28~V & \R 1.5 to 18~V & \R 0.3 to 5.5~V & 6 to 80~V \\
+%         Output voltage & \R 12 to 24~V & \R 12.4~V & \R -0.3 to 5.5~V & 1.3 to 80~V \\
+%         Max output current & Externally limited & 12~A & \R 1.8~A & 10~A \\
+%         Switching frequency & 600~kHz & Unknown & 100~kHz & 100 to 400~kHz \\
+%         Electrical efficiency & 95\% & 99.1\% (max) & \R 80 to 95\% & 95 to 99\% \\
+%
+%         \midrule
+%         \multicolumn{5}{l}{\textit{\textbf{MPPT and control}}} \\
+%         Algorithm & User input & Unknown & Unknown & P\&O \\
+%         Tracking accuracy & User dependent & 99.9\% (max) & \R Unknown & \R Unknown \\
+%         Tracking speed & User dependent & \R Unknown & \R Unknown & \R 1 to 2~s \\
+%
+%         \midrule
+%         \multicolumn{5}{l}{\textit{\textbf{Functional aspects}}} \\
+%         Topology & Synchronous Buck & Synchronous Buck & Synchronous Boost & Buck-Boost \\
+%         Communication & \R No & \R No & \R No & \R I\textsuperscript{2}C \\
+%         Configurability & No & No & No & Yes \\
+%         Charge profile & CC-CV & \R Unknown & \R Unknown & CC-CV \\
+%         \midrule
+%         \multicolumn{5}{l}{\textit{\textbf{Extra hardware needed}}} \\
+%         Transistors &  Yes & No & No &  Yes \\
+%         Sensors & Yes & No & No & No \\
+%         Storage elements & Yes & Yes & Yes & Yes \\
+%
+%         \midrule
+%         \multicolumn{5}{l}{\textit{\textbf{Economic}}} \\
+%         Price & 5.25~€ & 4.50~€ & 3.02~€ & \R 15-20~€ \\
+%
+%         \bottomrule
+%         \end{tabularx}
+%         \end{adjustbox}
+%         \begin{center}
+%             Legend: \fcolorbox{black}{light_red}{unsuitable}
+%         \end{center}
+%     \end{table}
 
-    Table~\ref{tab:commercial-ics-comparison} summarizes four commonly used commercial \acp{ic}. Characteristics marked in red indicate incompatibilities with the project requirements, leading to the exclusion of the corresponding devices.
 
-    The BQ24650RVAT is a stand-alone synchronous buck battery charge controller that implements a high-efficiency battery charger and provides safety features. By adding a \ac{mcu} to run a \acs{mppt} algorithm and current and voltage sensors, this \acs{ic} can track the \ac{mpp} of a solar panel, making it appropriate for applications with 12/24~V batteries and high-power panels, such as electric vehicles. However, it does not support the required 48~V battery voltage and is therefore unsuitable for this work.
-
-    The MAX20801TPBA+ and SPV1040TTR target low-power IoT applications with small batteries and solar panels. Both devices cannot meet the 48~V output requirement, and limited publicly available information on tracking speed further restricts performance evaluation.
-
-    The LT8491IUKJ\#PBF offers a wide input and output voltage range, buck-boost operation, high efficiency, communication capabilities, and \acs{cc}-\acs{cv} charging. Despite these advantages, its reported \acs{mppt} tracking speed of up to 2~s is insufficient for the dynamic conditions of this application. Additionally, its I\textsuperscript{2}C interface would require an additional microcontroller to provide \acs{can} communication, increasing system cost.
-
-    \begin{table}[htbp]
-        \centering
-        \caption{Comparison of commercial specialized \acp{ic}.}
-        \label{tab:commercial-ics-comparison}
-        \scriptsize
-        \setlength{\tabcolsep}{4pt}
-        \renewcommand{\arraystretch}{1.05}
-        \begin{adjustbox}{max width=0.95\textwidth}
-        \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.7cm}
-                                    >{\centering\arraybackslash}X
-                                    >{\centering\arraybackslash}X
-                                    >{\centering\arraybackslash}X
-                                    >{\centering\arraybackslash}X}
-        \toprule
-        \textbf{Model} & \textbf{BQ24650RVAT} & \textbf{MAX20801TPBA+} & \textbf{SPV1040TTR} & \textbf{LT8491IUKJ\#PBF} \\
-        \midrule
-
-        \multicolumn{5}{l}{\textit{\textbf{Electrical specifications}}} \\
-        Input voltage & \R 5 to 28~V & \R 1.5 to 18~V & \R 0.3 to 5.5~V & 6 to 80~V \\
-        Output voltage & \R 12 to 24~V & \R 12.4~V & \R -0.3 to 5.5~V & 1.3 to 80~V \\
-        Max output current & Externally limited & 12~A & \R 1.8~A & 10~A \\
-        Switching frequency & 600~kHz & Unknown & 100~kHz & 100 to 400~kHz \\
-        Electrical efficiency & 95\% & 99.1\% (max) & \R 80 to 95\% & 95 to 99\% \\
-
-        \midrule
-        \multicolumn{5}{l}{\textit{\textbf{MPPT and control}}} \\
-        Algorithm & User input & Unknown & Unknown & P\&O \\
-        Tracking accuracy & User dependent & 99.9\% (max) & \R Unknown & \R Unknown \\
-        Tracking speed & User dependent & \R Unknown & \R Unknown & \R 1 to 2~s \\
-
-        \midrule
-        \multicolumn{5}{l}{\textit{\textbf{Functional aspects}}} \\
-        Topology & Synchronous Buck & Synchronous Buck & Synchronous Boost & Buck-Boost \\
-        Communication & \R No & \R No & \R No & \R I\textsuperscript{2}C \\
-        Configurability & No & No & No & Yes \\
-        Charge profile & CC-CV & \R Unknown & \R Unknown & CC-CV \\
-        \midrule
-        \multicolumn{5}{l}{\textit{\textbf{Extra hardware needed}}} \\
-        Transistors &  Yes & No & No &  Yes \\
-        Sensors & Yes & No & No & No \\
-        Storage elements & Yes & Yes & Yes & Yes \\
-
-        \midrule
-        \multicolumn{5}{l}{\textit{\textbf{Economic}}} \\
-        Price & 5.25~€ & 4.50~€ & 3.02~€ & \R 15-20~€ \\
-
-        \bottomrule
-        \end{tabularx}
-        \end{adjustbox}
-        \begin{center}
-            Legend: \fcolorbox{black}{light_red}{unsuitable}
-        \end{center}
-    \end{table}
-
-
-\subsection{Commercial MPPT chargers}
-Several commercial \ac{mppt} chargers can address the problem under analysis without requiring additional hardware. However, each solution presents limitations when evaluated against the project requirements. Table~\ref{tab:commercial-mppt-comparison} summarizes selected commercial \acs{mppt} chargers, with red-marked characteristics indicating incompatibilities.
+% \subsection{Commercial MPPT chargers}
+Several commercial \ac{mppt} chargers were evaluated against the project requirements. Each solution presents limitations. Table~\ref{tab:commercial-mppt-comparison} summarizes selected commercial \acs{mppt} chargers, with red-marked characteristics indicating incompatibilities.
 
 The GVB-8-Li-CV(50.4) is a high-performance and fast \ac{mppt} charger, particularly suited for dynamic environments such as marine applications. It has been successfully used by \acs{tsb} in previous projects, demonstrating high efficiency and reliability. Nevertheless, its lack of configurability, fixed output voltage, no communication and high cost restrict its suitability for this application. Despite these drawbacks, it serves as a valuable reference design.
 
