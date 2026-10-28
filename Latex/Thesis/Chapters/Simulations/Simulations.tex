@@ -20,7 +20,7 @@
             \label{eq:1m5p}
         \end{equation}
 
-        These parameters are not directly provided by manufacturers, but can be extracted from the standard datasheet values, namely the open-circuit voltage ($V_{oc}$), short-circuit current ($I_{sc}$), voltage and current at the \ac{mpp} ($V_{mp}$, $I_{mp}$), and the respective temperature coefficients, through a set of equations that ensure the model matches these reference points under \ac{stc}. There are several ways to do it, however, it is outside the range of this work. To simplify, it was used an online tool for the calculations, which we will not explain in detail here. 
+        These parameters are not directly provided by manufacturers, but can be extracted from the standard datasheet values, namely the open-circuit voltage ($V_{oc}$), short-circuit current ($I_{sc}$), voltage and current at the \ac{mpp} ($V_{mp}$, $I_{mp}$), and the respective temperature coefficients, through a set of equations that ensure the model matches these reference points under \ac{stc}. There are several ways to do it, however, it is outside the range of this work. To simplify, an online tool was used for the calculations, which we will not explain in detail here. 
 
         \begin{figure}[!ht]
             \centering
@@ -50,7 +50,7 @@
 
         With the chosen five points, some simulations were carried out using capacitors and inductors that would fit the requirements calculated earlier. The objective of these simulations is to optimize the performance of the converter, leading to better choices.
 
-        The model was built in LTspice using manufacturer component models, except for the solar panel, which was implemented as described above. The battery was represented by a voltage source and a series resistor, and the transistor dead time was set to the prototype value, using the measured rise and fall times. Figure~\ref{fig:sim_circuit} shows the simulation circuit and his parameters.
+        The model was built in LTspice using manufacturer component models, except for the solar panel, which was implemented as described above. The battery was represented by a voltage source and a series resistor, and the transistor dead time was set to the prototype value, using the measured rise and fall times. Figure~\ref{fig:sim_circuit} shows the simulation circuit and its parameters.
 
         \begin{figure}[!ht]
             \centering
@@ -85,7 +85,7 @@
             \label{tab:loss_capacitors_2}
         \end{table}
 
-        As in the previous simulation, the inductor was chosen by keeping all components with the same values (the capacitors used were $C_\mathrm{in} = 2\times56~\mu\mathrm{F}$ and $C_\mathrm{out} = 5\times100~\mu\mathrm{F}$) and changing the inductor. Similar to before, all inductors simulated are within the minimum required.
+        As in the previous simulation, the inductor was chosen by keeping all components with the same values (the capacitors used were $C_\mathrm{in} = 2\times56~\mu\mathrm{F}$ and $C_\mathrm{out} = 5\times100~\mu\mathrm{F}$) and changing the inductor. Similar to before, all simulated inductor values are within the minimum required.
 
         Table~\ref{tab:loss_inductance_2} shows the losses and the inductor current ripple for each charging case. As before, the efficiency difference is very low but less linear than in the previous simulation, likely due to the inductor models chosen. The chosen inductor strongly influences the input ripple, which can generate heat and electrical interference. The $22~\mu\mathrm{H}$ inductor showed a higher ripple current, reaching values close to the input current. The inductor chosen was $68~\mu\mathrm{H}$, since it has overall good efficiency and a reasonable inductor current ripple.
 
@@ -170,24 +170,24 @@
         The total prototype losses are obtained by summing the losses associated with the GaN transistors, inductor, capacitors and auxiliary electronics:
 
         \begin{equation}
-        P_{loss}=P_{tran}+P_{L}+P_{C}+P_{aux}.
+        P_{loss}=P_{tran}+P_{L}+P_{C}+P_{aux} .
         \end{equation}
 
         The prototype efficiency is then calculated as:
 
         \begin{equation}
-        \eta=\frac{P_{out}}{P_{out}+P_{loss}}\times100\%.
+        \eta=\frac{P_{out}}{P_{out}+P_{loss}}\times100\% .
         \end{equation}
 
         The transistor losses can be split in three. The conduction, switching and deadtime losses:
         \begin{equation}
-            P_{tran}=P_{cond_{HS}}+P_{cond_{LS}}+P_{sw_{HS}}+P_{sw_{LS}}+P_{dead}
+            P_{tran}=P_{cond_{HS}}+P_{cond_{LS}}+P_{sw_{HS}}+P_{sw_{LS}}+P_{dead}.
         \end{equation}
 
         The conduction losses of each GaN transistor are given by:
 
         \begin{equation}
-        P_{cond}=I_{RMS}^{2}R_{DS(on)}.
+        P_{cond}=I_{RMS}^{2}R_{DS(on)} .
         \end{equation}
 
         These losses are primarily caused by the on state resistance of the transistors, resulting in power dissipation whenever current flows through the transistors. 
@@ -203,18 +203,18 @@
         The deadtime losses are calculated using Equation~\ref{eq:pdead}. These losses originate from the conduction of the reverse conduction path during the dead time interval required to prevent shoot through. This reverse conduction path is either from the third-quadrant conduction of the GaN device or from the parallel Schottky diode added later in version 1.1 of the prototype.
 
         \begin{equation}
-        P_{dead}=2\cdot  V_f \cdot I_{L_{AVG}} \cdot t_{dead} \cdot f_{sw}.
+        P_{dead}=2\cdot  V_f \cdot I_{L_{AVG}} \cdot t_{dead} \cdot f_{sw}
         \label{eq:pdead}
         \end{equation}
 
-        The inductor and \acs{dc} capacitor losses are estimated using the RMS current passing through them and their \ac{esr}. The inductor manufacturer does not provide the required magnetic material parameters to estimate the \acs{ac} losses. However, an employee suggested using their own tool called REDEXPERT, which can simulate both \acs{dc} and \acs{ac} losses. Therefore, the value \acs{ac} losses were copied from their tool
+        The inductor and \acs{dc} capacitor losses are estimated using the RMS current passing through them and their \ac{esr}. The inductor manufacturer does not provide the required magnetic material parameters to estimate the \acs{ac} losses. However, an employee suggested using their own tool called REDEXPERT, which can simulate both \acs{dc} and \acs{ac} losses. Therefore, the value \acs{ac} losses were copied from their tool.
 
         \begin{equation}
-        P_L=I_{L_{RMS}}^{2}ESR + P_{L_{AC}}.
+        P_L=I_{L_{RMS}}^{2}ESR + P_{L_{AC}},
         \end{equation}
 
         \begin{equation}
-        P_C=I_{C_{RMS}}^{2}ESR,
+        P_C=I_{C_{RMS}}^{2}ESR.
         \end{equation}
 
         
@@ -222,7 +222,7 @@
         The gate driver losses are estimated using Equation~\ref{eq:gate_drive} which takes into account the energy needed to drive the transistors. Although the EPC23102 has an internal gate driver, this is still relevant.
 
         \begin{equation}
-        P_{gate}= (Qg_{LS} + Qg_{HS})* Vdrv * fsw.
+        P_{gate}= (Qg_{LS} + Qg_{HS})* Vdrv * fsw
         \label{eq:gate_drive}
         \end{equation}
 
@@ -242,7 +242,7 @@
             \label{fig:loss_breakdown}
         \end{figure}
 
-        The inductor \acs{dc} losses are the largest term, followed by the auxiliary electronics (mainly the auxiliary \acs{dc}--\acs{dc} conversion), the GaN transistor losses ($24.4\%$) and the capacitors ($23.5\%$). Overall, nearly half of the losses come from passive components and about one quarter from the semiconductors. Despite this, both the simulation and the analytical model indicate a highly efficient converter.
+        The inductor \acs{dc} losses are the largest term, followed by the auxiliary electronics (mainly the auxiliary \acs{dc}-\acs{dc} conversion), the GaN transistor losses ($24.4\%$) and the capacitors ($23.5\%$). Overall, nearly half of the losses come from passive components, about one quarter from the transistors and one quarter from the rest of the circuit. Despite this, both the simulation and the analytical model indicate a highly efficient converter.
 
 
 

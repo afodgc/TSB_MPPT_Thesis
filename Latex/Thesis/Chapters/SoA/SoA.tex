@@ -31,7 +31,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
 
     \begin{figure} [!ht]
         \centering
-        \includegraphics[width=0.50 \textwidth]{Images/Background/i-v,p-v.pdf}
+        \includegraphics[width=0.50 \textwidth, trim=0 3 0 30, clip]{Images/Background/i-v,p-v.pdf}
         \qquad
         \caption{I-V and P-V curves of a solar panel~\cite{photovoltaics_System_Design}.}
         \label{fig:i-v,p-v}
@@ -46,15 +46,15 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
         \centering
         \begin{subfigure}[b]{0.48\textwidth}
             \centering
-            \includegraphics[width=1 \textwidth]{Images/Background/irradiance_i-v.pdf}
+            \includegraphics[width=1 \textwidth, trim=0 3 0 19, clip]{Images/Background/irradiance_i-v.pdf}
             \qquad
             \caption{Cell temperature of $25~^\circ\mathrm{C}$ and variable irradiance. }
             \label{fig:irradiance_i-v}
         \end{subfigure}
         \hfill
-        \begin{subfigure}[b]{0.48\textwidth}
+        \begin{subfigure}[b]{0.45\textwidth}
              \centering
-            \includegraphics[width=1 \textwidth]{Images/Background/temperature_i-v.pdf}
+            \includegraphics[width=1 \textwidth, trim=0 7 0 17, clip]{Images/Background/temperature_i-v.pdf}
             \qquad
             \caption{Irradiance of $1000~\mathrm{W/m}^2$ and variable temperature.}
             \label{fig:temperature_i-v}
@@ -97,7 +97,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
          Well known variants improve performance by setting the reference voltage to a fraction of the open-circuit voltage (typically 71-78\%)~\cite{Comparison_PV_Array_MPPT_Techniques_2007}. This voltage is obtained by briefly disconnecting the panel from the load, increasing reference accuracy and efficiency. Another variant uses a fraction of the short-circuit current as the reference~\cite{MPPT_Comparison_techniques}.
          
 
-        Although both methods are simple and cost-effective, they are inherently inefficient because they must interrupt energy production during measurement phases. However, alternative implementations address this limitation through proxy measurement techniques employing dummy cells or diodes, whose physical properties closely approximate those of standard solar cells, thereby enabling continuous power generation during measurement acquisition~\cite{Comparison_PV_Array_MPPT_Techniques_2007}~\cite{Optimum_Operating_Point_Tracker_2004}. Still, the \ac{mpp} is not always located at the same percentage of the open circuit voltage or short circuit current, leading to a lack of accuracy and therefore lower efficiency~\cite{Comparative_study_MPPT_algorithms_2000}.
+        Although both methods are simple and cost-effective, they are inherently inefficient because they must interrupt energy production during measurement phases. Moreover, the \ac{mpp} is not always located at the same percentage of the open circuit voltage or short circuit current, leading to a lack of accuracy and therefore lower efficiency~\cite{Comparative_study_MPPT_algorithms_2000}.
 
 
     \subsection{Perturb and Observe (P\&O)}
@@ -112,14 +112,14 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
 
         \begin{figure}[!ht]
             \centering
-            \begin{minipage}[b]{0.49\textwidth}
+            \begin{minipage}[b]{0.45\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{Images/Background/PeO.pdf}
                 \caption{Flowchart of the classic version of Perturb and Observe algorithm~\cite{Look-Up-Table_VS_PeO}.}
                 \label{fig:PeO_flowchart}
             \end{minipage}
             \hfill
-            \begin{minipage}[b]{0.49\textwidth}
+            \begin{minipage}[b]{0.45\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{Images/Background/fast_change.pdf}
                 \caption{Divergence of \ac{peo} from MPP as shown in~\cite{4112312}.}
@@ -127,9 +127,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
             \end{minipage}
         \end{figure}
 
-        To address this limitation, an additional condition can be incorporated into the algorithm that evaluates two consecutive measurements of $\Delta P$ and $\Delta V$. Specifically, when the signs of consecutive $\Delta P$ measurements do not follow the signs of $\Delta V$, this indicates that the observed power variation results from environmental disturbances rather than the algorithm's perturbation. Consequently, the voltage adjustment is suppressed. This refined variant is designated the two-point algorithm or improved \ac{peo} method~\cite{bendib_survey_mppt_methods}.
-
-        There are other variations of \ac{peo} algorithm that improve its performance, like Variable Step Size \ac{peo} (VSS-\ac{peo}), the three-point \ac{peo}, a-factor \ac{peo}, and more. Unfortunately, due to the scope of this work, it is not possible to explain all of them.
+        This limitation can be addressed by the two-point, or improved \ac{peo}, method~\cite{bendib_survey_mppt_methods}. Other variants, such as Variable Step Size \ac{peo} (VSS-\ac{peo}), the three-point \ac{peo} and a-factor \ac{peo}, further improve performance, but a full review is outside the scope of this work.
 
 
     \subsection{Incremental Conductance (IncCond)}
@@ -162,14 +160,14 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
         Based on these conditions, the algorithm adjusts its operating point (increasing or decreasing the voltage) using a variable step size based on the instantaneous conductance relative to the incremental conductance, Figure~\ref{fig:IncCond_flowchart}. For example, as suggested in~\cite{Comparison_PV_Array_MPPT_Techniques_2007}, the step size can be calculated using a proportional integral (PI) controller with zero as input reference and error defined as:
 
         \begin{equation}
-            e = \frac{I}{V} + \frac{dI}{dV}
+            e = \frac{I}{V} + \frac{dI}{dV} .
         \end{equation}
 
-        Comparative analysis shows that the \ac{incond} algorithm performs better than the \acs{peo} method. This outcome is expected, as the Incremental Conductance technique was developed specifically to address the limitations inherent in the \acs{peo} approach~\cite{Intelligent_PV_Module_2006}. For example, the \ac{incond} method eliminates the oscillation problem around the MPP that is characteristic of the \acs{peo} method. Additionally, \ac{incond} performs better under rapidly changing environmental conditions, such as sudden irradiance variations, because it uses derivative and variable step size~\cite{bendib_survey_mppt_methods}. The downside is increased complexity and, therefore, more parameters, which increases simulation and tuning time. Also, it uses fractions, which can be very demanding for \acp{mcu}.
+        The \ac{incond} algorithm generally outperforms \acs{peo}, which is expected since \ac{incond} was developed to address the limitations inherent in the \acs{peo} approach~\cite{Intelligent_PV_Module_2006}. For example, the \ac{incond} method eliminates the oscillation problem around the MPP that is characteristic of the \acs{peo} method. Additionally, \ac{incond} performs better under rapidly changing environmental conditions, such as sudden irradiance variations, because it uses derivative and variable step size~\cite{bendib_survey_mppt_methods}. The downside is increased complexity and, therefore, more parameters, which increases simulation and tuning time. Also, it uses fractions, which can be very demanding for \acp{mcu}.
 
         \begin{figure}[!ht]
             \centering
-            \begin{minipage}[b]{0.41\textwidth}
+            \begin{minipage}[b]{0.37\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{Images/Background/IncCond_flow.pdf}
                 \caption{Flowchart of the \ac{incond} method with direct control (for a buck converter)~\cite{IncCond_MPPT_Cuk_2011}.}
@@ -186,13 +184,11 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
 
     
         \subsection{Look Up Table (LUT)}
-            The \ac{lut} method is a simple and fast \ac{mppt} algorithm that relies on pre-calculated/measured data to determine the optimal operating point of a solar panel~\cite{MPPT_Comparison_techniques}.
+            The \ac{lut} method is a simple and fast \ac{mppt} algorithm that relies on pre-calculated or measured data to determine the optimal operating point of a solar panel~\cite{MPPT_Comparison_techniques}.
             
             The \acs{lut} table contains several entries organized by voltage and current. Each of these entries contains the optimal duty cycle of the DC-DC converter, which is pre-calculated or measured for a specific voltage and current. This approach allows the algorithm to reach the \acs{mpp} in one clock cycle by measuring the solar panel voltage and current, finding the closest entry in the \ac{lut} table, and applying the corresponding duty cycle to the converter. The entries of the table can be calculated through a mathematical model of the solar panel with different conditions (temperature and irradiance) or measured in a laboratory.
 
             Table~\ref{tab:LUT_matrix} visually represents a 2D \acs{lut} based only on current and voltage. Each entry represents the duty cycle used in each case.
-
-            The main advantage of this method is its speed since it can reach the \ac{mpp} in one clock cycle. This makes it suitable for applications that require fast tracking or use weak \acp{mcu}. However, it is not very accurate~\cite{Look-Up-Table_VS_PeO}.
 
             \begin{table}[ht]
                 \centering
@@ -210,8 +206,44 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
                 \end{tabular}
             \end{table}
 
+            The main advantage of this method is its speed since it can reach the \ac{mpp} in one clock cycle. This makes it suitable for applications that require fast tracking or use weak \acp{mcu}. However, it is not very accurate~\cite{Look-Up-Table_VS_PeO}. 
+
             To improve the accuracy, the \acs{lut} table needs to be large, which increases the required memory resources. Also, by adding the temperature and/or irradiance to the table would increase the accuracy, making it almost 100\% accurate, but this would increase the size of the table exponentially. In extreme cases, the memory requirements became expensive and slow. There is a trade-off between size, speed, and accuracy that needs to be considered when using this method. Also, the \acs{lut} method does not adapt to the aging of the solar panel or changes in its characteristics over time, unless the table is updated periodically through new measurements, which adds maintenance time.
-            
+
+    \subsection{Comparison between MPPT algorithms}
+        The four algorithms reviewed above differ in complexity, tracking accuracy, tracking speed, and maintenance. Table~\ref{tab:mppt-algorithm-comparison} summarizes these characteristics. Cells are marked as good, medium, or undesired according to the requirements of this project.
+
+        \begin{table}[htbp]
+        \centering
+        \caption{Comparison of MPPT algorithms.}
+        \label{tab:mppt-algorithm-comparison}
+        \scriptsize
+        \setlength{\tabcolsep}{4pt}
+        \renewcommand{\arraystretch}{1.05}
+        \begin{adjustbox}{max width=0.95\textwidth}
+            \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.2cm}
+                                        >{\centering\arraybackslash}X
+                                        >{\centering\arraybackslash}X
+                                        >{\centering\arraybackslash}X
+                                        >{\centering\arraybackslash}X}
+            \toprule
+            \textbf{Characteristic} & \textbf{Constant voltage} & \textbf{P\&O} & \textbf{IncCond} & \textbf{LUT} \\
+            \midrule
+            Complexity & \G Low & \Y Medium & \Y Medium & \R High \\
+            Tracking accuracy & \R Low & \Y Medium & \G High & \Y medium \\
+            Tracking speed & \R Low & \Y Medium & \G High & \G High \\
+            Needs maintenance & \G no & \G no & \G no & \R yes \\
+            \bottomrule
+            \end{tabularx}
+        \end{adjustbox}
+            \begin{center}
+                Legend: \fcolorbox{black}{light_red}{undesired} \fcolorbox{black}{light_yellow}{medium} \fcolorbox{black}{light_green}{good}
+            \end{center}
+        \end{table}
+
+        Tracking speed and accuracy matter most on a moving vessel, but the first firmware also has to be simple to implement and tune on the \ac{mcu}. Constant voltage is the simplest option, yet it does not follow the true \ac{mpp}. The \acs{lut} method reaches the operating point in one cycle, but the stored duty cycles become wrong if the panel ages or the string length changes, unless the table is rebuilt. Incremental conductance is the strongest of the four in both speed and accuracy, and it avoids the steady oscillation of \ac{peo}, it is also more demanding to code and tune, because each update uses fractions and extra parameters.
+
+        \ac{peo} is therefore selected as the compromise: medium complexity, no maintenance needed, and a step size that can be set to meet the required tracking speed with acceptable accuracy. Incremental conductance remains the preferred candidate for a later firmware revision.
 
 \section{Types of DC-DC converters}
     The \acs{dc}-\acs{dc} converter is a crucial component of an \acs{mppt} charger because it adjusts the solar panel operating point to match the \ac{mpp}. This choice is important to the project because it directly affects the overall system's efficiency, cost, and complexity.
@@ -366,7 +398,7 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
 
     To charge these batteries properly, the \ac{mppt} algorithm can operate alone if an additional converter is used in series. But in most of \ac{mppt} chargers, the \ac{mppt} and the battery charging unit are integrated in the same converter. This way, the \ac{mppt} algorithm can adjust the solar panel operating point to extract maximum power, while the battery charging technique ensures the battery charges properly. A proper combination of both is essential to ensure both maximum energy extraction and safe battery charge.
 
-    Several charging techniques are available for lithium-ion batteries. For the application considered in this work, the most relevant approach is the constant-current constant-voltage (\acs{cc}-\acs{cv}) charging method~\cite{Charging_Algorithms_Nickel_Lithium_Battery_2011}.It is also widely used in commercial chargers because of its simplicity and effectiveness~\cite{Review_Different_Charging_Techniques_Lithium_Polymer_Battery_2015}. 
+    Several charging techniques are available for lithium-ion batteries. For the application considered in this work, the most relevant approach is the constant-current constant-voltage (\acs{cc}-\acs{cv}) charging method~\cite{Charging_Algorithms_Nickel_Lithium_Battery_2011}. It is also widely used in commercial chargers because of its simplicity and effectiveness~\cite{Review_Different_Charging_Techniques_Lithium_Polymer_Battery_2015}. 
     This method consists of two main phases (Figure~\ref{fig:CC-CV profile}). In the first phase, the battery is charged at a constant current until it reaches its maximum voltage. In the second phase, the voltage is held constant at this limit while the current gradually decreases as the battery approaches full charge. Once the current drops below a certain threshold, the charging process is terminated to prevent overcharging~\cite{Review_Different_Charging_Techniques_Lithium_Polymer_Battery_2015}.
 
     When employing the \acs{cc}-\acs{cv} charging technique with a \ac{mppt} controller, the initial \ac{cc} phase is regulated by the \ac{mppt} algorithm, which extracts the maximum available power from the solar panel, limited by the maximum charging current. If the maximum charge current is reached, it operates at \ac{cc}. Once the \ac{cv} phase is reached, the \ac{cc}/\ac{mppt} function is disabled, and the power converter increases the solar panel voltage to progressively reduce the charging current while keeping the output voltage constant.
@@ -380,21 +412,18 @@ In this chapter, the main State-of-the-Art concepts regarding the engineering be
         \label{fig:CC-CV profile}
     \end{figure}
 
-    The literature has proposed more advanced high-performance battery charging techniques to reduce charging time without increasing charging current, thereby preserving battery lifetime. However, these techniques generally introduce higher switching losses and increased system complexity. In the present application, the current generated by the photovoltaic panels is less than half of the maximum allowable battery charging current, consequently, the charging current is inherently limited by the solar panels rather than by the charging strategy. Furthermore, battery lifetime is not a critical concern in this project, as the battery is expected to undergo a limited number of charge cycles, not exceeding 20 cycles per year.
+    Advanced charging techniques can reduce charging time but often increase switching losses and system complexity. Since the available photovoltaic current is less than half the maximum allowable battery-charging current and the battery undergoes fewer than 20 charge cycles per year, these techniques are unnecessary for this application.
 
     Therefore, the \acs{cc}-\acs{cv} charging method is considered the most suitable technique for this project, owing to its simplicity, effectiveness, and widespread adoption in commercial battery chargers. 
 
-    Other charging techniques fall outside the scope of this work, however, some methods are briefly discussed in the references provided~\cite{Charging_Algorithms_Nickel_Lithium_Battery_2011}\cite{Charging_Algorithms_Lithium_Ion_Batteries_Overview_2012}\cite{Review_Different_Charging_Techniques_Lithium_Polymer_Battery_2015}.
+    % Other charging techniques fall outside the scope of this work, however, some methods are briefly discussed in the references provided~\cite{Charging_Algorithms_Nickel_Lithium_Battery_2011}\cite{Charging_Algorithms_Lithium_Ion_Batteries_Overview_2012}\cite{Review_Different_Charging_Techniques_Lithium_Polymer_Battery_2015}.
 
     
 
 
-        % \textcolor{red}{If there is time, chose a specific STM32 and justify the choice based on some parameters.}
-
-
 
 \section{Commercial Options}
-    To assess the feasibility of adopting a \ac{ots} solution, this section reviews complete commercial \ac{mppt} chargers for solar battery charging. Their electrical, functional, and economic characteristics are evaluated against the requirements of this project. The objective is to identify whether a commercially available charger can satisfy the constraints of the application or, alternatively, to justify the need for a custom designed converter and control system.
+    To assess the feasibility of adopting a \ac{cots} solution, this section reviews complete commercial \ac{mppt} chargers for solar battery charging. Their electrical, functional, and economic characteristics are evaluated against the requirements of this project. The objective is to identify whether a commercially available charger can satisfy the constraints of the application or, alternatively, to justify the need for a custom designed converter and control system.
 
 % \subsection{Specialized ICs}
 % \label{sec:ICs}

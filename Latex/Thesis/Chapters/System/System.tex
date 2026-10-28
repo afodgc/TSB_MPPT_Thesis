@@ -5,7 +5,7 @@ This chapter presents the electrical architecture of \ac{sg01}, providing the co
 
 \section{Overview}
 
-\ac{sg01} is the most recent vessel built by \acs{tsb}, designed to compete in the Sea Lab category of the Monaco Energy Boat Challenge. It uses hydrofoils to hydroplane and reduce drag. As it is \acs{tsb}'s largest and heaviest vessel to date, it required more power, addressed with a 130~kW motor combined with the first ever \acs{tsb} High Voltage system (300-600~V), paired with a Low Voltage system (30-50~V) for the auxiliary electronics. Since solar panels alone could never meet the motor's power needs, the High Voltage system is designed to be powered by hydrogen instead, however, this is not yet implemented due to budget constraints, while the Low Voltage system relies on solar energy. Figure~\ref{fig:SG01_sch} shows a highly simplified diagram of the overall system architecture just described.
+\ac{sg01} is the most recent vessel built by \acs{tsb}, designed to compete in the Sea Lab category of the Monaco Energy Boat Challenge. It uses hydrofoils to hydroplane and reduce drag. As it is \acs{tsb}'s largest and heaviest vessel to date, it required more power, addressed with a 130~kW motor combined with the first ever \acs{tsb} High Voltage system (300-600~V), paired with a Low Voltage system (30-50~V) for the auxiliary electronics. Since solar panels alone could never meet the motor's power needs, the High Voltage system is designed to be powered by hydrogen instead. However, this is not yet implemented due to budget constraints, while the Low Voltage system relies on solar energy. Figure~\ref{fig:SG01_sch} shows a highly simplified diagram of the overall system architecture just described.
 
 \begin{figure} [!ht]
     \centering
@@ -15,7 +15,7 @@ This chapter presents the electrical architecture of \ac{sg01}, providing the co
     \label{fig:SG01_sch}
 \end{figure}
 
-The low voltage system is designed to power all auxiliary system (dashboard, telemetry, flight control, electrical string, throttle, etc.). Some of these auxiliary systems are critical for the normal use of the vessel, for example, if the dashboard turns off, the pilot will not know the state of the high voltage system (temperature, voltage, state of charge, etc.). Or, even more critically, if the throttle does not work, the boat cannot electrically move.
+The low voltage system is designed to power all auxiliary system (dashboard, telemetry, flight control, electrical string, throttle, etc.). Some of these auxiliary systems are critical for the normal use of the vessel, for example, if the dashboard turns off, the pilot will not know the state of the high voltage system (temperature, voltage, state of charge, etc.). Or, even more critically, if the throttle does not work, the boat can not move by electrical means.
 
 Auxiliary systems are always changing and growing, so it is difficult to estimate their power consumption. For this work it is considered 1000~W of continuous consumption. It is not a perfect estimation because the power consumption will depend on the driving mode (autonomous driving, hydroplaning, or normal drive), which can create different power profiles due to the actuators. Additionally, the cooling system (which is planned to be moved to the High Voltage system) has high power consumption that is not considered in this estimation. 
 
@@ -186,7 +186,7 @@ The environmental excitation experienced by \ac{sg01} was further investigated u
     \centering
     \includegraphics[width=0.70 \textwidth]{Images/System/sg01_osc.pdf}
     \qquad
-    \caption{Measured oscillations from \ac{sg01}.}
+    \caption{Measured oscillations' spectrum from \ac{sg01}.}
     \label{fig:sg01 wave}
 \end{figure}
 

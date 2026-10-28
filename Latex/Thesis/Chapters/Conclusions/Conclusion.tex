@@ -1,34 +1,66 @@
 \fancychapter{Conclusion}
 \label{chap:Conclusion}
 
+This chapter presents the main conclusions of the work, summarizing the design decisions, experimental results, and the achievement of the project targets.
+It then discusses the remaining limitations and outlines what can still be improved.
+
+
+\section{Conclusions}
+
 The objective of this thesis was to develop a low-cost and high efficiency \ac{mppt} charger for \ac{sg01}, while also increasing the data acquired during operation. 
 
 The potential impact of such a prototype was assessed by estimating the time to drain a battery with and without solar panels, with two different batteries. For both batteries, the calculated discharge time can increase up to 200\%, although it is highly dependent on the environmental conditions. To establish a target tracking time, environmental variations were analyzed, indicating that the tracking algorithm should be capable of reaching the \ac{mpp} within $1~\mathrm{s}$ to remain effective under real operating conditions.
 
-A state-of-the-art review identified suitable \ac{mppt} algorithms and \acs{dc}-\acs{dc} converters useful for this project. A subsequent market analysis revealed a lack of companies addressing the subject. The few companies that did present some flaws, such as high cost, incompatibility with the system, or limited data logging and communication capabilities.
+A state-of-the-art review identified suitable \ac{mppt} algorithms and \acs{dc}-\acs{dc} converters useful for this project. A subsequent market analysis revealed a lack of companies addressing the subject. The few companies that did, present products with some flaws, such as high cost, incompatibility with the system, or limited data logging and communication capabilities.
 
 To meet the project requirements, a synchronous boost converter was carefully dimensioned and validated in LTspice simulations, while the \ac{mppt} algorithm was developed in MATLAB Simulink, which helped to understand how to tune the algorithm and what its limitations are. The \ac{peo} algorithm was selected because it offers satisfactory tracking speed and accuracy, along with a simple implementation and tuning process.
 
 After selecting the converter components, an STM32 microcontroller and voltage and current sensors, a \ac{pcb} was designed, manufactured, and hand soldered.
 The estimated cost of the final prototype is 125~€, which is lower than the equivalent commercial solutions currently used (240~€) and meets the cost requirement set for this project.
 
-Initial tests revealed concerning levels of noise caused by the switching converter. The problem was addressed with several SMD capacitors, which drastically improved the noise. A conducted emissions measurement based on CISPR 25:2021 was then performed to characterize the residual noise against the limits relevant to the vessel communication systems, such as CAN and VHF. In both the loaded and unloaded conditions, the measured spectrum remained below the Class 5 limits, the most stringent class defined by the standard. This is an indicative comparison, not a formal compliance test.
+Initial tests revealed concerning levels of noise caused by the switching converter. The problem was addressed with several SMD capacitors, which drastically reduced the noise. A conducted emissions measurement based on CISPR 25:2021 was then performed to characterize the residual noise against the limits relevant to the vessel communication systems, such as CAN and VHF. In both the loaded and unloaded conditions, the measured spectrum remained below the Class 5 limits, the most stringent class defined by the standard. This is an indicative comparison, not a formal compliance test.
 Additionally, it was observed that the inductor heats up during operation. A 3~h continuous test, performed both in open air and inside an enclosed box, confirmed that all component temperatures stabilize after approximately 1~h, reaching a maximum of $51.6~^\circ\mathrm{C}$, within safe operating limits.
 
-Performance testing produced strong results overall. The efficiency was measured under several conditions, such as DC-DC mode, current sweep, or battery sweep. An efficiency of up to 96.84\% was measured. When isolating the losses of the boost converter itself from those of the measurement and control circuit, the estimated converter efficiency is 98\%. The tracking speed is consistently under 100~ms, reaching up to 200~ms in the most demanding test case, while averaging 99\% tracking accuracy. In all cases the response remains below the design targets of 0.5~s under typical conditions and 1~s in the worst case.
+Performance testing produced good results overall. The efficiency was measured under several conditions, such as DC-DC mode, current sweep, or battery sweep. An efficiency of up to 96.84\% was measured. When isolating the losses of the boost converter itself from those of the measurement and control circuit, the estimated converter efficiency is 98\%. The tracking speed is consistently under 100~ms, reaching up to 200~ms in the most demanding test case, while averaging 99\% tracking accuracy. In all cases the response remains below the design targets of 0.5~s under typical conditions and 1~s in the worst case.
 Finally, the prototype successfully charged a battery following the expected \acs{cc}-\acs{cv} curve in the laboratory, in an on-shore field test, and on the water aboard NAV-45. During the on-water test the prototype was able to charge a battery and track the \ac{mpp}. The influence of roll and pitch on tracking could not be quantified.
 
-These results confirm that the developed prototype meets the efficiency, cost, and tracking speed requirements defined for this project. However, as a prototype, it still has some limitations: measurement accuracy, cost optimization, a limited set of battery voltages and solar panels, and the fact that the on-water test was performed on NAV-45 with the charger electrically isolated from the vessel electronics, rather than installed on \ac{sg01}. These limitations, along with further improvements, are discussed in the following section.
+Table~\ref{tab:targets-vs-results} compares the design targets of Table~\ref{tab:design-targets} with the experimental results.
+
+\begin{table}[!ht]
+    \centering
+    \caption{Comparison of the design targets with the measured results.}
+    \label{tab:targets-vs-results}
+    \begin{tabular}{lcc}
+        \toprule
+        Parameter & Target & Result \\
+        \midrule
+        Continuous power & \(150~\mathrm{W}\) & did not overheat at 130~W \\
+        Efficiency & \(> 90\%\) & up to \(96.84\%\) \\
+        Tracking time (typical) & \(< 0.5~\mathrm{s}\) & \(< 0.1~\mathrm{s}\) \\
+        Tracking time (worst case) & \(< 1~\mathrm{s}\) & \(0.2~\mathrm{s}\) \\
+        Tracking accuracy & \(> 95\%\) & \(\approx 99\%\) \\
+        Output voltage ripple & \(0.1~\mathrm{V}\) & \(0.085~\mathrm{V}\) \\
+        Input voltage ripple & \(0.5~\mathrm{V}\) & \(0.032~\mathrm{V}\) \\
+        Battery voltage & \(30\)-\(50.4~\mathrm{V}\) & Charged with success \\
+        PV string & 20-40 series cells & tested with 24-42 cells \\
+        Cost & \(< 240\)~€ & \(\approx 125\)~€ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+These results demonstrate that the prototype meets the project requirements for efficiency, cost, voltage ripple, and tracking performance. However, its validation remains limited to a specific range of battery voltages and solar panel configurations, and further cost optimization is possible. These limitations and potential improvements are discussed in the following section.
 
 \section{Future work}
 
 The prototype developed in this thesis is not a finished product ready for market and fully tested under all conditions. However, its functionality was proven on the water and it can be implemented in \ac{sg01}. As a prototype, there remains considerable room for improvement.
 
-The on-water test was performed on NAV-45, not on \ac{sg01}, and the charger was electrically isolated from the vessel systems. Installation on \ac{sg01} remains necessary to validate \ac{can} telemetry, conducted noise, and charging under the electrical conditions of the target boat. Further on-water testing with fully synchronized measurements, including solar-panel temperature and irradiance, would provide a more reliable evaluation of the \ac{mppt} algorithm's performance under real operating conditions.
+The prototype's operating limits have yet to be established. Further testing should assess its robustness under a wide range of conditions, including increased input current, elevated ambient temperature, high humidity, and reverse-polarity connection.
+
+The on-water test was performed on NAV-45, not on \ac{sg01}, and the charger was electrically isolated from the vessel systems. Installation on \ac{sg01} remains necessary to validate \ac{can} telemetry, conducted noise, and charging under the electrical conditions of the target boat. Further on-water testing with fully synchronized measurements, including solar panel temperature and irradiance, would provide a more reliable evaluation of the \ac{mppt} algorithm's performance under real operating conditions.
 
 On the control side, additional \ac{mppt} algorithms should be implemented, tuned and compared under the same operating conditions. A dedicated irradiance measurement, used with the existing temperature sensing, would also enable a more accurate estimate of conversion losses and could serve as input to more advanced tracking methods.
 
-Regarding the processing unit, a \ac{mcu} with a native 16-bit ADC would improve measurement resolution, while a higher clock frequency would increase the PWM duty cycle resolution, which is particularly relevant to increase accuracy.
+Regarding the processing unit, a \ac{mcu} with a native 16-bit ADC would improve measurement resolution, while a higher clock frequency would increase the PWM duty cycle resolution, which is particularly relevant to increase algorithm accuracy. However, for the current algorithm both changes are not necessary. 
 
-Finally, both cost and output voltage ripple could be reduced by coordinating the \acp{mppt} that operate in parallel. If the converters are interleaved, that is, operated with a controlled phase shift, the individual output ripples tend to cancel rather than add. A common output capacitor bank could then be shared among chargers, reducing the required capacitance per unit and the overall cost of the installation.
+Finally, both cost and output voltage ripple could be reduced by coordinating the \ac{mppt} chargers that operate in parallel. If the converters are interleaved, that is, operated with a controlled phase shift, the individual output ripples tend to cancel rather than add. A common output capacitor bank could then be shared among chargers, reducing the required capacitance per unit and the overall cost of the installation.
 
