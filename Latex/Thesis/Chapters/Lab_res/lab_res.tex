@@ -47,9 +47,9 @@ Following the design and simulation stages, a prototype was manufactured and ass
 
     These could be improved even further by using resistors with lower tolerance and a lower temperature coefficient, or by increasing the ADC resolution. Another option that does not increase system cost is to subtract the linear error from the results. The magnitude of the error is small, and therefore it does not affect the \ac{mppt} operation, however, for the purpose of this project, the linearization was implemented in firmware to improve the accuracy of the measurements made during the testing phase.
 
-    In Figure~\ref{fig:voltage_sense_error} the error of the voltage readings is represented. Since the error is linear, the trend line is also shown and used to correct the results and improve measurement accuracy. The figure also shows the results after subtracting the linear error, and the error is significantly reduced. The average error was reduced to 28.325~mV and 29.825~mV for the battery and solar panel, respectively. 
+    In Figure~\ref{fig:voltage_sense_error} the error of the voltage readings is represented. Since the error is linear, the trend line is also shown and used to correct the results and improve measurement accuracy. The figure also shows the results after subtracting the linear error, and the error is significantly reduced. The average error was reduced to 28.3~mV and 29.8~mV for the battery and solar panel, respectively. 
 
-    The same test was performed for the current sensors, the average error was 99.93~mA and 8.5~mA for the solar panel and battery, respectively, which is acceptable for this application. Figure~\ref{fig:current_sense_error} shows the current sensor error and indicates that it is linear on the solar panel side and almost null on the battery side. This can be explained by the fact that at low currents, the error is smaller, and probably the shunt resistor value on the solar panel side is more accurate than the shunt resistor on the battery side. However, it is still small and does not affect the \ac{mppt} operation.
+    The same test was performed for the current sensors, the average error was 99.9~mA and 8.5~mA for the solar panel and battery, respectively, which is acceptable for this application. Figure~\ref{fig:current_sense_error} shows the current sensor error and indicates that it is linear on the solar panel side and almost null on the battery side. This can be explained by the fact that at low currents, the error is smaller, and probably the shunt resistor value on the solar panel side is more accurate than the shunt resistor on the battery side. However, it is still small and does not affect the \ac{mppt} operation.
 
     \begin{figure}[!ht] 
         \centering 
@@ -70,26 +70,26 @@ Following the design and simulation stages, a prototype was manufactured and ass
 
     As in the case of the voltage sensor, the subtraction of the linear error would greatly increase the accuracy of the measurements. However, it takes a lot of time to do the measurements and calculate the linearization for each \ac{pcb} which is not realistic for a student prototype project like \ac{tsb}. However, to increase the accuracy of the laboratory results, error correction was implemented for the \ac{pv} side current sensor. The figure also shows the results after subtracting the linear error, and the error is significantly reduced. The average error was reduced to 5.28~mA.
 
-    Another factor affecting the accuracy of the measurements is electrical noise. In prototype version 1.1, the filtering components were placed close to the sensors. In practice, this configuration primarily attenuated noise generated locally by the sensors themselves. However, switching converters are also significant sources of electrical noise, which should be attenuated as close as possible to the ADC/\ac{mcu}. Therefore, the filter placement was modified in version 1.2. The resulting difference in measurement quality is shown in Figure~\ref{fig:sensors noise}, where the measurements were collected at a fixed duty cycle.
+    Another factor affecting the accuracy of the measurements is electrical noise. In prototype version 1.1, the filtering components were placed close to the sensors. In practice, this configuration primarily attenuated noise generated locally by the sensors themselves. However, switching converters are also significant sources of electrical noise, which should be attenuated as close as possible to the ADC or \ac{mcu}. Therefore, the filter placement was modified in version 1.2. The resulting difference in measurement quality is shown in Figure~\ref{fig:sensors noise}, where the measurements were collected at a fixed duty cycle.
 
     \begin{figure}[!ht]
         \centering
         \begin{subfigure}{0.49\textwidth}
             \centering
-            \includegraphics[width=0.99\textwidth]{Images/LAB_res/noise_V1.1.pdf}
+            \includegraphics[width=0.99\textwidth]{Images/LAB_res/noise_V1.1(2).pdf}
             \caption{Version 1.1.}
         \end{subfigure}
         \hfill
         \begin{subfigure}{0.49\textwidth}
             \centering
-            \includegraphics[width=0.99\textwidth]{Images/LAB_res/noise_V1.2_2.pdf}
+            \includegraphics[width=0.99\textwidth]{Images/LAB_res/noise_V1.2_3.pdf}
             \caption{Version 1.2.}
         \end{subfigure}
         \caption{Comparison of sensor readings over a one-minute interval at a fixed duty cycle.}
         \label{fig:sensors noise}
     \end{figure}
 
-    The difference between the two versions is clearly noticeable. In version 1.1, all measurements exhibited significant noise. In contrast, the modified filter configuration in version 1.2 substantially reduced the observed noise to an acceptable level. The battery current measurement represented the worst-case condition, with two distinct spikes occurring during the one minute measurement interval.
+    The difference between the two versions is clearly noticeable. In version 1.1, all measurements exhibited a significant amount of noise spikes. In contrast, the modified filter configuration in version 1.2 substantially reduced the observed noise readings.
 
 
 
@@ -130,10 +130,10 @@ Following the design and simulation stages, a prototype was manufactured and ass
                 +9 $\times$ $1~\mu\mathrm{F}$ +6 $\times$ $100~\mathrm{nF}$ &
                 All + schottky diode\\
                 \hline
-                $I_{in}$  & 1.8~A   & 640~mA & 292~mA & 140~mA \\
-                $I_{out}$ & 0.8~A   & 300~mA & 220~mA & 272~mA \\
-                $V_{in}$  & 2.0~V   & 350~mV & 380~mV & 490~mV \\
-                $V_{out}$ & 8.0~V   & 2.3~V  & 2.2~V  & 1.440~V \\
+                $I_{in} (mA)$  & 1800   & 640 & 292 & 140 \\
+                $I_{out} (mA)$ & 800   & 300 & 220 & 272 \\
+                $V_{in} (V)$  & 2.00   & 0.35 & 0.38 & 0.49 \\
+                $V_{out} (v)$ & 8.00   & 2.30  & 2.20  & 1.44 \\
                 \hline 
             \end{tabular}
         \end{table}
@@ -244,20 +244,20 @@ Following the design and simulation stages, a prototype was manufactured and ass
                 Case & Power in & Power out & Efficiency 
                 & Efficiency & Efficiency \\
                 \hline
-                Case 1 & 127.444 & 123.413 & 96.84\% & 97.23\% & 97.64\% \\
-                Case 2 & 129.108 & 124.685 & 96.57\% & 96.96\% & 97.36\% \\
-                Case 3 & 127.523 & 123.232 & 96.64\% & 97.02\% & 97.43\% \\
-                Case 4 & 73.1277 & 70.818 & 96.84\% & 97.52\% & 98.24\% \\
+                Case 1 & 127.4 & 123.4 & 96.8\% & 97.2\% & 97.6\% \\
+                Case 2 & 129.1 & 124.7 & 96.6\% & 97.0\% & 97.4\% \\
+                Case 3 & 127.5 & 123.2 & 96.6\% & 97.0\% & 97.4\% \\
+                Case 4 & 73.1 & 70.8 & 96.8\% & 97.5\% & 98.2\% \\
                 \hline
-                No load & 0.5103 & 0 & -- & -- & -- \\
-                No load and switching & 1.04279 & 0 & -- & -- & -- \\
+                No load & 0.5 & 0 & -- & -- & -- \\
+                No load and switching & 1.0 & 0 & -- & -- & -- \\
                 \hline
             \end{tabular}
         \end{table}
 
         The measured efficiency exceeds 96\% across all test cases, which is higher than the goal (90\%). This efficiency accounts for all converter losses, including the measurement and control systems. Compared with the power loss estimate in Section~\ref{subsubsec:loss_estimation}, the efficiency is about 2\% lower than expected. This difference can be explained by the fact that the components used can have slightly different characteristics. Also, the estimation did not account for losses caused by the parasitic elements of the \ac{pcb}.
 
-        The \ac{pcb} was also tested in open circuit with and without driving the transistors. The results show the losses of the circuit without the boost converter. Around 0.5~W of losses are caused only by the measurement and control system. When the transistors are driven without any load, the converter losses are negligible because the current is too low. So the measured losses are approximately equal to the driving circuit + the measurement and control system. Based on these values, Table~\ref{tab:efficiency_results} also presents an estimate of the efficiency without the measurement and control system, and another without the driving circuit. The converter efficiency is around 97\% to 98\% for all test cases, which is close to the simulation measurements. From another perspective, this shows how significant the losses are in the rest of the circuit.    
+        The \ac{pcb} was also tested in open circuit with and without driving the transistors. The results show the losses of the circuit without the boost converter. Around 0.5~W of losses are caused only by the measurement and control system. When the transistors are driven without any load, the converter losses are negligible because the current is too low. So the measured losses are approximately equal to the driving circuit plus the measurement and control system. Based on these values, Table~\ref{tab:efficiency_results} also presents an estimate of the efficiency without the measurement and control system, and another without the driving circuit. The converter efficiency is around 97\% to 98\% for all test cases, which is close to the simulation measurements. From another perspective, this shows how significant the losses are in the rest of the circuit.    
         
         During the same tests, the input and output voltage ripple were measured at all charging points. However, measurement noise and limited precision reduced the accuracy of the results. The maximum measured input and output voltage ripple were approximately \(32~\mathrm{mV}\) and \(85~\mathrm{mV}\), respectively, slightly exceeding the simulated values, potentially due to parasitic effects in the components and \ac{pcb}. Nevertheless, both measurements satisfy the design limits of \(500~\mathrm{mV}\) at the input and \(100~\mathrm{mV}\) at the output. 
 
@@ -288,7 +288,7 @@ Following the design and simulation stages, a prototype was manufactured and ass
             \end{minipage} 
         \end{figure}
 
-        To confirm that the temperature does not rise to a concerning level, a test of 3~h was performed with the converter operating at Case 3. Figure~\ref{fig:3h_temp_test} shows the temperature evolution over the 3~h for the inductor, capacitors, transistors and the ambient temperature. These results were acquired using the thermistors placed on the board, which measure the ambient temperature and the transistors' temperature. The other measurements were acquired using additional external thermistors that can be read by the board using the connector placed for thermistors. 
+        To confirm that the temperature does not rise to a concerning level, a test of 3~h was performed with the converter operating at Case 3(defined in Figure~\ref{fig:cc-cv points}). Figure~\ref{fig:3h_temp_test} shows the temperature evolution over the 3~h for the inductor, capacitors, transistors and the ambient temperature. These results were acquired using the thermistors placed on the board, which measure the ambient temperature and the transistors' temperature. The other measurements were acquired using additional external thermistors that can be read by the board using the connector placed for thermistors. 
 
         The measured values were confirmed using an infrared thermometer which show insignificant difference in temperature, confirming the quality of the measurements.
         
@@ -296,7 +296,7 @@ Following the design and simulation stages, a prototype was manufactured and ass
 
         This test concludes that no cooling is needed. At least under the same test conditions. To confirm this statement, the board was placed inside a cardboard box since \ac{tsb} usually places boards inside closed boxes. If the components inside the box need cooling, a fan or water cooling needs to be added.
 
-        Figure~\ref{fig:3h_temp_test_close_box} represents the described test. With no airflow, the ambient temperature reading is more stable, and so are the others. As in the previous test, after 60~min the temperatures remained approximately constant and the maximum temperature was $51.6~^\circ\mathrm{C}$. Since none of the temperatures show concerning values, it is safe to conclude that no additional cooling is needed
+        Figure~\ref{fig:3h_temp_test_close_box} represents the described test. With no airflow, the ambient temperature reading is more stable, and so are the others. As in the previous test, after 60~min the temperatures remained approximately constant and the maximum temperature was $51.6~^\circ\mathrm{C}$. Since none of the temperatures show concerning values, it is safe to conclude that no additional cooling is needed.
 
         \begin{figure}[!ht] 
             \centering 

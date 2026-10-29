@@ -9,7 +9,7 @@ This chapter presents the electrical architecture of \ac{sg01}, providing the co
 
 \begin{figure} [!ht]
     \centering
-    \includegraphics[width=0.80 \textwidth]{Images/System/Sys_diagram.pdf}
+    \includegraphics[width=0.90 \textwidth]{Images/System/Sys_diagram.pdf}
     \qquad
     \caption{Simplified electrical schematic of \ac{sg01}.}
     \label{fig:SG01_sch}
@@ -17,7 +17,7 @@ This chapter presents the electrical architecture of \ac{sg01}, providing the co
 
 The low voltage system is designed to power all auxiliary system (dashboard, telemetry, flight control, electrical string, throttle, etc.). Some of these auxiliary systems are critical for the normal use of the vessel, for example, if the dashboard turns off, the pilot will not know the state of the high voltage system (temperature, voltage, state of charge, etc.). Or, even more critically, if the throttle does not work, the boat can not move by electrical means.
 
-Auxiliary systems are always changing and growing, so it is difficult to estimate their power consumption. For this work it is considered 1000~W of continuous consumption. It is not a perfect estimation because the power consumption will depend on the driving mode (autonomous driving, hydroplaning, or normal drive), which can create different power profiles due to the actuators. Additionally, the cooling system (which is planned to be moved to the High Voltage system) has high power consumption that is not considered in this estimation. 
+Auxiliary systems are always changing and growing, so it is difficult to estimate their power consumption. Based on the power consumption of the components installed in the vessel, 1000~W of continuous consumption is considered for this work. It is not a perfect estimation because the power consumption will depend on the driving mode (autonomous driving, hydroplaning, or normal drive), which can create different power profiles due to the actuators. Additionally, the cooling system (which is planned to be moved to the High Voltage system) has high power consumption that is not considered in this estimation. 
 
 To help keeping the low voltage system always powered, solar panels are used and connected to several \acp{mppt}. In the future, there are plans to add a bidirectional DC-DC converter between the low voltage battery and the high voltage battery, enabling energy transfer in both directions. 
 
@@ -50,7 +50,7 @@ The current installation consists of 140 Maxeon Gen 3 (Me3) photovoltaic cells d
 \end{figure}
 
 Each \ac{pv} cell has an active area of approximately $155.06~\mathrm{cm^2}$, resulting in a total photovoltaic area of $2.171~\mathrm{m^2}$.
-Assuming \ac{stc} (irradiance of $1000~\mathrm{W/m}^2$ and $25~^\circ\mathrm{C}$), the photovoltaic array is capable of delivering approximately $526.4~\mathrm{W}$ of peak power (theoretical value). 
+Assuming \ac{stc} (irradiance of $1000~\mathrm{W/m}^2$ and $25~^\circ\mathrm{C}$), each cell is capable of delivering 3.76~W, therefore the photovoltaic system is capable of delivering approximately $526.4~\mathrm{W}$ of peak power, in theory. 
 
 The \ac{pv} energy is extracted by four commercial Genasun \acp{mppt}, grouped in a dedicated \ac{mppt} box, which convert the variable solar panel voltage into a stable charging voltage. This architecture allows each photovoltaic group to independently track its \ac{mpp}, improving energy extraction under non-uniform illumination conditions.
 
@@ -62,13 +62,13 @@ Prior to installation, all panels underwent electroluminescence testing to detec
     \centering
     \begin{subfigure}{0.49\textwidth}
         \centering
-        \includegraphics[width=0.8\textwidth]{Images/System/DSC_3873.pdf}
+        \includegraphics[width=0.75\textwidth]{Images/System/DSC_3873.pdf}
         \caption{Worst results.}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.49\textwidth}
         \centering
-        \includegraphics[width=0.65\textwidth]{Images/System/DSC_3887.pdf}
+        \includegraphics[width=0.60\textwidth]{Images/System/DSC_3887.pdf}
         \caption{Best results.}
     \end{subfigure}
     \caption{Electroluminescence test results.}
@@ -110,7 +110,7 @@ The current low voltage battery uses Samsung INR21700-50G cells in a 12s28p conf
         Max charge current & A & 135.8 & 42 & 5.3 \\ \hline
         Cutoff charge current & A & 3.395 & 1.75 & 0.133 \\ \hline
         Max discharge current & A & 271.6 & 175 & 15.9\\ \hline
-        Weight & kg & 25.2 & ? & 1\\ \hline
+        Weight & kg & 25.2 & 11.2 & 0.9\\ \hline
         Internal resistance & $\mathrm{m}\Omega$ & 6 & 24 & 192\\ \hline
     \end{tabular}
 \end{table}
@@ -122,13 +122,13 @@ For a more realistic impact analysis, the \ac{sr03} battery will be used. This i
 Additionally, to shorten the charging test time, another battery was used. This battery was provided by a startup called NAVICTUS and is a 12s1p pack with Samsung INR21700-53G cells.
 \section{PV system impact on autonomy}
 
-With \ac{sg01} battery (5844.56~Wh) and the maximum power that the solar panels can currently provide (526.4~W), the minimum time to fully charge the battery is 11~h and 7~min (5844.56~Wh / 526.4~W). This is a long time to charge a battery. There are two solutions to this problem: increase the power provided by the solar panels or decrease the battery capacity.
+With \ac{sg01} battery (5844.56~Wh) and the maximum power that the solar panels can currently provide (526.4~W), the minimum time to fully charge the battery is 11~h and 7~min (5844.56~Wh / 526.4~W). That is a long time to charge a battery. There are two solutions to this problem: increase the power provided by the solar panels or decrease the battery capacity.
 
 Considering the approach of reducing the battery capacity to $1512~\mathrm{Wh}$, corresponding to the battery capacity of \acs{sr03}, the battery can be fully charged in $2~\mathrm{h}$ and $53~\mathrm{min}$, which represents a much more reasonable charging time. Furthermore, increasing the power provided by the solar panels to $977~\mathrm{W}$ reduces the charging time to $1~\mathrm{h}$ and $33~\mathrm{min}$, providing a highly suitable charging time for the battery.
 
-The charging times are good metrics to evaluate the \ac{pv} system, but the main goal is to maximize the time on water before full battery discharge. For this analysis, a consumption of $1000~\mathrm{W}$ is assumed. Considering the original battery, it takes 5~h 51~min to fully discharge without solar panels, 12~h 21~min with solar panels, and approximately 10 days with the additional solar panels. As previously said, this battery is overdimensioned and will be changed in the future.
+The charging times are good metrics to evaluate the \ac{pv} system, but the main goal is to maximize the time on water before full battery discharge. For this analysis, an average consumption of $1000~\mathrm{W}$ is assumed. Considering the original battery, it takes 5~h 51~min to fully discharge without solar panels, 12~h 21~min with solar panels (at \ac{stc}), and approximately 10 days with the additional solar panels (at \ac{stc}). As previously said, this battery is overdimensioned and will be changed in the future.
 
-To better understand the impact of the \ac{pv} system, the battery of \acs{sr03} will be considered. This battery takes 1~h and 30~min to fully discharge without solar panels, 3~h 12~min with solar panels, and approximately 2 days 18~h with the additional solar panels. 
+To better understand the impact of the \ac{pv} system, the battery of \acs{sr03} will be considered. This battery takes 1~h and 30~min to fully discharge without solar panels, 3~h 12~min with solar panels (at \ac{stc}), and approximately 2 days 18~h with the additional solar panels (at \ac{stc}). 
 
 In theory, reducing the battery capacity while increasing the solar panel area could allow the battery to be maintained without the need for external charging. 
 From another perspective, the power consumption can be increased without the need to increase the battery capacity.
@@ -168,7 +168,7 @@ For pitch, $k=k_{yy}$ and $GM=GM_L$, whereas for roll, $k=k_{xx}$ and $GM=GM_T$.
 
 This formula is used with results given by the hydrostatic simulations, which were provided by \ac{tsb}, where $GM_L$ is $21.515~\mathrm{m}$ and $GM_t$ is $1.867~\mathrm{m}$. The radius of gyration is also calculated based on the longitude (L=8~m) and width/beam (B=2.5~m). Based on the International Towing Tank Conference (ITTC) recommendation \cite{ittc_seakeeping_2024}, when the radius of gyration for pitch and roll is unknown, use 0.25L and 0.35B to 0.40B, respectively.
 
-Based on the given values, the pitch and roll natural periods are 0.8654~s and 1.2853~s, respectively, which is equivalent to 1.1555~Hz and 0.7780~Hz. These values represent an estimate of the natural frequencies of the vessel.
+Based on the given values, the pitch and roll natural periods are 0.87~s and 1.29~s, respectively, which is equivalent to 1.15~Hz and 0.78~Hz. These values represent an estimate of the natural frequencies of the vessel.
 
 As for the frequency of the waves, it has a wide range and depends on several factors. Studies on this subject show higher energy for waves with 1~s to 30~s periods, which is equivalent to 0.033~Hz to 1~Hz, Figure~\ref{fig:wave by period}.
 

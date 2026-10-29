@@ -19,7 +19,7 @@ The DC-DC converter chosen for this project was a boost converter. This topology
     \label{fig:boost}
 \end{figure}
 
-Analyzing the boost converter separately in its two stages, it is possible to define the voltage drop across the inductor (VL), as a function of the input voltage (Vin) and output voltage (Vout) as follows:
+Analyzing the boost converter separately in its two stages, it is possible to define the voltage drop across the inductor ($V_L$), as a function of the input voltage ($V_{in}$) and output voltage ($V_{out}$) as follows:
 
 \begin{equation}
     V_L = \begin{cases}
@@ -53,19 +53,19 @@ The influence of the transistor internal resistance ($R_{DS_{(on)}}$), the induc
   \label{eq:vl2}
 \end{equation}
 
-In this case, at the stationary state, the average voltage across the inductor is $r_L \cdot I_L$ and therefore the output voltage can be defined as:
+In this case, at the stationary state, the average voltage across the inductor is $R_{ind} \cdot I_L$ and therefore the output voltage can be defined as:
 
 \begin{equation}
     V_{Lavg} = \frac{1}{T} (\int_{0}^{DT} (V_{in} - R_{DS_{(on)}} \cdot I_{DS}) dt + \int_{DT}^{T} (V_{in} - V_{out} - V_d) dt) \Leftrightarrow
 \end{equation}
 
 \begin{equation}
-    \Leftrightarrow r_L \cdot I_L = \frac{1}{T} [T \cdot D \cdot  (V_{in} - R_{DS_{(on)}} \cdot I_{DS}) + T \cdot (1-D)\cdot(V_{in} - V_{out} -V_d)] \Leftrightarrow
+    \Leftrightarrow R_{ind} \cdot I_L = \frac{1}{T} [T \cdot D \cdot  (V_{in} - R_{DS_{(on)}} \cdot I_{DS}) + T \cdot (1-D)\cdot(V_{in} - V_{out} -V_d)] \Leftrightarrow
     \label{eq:vout3}
 \end{equation}
 
 \begin{equation}
-    \Leftrightarrow  V_{out} = \frac{V_{in} - D \cdot R_{DS_{(on)}} \cdot I_{DS} - r_L \cdot I_L}{1-D}-V_d .
+    \Leftrightarrow  V_{out} = \frac{V_{in} - D \cdot R_{DS_{(on)}} \cdot I_{DS} - R_{ind} \cdot I_L}{1-D}-V_d .
     \label{eq:vout2}
 \end{equation}
 
@@ -85,7 +85,7 @@ Let us first define the design goals of the synchronous boost converter. The con
 The converter must charge a lithium-ion battery with a nominal voltage of 43.2~V. 
 The switching frequency was defined as 100~kHz. This relatively high frequency allows the use of smaller inductors and capacitors, while still avoiding excessive switching losses.
 
-Table~\ref{tab:converter_constraints} and \ref{tab:pv_conditions} summarizes the system requirements.
+Table~\ref{tab:pv_conditions} summarizes the solar panel properties at \ac{mppt} and Table~\ref{tab:converter_constraints} the converter design specifications.
 
 
 
@@ -140,7 +140,7 @@ The equation that describes the inductor is defined as:
     \label{eq:inductor1}
 \end{equation}
 
-In the first stage (transistor in conduction mode), the voltage in the inductor is equal to the input voltage and it occurs for $D \cdot T$~s. Therefore, the inductor ripple current can be defined as follows:
+In the first stage (transistor in conduction mode), the voltage in the inductor is equal to the input voltage and it occurs for a period of $D \cdot T$. Therefore, the inductor ripple current can be defined as follows:
 
 \begin{equation}
     \Delta I_L = \frac{V_{in} \cdot D \cdot T}{L} .
@@ -260,7 +260,7 @@ Additionally, it has a low \ac{esr} of only $10.3~\mathrm{m}\Omega$, a high self
 
     In applications where the efficiency is a key factor in the design, like solar inverters or \ac{mppt} chargers, it is better to use the component that has lower Internal (On) Resistance (RdsOn) and supports higher switching frequency. In this case, GaN is the better fit. MOSFETs would take second place since they can handle higher switching frequencies than IGBTs \cite{talat2024igbt}.
 
-    There are a lot of options in the market, however, there was one in particular that stood out due to its compact size, while having an integrated gate driver and two transistors in the same package. The \ac{ic} is the EPC23102, which was designed for power applications, with an incredibly low RdsOn (only $5.2~\mathrm{m}\Omega$), 35~A of maximum current, and a maximum operating voltage of 100~V.
+    There are a lot of options in the market, however, there was one in particular that stood out due to its compact size, while having an integrated gate driver and two transistors in the same package. The \ac{ic} is the EPC23102, was designed for power applications, uses eGaN output FETs, with an incredibly low RdsOn (only $5.2~\mathrm{m}\Omega$), 35~A of maximum current, and a maximum operating voltage of 100~V.
     
     Additionally, it incorporates shoot-through protection that protects the transistor from a control error. However, a dead time needs to be introduced in firmware. It uses a DFN package, which has a good thermal performance.
 
@@ -348,9 +348,9 @@ The \ac{mppt} algorithm and the monitoring system rely on measurements of the el
 
     The Hall effect current sensor is a non-invasive method that uses the Hall effect to measure current. It provides galvanic isolation and can do bidirectional measurements. However, it is typically more expensive, has lower bandwidth, and may introduce additional noise due to its magnetic sensing nature.
 
-    As for shunt resistor sensing, it is a simple and cost-effective method that uses a low value resistor to convert the current into a voltage drop. This voltage is then amplified using operational amplifiers to match the ADC input range. This method provides high accuracy, low cost, and fast-response time, but it requires careful design to minimize power loss, since it dissipates power proportional to the current.
+    As for shunt resistor sensing, it is a simple and cost-effective method that uses a low value resistor to convert the current into a voltage drop. This voltage is then amplified using operational amplifiers to match the ADC input range. This method provides high accuracy, low cost, and fast-response time, but it requires careful design to minimize power loss, since it dissipates power proportional to the square of the current.
 
-    In the prototype, an \ac{ic} based on a shunt resistor sensing method was used, which has a built-in amplifier. The chosen sensor was the INA253A2IPWR, which has a PWM rejection block and a small form factor that will be extremely useful for this application. However, this \ac{ic} is more expensive than a simple shunt resistor and op-amp solution, but it is more accurate and has better noise rejection. In the future, it can be swapped for a lower cost solution if the performance is acceptable.
+    In the prototype, an \ac{ic} based on a shunt resistor sensing method was used, which has a built-in amplifier and $2~m\Omega$ resistor. The chosen sensor was the INA253A2IPWR, which has a PWM rejection block and a small form factor that will be extremely useful for this application. However, this \ac{ic} is more expensive than a simple shunt resistor and op-amp solution, but it is more accurate and has better noise rejection. In the future, it can be swapped for a lower cost solution if the performance is acceptable.
 
     Both sensors use the internal ADC from the STM32L476, which has a 12 bit ADC (with 3.0~V as the reference). The current sensor outputs an analog voltage that is equal to the current multiplied by 0.2~V/A. This means that the resolution of the measured current is 3.0/(4096 * 0.2) = 3.66~mA. As for the voltage sensor, it outputs an analog voltage that is equal to the voltage multiplied by 10/210. The resolution is 21 * 3.0/(4096) = 15.38~mV, which is more than enough for this application.
 
@@ -366,7 +366,7 @@ The \ac{mppt} algorithm and the monitoring system rely on measurements of the el
         \frac{1}{T} = A + B \cdot ln(R) + C \cdot ln(R)^3
     \end{equation}
 
-    This equation uses 3 parameters (A, B and C) that are usually not provided in the datasheet but can be calculated using 3 measurements of temperature and resistance. However, the most common approach is to use a simplified version of the equation, which uses only 2 parameters (B and R0). The temperature can be calculated using the following equation:
+    This equation uses 3 parameters (A, B and C) that are usually not provided in the datasheet but can be calculated using 3 measurements of temperature and resistance. However, the most common approach is to use a simplified version of the equation, which uses only 2 parameters (B and R0). The temperature can be calculated using the following equation, where temperature is in kelvins:
 
     \begin{equation}
         \frac{1}{T} = \frac{1}{T_0} + \frac{1}{B} \cdot ln(\frac{R}{R_0}) .
@@ -374,7 +374,7 @@ The \ac{mppt} algorithm and the monitoring system rely on measurements of the el
 
     The thermistor that measures the transistor temperature is also used in analog protection. This protection uses a comparator to disable the transistors after a temperature threshold that can be modified by changing one resistor in the comparator circuit (Appendix~\ref{chapter:Schematics}). 
 
-    As for the irradiance sensor, the board was designed to use a TSL2591, which is a digital light sensor with a wide dynamic range and high sensitivity. It can measure light intensity from 0.000118 lux to 88,000 lux, making it suitable for a wide range of lighting conditions. The sensor communicates with the \ac{mcu} via the I2C protocol, allowing for easy integration and data acquisition. However, this sensor is not ideal for outdoor use, since it can easily saturate and its spectrum is not ideal for solar irradiation measurement. The best application for this sensor is in laboratory, however, it was not needed, and therefore it was not used
+    As for the irradiance measurement, the board was designed to use a TSL2591, which is a digital light sensor with a wide dynamic range and high sensitivity. It can measure light intensity from 0.000118 lux to 88,000 lux, making it suitable for a wide range of lighting conditions. The sensor communicates with the \ac{mcu} via the I2C protocol, allowing for easy integration and data acquisition. However, this sensor is not ideal for outdoor use, since it can easily saturate and its spectrum is not ideal for solar irradiation measurement. The best application for this sensor is in laboratory, however, it was not needed, and therefore it was not used
 
     In the future, if the irradiance value needs to be used in the \ac{mppt} algorithm, a more precise irradiance sensor is needed. The most precise sensors use a \ac{pv} cell which, based on its temperature, short circuit current and open circuit voltage can provide a good estimation of the irradiance. The design of this circuit using the same cell model used in the \ac{pv} panel would accurately measure irradiance and have exactly the same spectral distribution as the \ac{pv} panel, which can be used for certain algorithms like \ac{lut}. This was not implemented in this project due to time constraints, but it is a good option for future work.
 
@@ -383,13 +383,13 @@ The \ac{mppt} algorithm and the monitoring system rely on measurements of the el
     This section explains how the firmware inside the \ac{mcu} is structured and how it works. Also, the basic idea behind the communication protocols used and how they are applied to this project as well as the \ac{gui} developed for configuration and data analysis. 
     
     \subsection{Firmware overview}
-        The firmware uses a flag-based scheduler with four tasks, shown in Figure~\ref{fig:Firmware flowchart}: ADC (1~ms), \ac{mppt} (20~ms), \acs{can} (100~ms) and serial (1~s). The periods are user configurable, originally the \ac{mppt} period was set to 10~ms (as it is in simulations) and increased to 20~ms to improve the measurement accuracy by increasing the number of samples taken. A 1~s watchdog timer resets the \ac{mcu} if a task crashes or enters infinite loops. 
+        The firmware uses a flag-based scheduler with four tasks, shown in Figure~\ref{fig:Firmware flowchart}: ADC (1~ms), \ac{mppt} (20~ms), \acs{can} (100~ms) and serial (1~s). The periods are user configurable, originally the \ac{mppt} period was set to 10~ms (as it is in simulations) and increased to 20~ms to improve the measurement accuracy by increasing the number of samples taken. A 1s watchdog timer resets the \ac{mcu} if a task crashes or enters infinite loops. 
 
-        The fastest of these is the ADC task, which converts the analogue readings into current, voltage and temperature. If any value exceeds the configured limits, a fault is raised and the charging state machine is blocked for 5~s. After this delay the ADC task runs again and checks whether the faults have cleared. 
+        The fastest of these is the ADC task, which converts the analogue readings into current, voltage and temperature. If any value exceeds the configured limits, a fault is raised and the charging state machine is blocked for 5s. After this delay the ADC task runs again and checks whether the faults have cleared. 
 
         \begin{figure}[!ht]
             \centering
-            \includegraphics[width=0.6\textwidth]{Images/Implementation/Block diagram-Firmware_flowchart.drawio.pdf}
+            \includegraphics[width=0.65\textwidth]{Images/Implementation/Block diagram-Firmware_flowchart.drawio.pdf}
             \caption{Firmware flowchart.}
             \label{fig:Firmware flowchart}
         \end{figure}
@@ -537,7 +537,7 @@ The \ac{mppt} algorithm and the monitoring system rely on measurements of the el
 
         \begin{figure}[!ht]
             \centering
-            \includegraphics[width=0.90\textwidth]{Images/Implementation/GUI_MPPT_main.png}
+            \includegraphics[width=0.85\textwidth]{Images/Implementation/GUI_MPPT_main.png}
             \caption{MPPT monitor tab.}
             \label{fig:MPPT monitor GUI}
         \end{figure}

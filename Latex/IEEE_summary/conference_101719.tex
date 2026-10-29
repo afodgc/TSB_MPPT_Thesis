@@ -26,7 +26,7 @@
 
 \title{A Fast-Response MPPT Charger for the Técnico Solar Boat}
 
-\author{\IEEEauthorblockN{Afonso D. G. Coelho, Gonçalo N. G. Tavares, and Pedro R. B. Vitor}
+\author{\IEEEauthorblockN{Afonso Daniel Guerreiro Coelho}
 \IEEEauthorblockA{Instituto Superior Técnico, Universidade de Lisboa, Lisbon, Portugal}
 \thanks{This manuscript is a draft conference summary of the MSc dissertation \emph{Fast response MPPT charger for the Técnico Solar Boat}.}}
 
@@ -107,7 +107,7 @@
     The onboard low-voltage battery is a 12s28p assembly of Samsung INR21700-50G cells (43.2~V nominal, 50.4~V maximum, 30~V minimum, 135.8~Ah). It was carried over from another boat and is heavier than SG01 needs. Autonomy estimates therefore also use the smaller 12s7p pack from another TSB vessel, São Rafael 03 (35~Ah, 1512~Wh). 
     % A 12s1p pack (5.14~Ah) was used only to shorten laboratory charge tests. 
 
-    At Standard Test Condition (STC) the present array roughly doubles the endurance of the 1512~Wh pack under a 1000~W auxiliary load, from 1~h~30~min without sun to 3~h~12~min with sun. Higher cell temperature and lower irradiance reduce that gain.
+    At Standard Test Conditions (STC) the present array roughly doubles the endurance of the 1512~Wh pack under a 1000~W auxiliary load, from 1~h~30~min without sun to 3~h~12~min with sun. Higher cell temperature and lower irradiance reduce that gain.
 
     \subsection{How fast the tracker must be}
     The tracker must respond to environmental changes. Seawater on the panels can cause sudden cooling, while roll and pitch are the main periodic sources of variation on a solar vessel. SG01 has estimated natural periods of $0.87~\mathrm{s}$ in pitch and $1.29~\mathrm{s}$ in roll, near the $1$--$30~\mathrm{s}$ band that holds much of the wave energy~\cite{newfrontiers2018}. Datasets from SG01 at sea show spectral peaks near $0.05~\mathrm{Hz}$ and $0.5~\mathrm{Hz}$. The operating point is therefore required to return to the MPP within $1~\mathrm{s}$, with a typical target of $0.5~\mathrm{s}$.
@@ -346,7 +346,7 @@
     With the capacitor configuration fixed, the inductance was then varied from 22 to 100~$\mu\mathrm{H}$ across the same five operating points. At 22~$\mu\mathrm{H}$, the current ripple reaches 5.6$~\mathrm{A}$, comparable to the solar panel current, while the light-load losses increase to 6.7\%. At 100$~\mu\mathrm{H}$, the ripple falls below 1.3~$\mathrm{A}$ and the light-load loss falls below 3.9\%, but the high-power loss rises to about 1.3-1.4\%. The 68~$\mu\mathrm{H}$ inductor provides a compromise between these two extremes. It maintains a relatively low ripple current of 1-2~$\mathrm{A}$, achieves the lowest light-load losses among the tested inductances, and exhibits high-power losses within a few hundredths of a percentage point of those obtained with the smaller inductors. Therefore, the 68~$\mu\mathrm{H}$ inductor offers a favorable balance between current ripple and losses, avoiding the additional copper losses associated with the 100~$\mu\mathrm{H}$ inductor.
 
 
-    Table~\ref{tab:ripple} summarizes the results obtained with the selected components. Both input and output voltage ripples remain within the specified limits of $0.5~\mathrm{V}$ and $0.1~\mathrm{V}$, respectively. At the fifth operating point, corresponding to the end of the CV stage, the converter exhibits a loss of $3.5\%$.
+    Table~\ref{tab:ripple} summarizes the results obtained with the selected components. Both input and output voltage ripples remain within the specified limits of $0.5~\mathrm{V}$ and $0.1~\mathrm{V}$, respectively. At the fifth operating point, corresponding to the end of the CV stage, the converter exhibits a loss of $3.46\%$.
 
     \begin{table}[!t]
         \centering
@@ -359,11 +359,11 @@
             Point & $\Delta V_{\mathrm{bat}}$ & $\Delta V_{\mathrm{pv}}$ & $\Delta I_L$ & Loss \\
             & (V) & (V) & (A) & (\%) \\
             \midrule
-            1 & 0.041 & 0.015 & 0.98 & 0.58 \\
-            2 & 0.049 & 0.021 & 1.71 & 0.68 \\
-            3 & 0.053 & 0.024 & 1.96 & 0.75 \\
-            4 & 0.041 & 0.022 & 2.01 & 0.67 \\
-            5 & 0.030 & 0.022 & 1.96 & 3.46 \\
+            1 & 0.04 & 0.01 & 0.98 & 0.58 \\
+            2 & 0.05 & 0.02 & 1.71 & 0.68 \\
+            3 & 0.05 & 0.02 & 1.96 & 0.75 \\
+            4 & 0.04 & 0.02 & 2.01 & 0.67 \\
+            5 & 0.03 & 0.02 & 1.96 & 3.46 \\
             \bottomrule
         \end{tabular}
     \end{table}
@@ -385,7 +385,7 @@
 
     At 100~Hz, fifty updates fit in the 0.5~s budget, so a 0.18\% step would cover the 9\% temperature travel, but a step that small can be confused with the measurement noise. 
     
-    In simulation, comparing slow and fast changes, a 0.1\% step is slow and can be confused with noise, a 2\% step arrives quickly but oscillates around the MPP. Steps in 0.5-1\% range showed the best results. The final values were set during bench testing, because the sensor noise is not equal to simulation.
+    In simulation, comparing slow and fast changes, a 0.1\% step is slow and can be confused with noise, a 2\% step arrives quickly but oscillates around the MPP. Steps in the 0.5-1\% range showed the best results. The final values were set during bench testing, because the sensor noise is not equal to simulation.
 
 
 \section{Experimental Results}
@@ -406,7 +406,7 @@
 
     \subsection{Conducted emissions}
 
-    The charger shares the vessel with a CAN bus and with radio equipment. Conducted noise on the supply lines is the path that reaches both, so the prototype was compared with CISPR~25:2021, the standard for radio disturbance from electronic components used on vehicles. The standard defines five limit classes for conducted voltage on the power lines. Class~5 is the most strict. Table~\ref{tab:cispr} lists the peak and average limits of all five classes in the bands used for this comparison, from the long-wave range through the FM broadcast band.
+    The charger shares the vessel with a CAN bus and with radio equipment. Conducted noise on the supply lines is the path that reaches both, so the prototype was compared with CISPR~25:2021, the standard for radio disturbance from electronic components used on vehicles. The standard defines five limit classes for conducted voltage on the power lines. Class~5 is the most stringent. Table~\ref{tab:cispr} lists the peak and average limits of all five classes in the bands used for this comparison, from the long-wave range through the FM broadcast band.
 
     \begin{table}[!t]
         \centering
@@ -429,7 +429,7 @@
 
     The scan was made after the output decoupling had been corrected. The first board had a single $1~\mu\mathrm{F}$ ceramic at the output, against ten $1~\mu\mathrm{F}$ capacitors on the GaN evaluation board, and input current spikes of about 1.8~A were tripping the overcurrent protection. Nine additional $1~\mu\mathrm{F}$ capacitors reduced the noise amplitude to 640~mA, and six $100~\mathrm{nF}$ capacitors brought it to about 290~mA. The spectral measurement was performed on that decoupled hardware.
 
-    The supply was set to 22~V, the load was $10~\Omega$, and the duty cycle was fixed at 52.5\% (Fig.~\ref{fig:cispr_load}). The measurement was then repeated with the load removed and the output held at 50.4~V (Fig.~\ref{fig:cispr_noload}). In both conditions the recorded level stays below the Class~5 peak and average limits of Table~\ref{tab:cispr} in every listed band. The no-load spectrum shows higher noise. With no load the switching waveform changes, and a larger share of the measured energy falls at the high-frequency end of the scan.
+     The supply was set to 22~V, the load was $10~\Omega$, and the duty cycle was fixed at 52.5\% (Fig.~\ref{fig:cispr_load}). The measurement was then repeated with the load removed and the output held at 50.4~V (Fig.~\ref{fig:cispr_noload}). In both conditions the recorded level stays below the Class~5 peak and average limits of Table~\ref{tab:cispr} in every listed band. The no-load spectrum shows higher noise. With no load the switching waveform changes, and a larger share of the measured energy falls at the high-frequency end of the scan.
 
     % A line-impedance stabilization network and a shielded room were not available, so the source impedance was that of the laboratory supply and the trace includes ambient pickup. The numbers are an indication, and they are not a CISPR~25 certificate. Ambient pickup raises a reading. A trace that still lies under the Class~5 limit, with that contribution included, places the charger below the most severe limit in the standard at the two operating points that were tested.
 
@@ -556,9 +556,9 @@
 
     Conducted emissions remain below the CISPR~25 Class~5 limits. Thermal testing in a closed enclosure showed that the hottest component reached a steady-state temperature of $51.6~^\circ\mathrm{C}$ without forced cooling.
     
-    Complete CC-CV charging cycles were demonstrated in the laboratory and outdoors on shore. An on-water test aboard NAV-45 then confirmed that the charger tracks the MPP and charges a battery under marine shading and heading changes. The charger was electrically isolated from the vessel systems, and the motion and converter records were not perfectly synchronized, so the effect of roll and pitch was not quantified. The assembled charger costs approximately 125~\texteuro{}, compared with approximately 240~\texteuro{} for the commercial MPPT charger currently in use. In addition, the unit supports configuration through a graphical user interface over serial communication and communication with the vessel's systems via CAN.
+    Complete CC-CV charging cycles were demonstrated in the laboratory and outdoors on shore. An on-water test aboard NAV-45, not on SG01, showed that the charger tracks the MPP and charges a battery. The charger was electrically isolated from the vessel systems, and the motion and converter records were not synchronized, so the effect of roll and pitch was not quantified. The assembled charger costs approximately 125~\texteuro{}, compared with approximately 240~\texteuro{} for the commercial MPPT charger currently in use. In addition, the unit supports configuration through a graphical user interface over serial communication and communication with the vessel's systems via CAN.
 
-    The prototype is not a finished product, but it has been shown to work on the water and is suitable for SG01. Remaining work includes installation on SG01, implementation and comparison of other MPPT algorithms, a native 16-bit ADC and faster clock, and interleaving the four chargers that share the battery.
+    The prototype is not a finished product, but it worked on the water aboard NAV-45 and can be installed on SG01. Remaining work includes that installation, a comparison of other MPPT algorithms, and interleaving the four chargers that share the battery. A 16-bit ADC and a faster clock would improve resolution, but neither is required for the present algorithm.
 
 
 \bibliographystyle{IEEEtran}
